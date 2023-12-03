@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "username": "Kakaroto",
+      "password": "popo",
+      "token": null,
+      "id": 1
+    },
+    {
+      "id": 1701644652068,
+      "username": "Lolo",
+      "password": "lolo",
+      "token": "282b1fe3-2bed-40d5-8d99-c1d215ca35a5"
+    }
+  ]
+}
