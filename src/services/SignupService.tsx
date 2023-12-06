@@ -1,28 +1,31 @@
 // authService.ts
 
 import axios from 'axios';
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
 
 interface User {
   id: number;
   username: string;
   password: string;
-  token: string | null;
+  gender?: string;
+  token: string;
 }
 
 interface SignupCredentials {
   username: string;
   password: string;
+  gender?: string;
 }
-
-export const signupService = async ({ username, password }: SignupCredentials): Promise<User> => {
+const API_URL = process.env.API_URL;
+export const signupService = async ({ username, password, gender }: SignupCredentials): Promise<User> => {
   try {
-    const token = uuidv4();
-    const newUser: User = { id: Date.now(), username, password, token };
-    await axios.post('https://385d-179-54-192-206.ngrok.io/users', newUser);
+    const response = await axios.post(`${API_URL}/users`, { username, password, gender });
+    const token = response.data.token;
+    if (!token) {
+      throw new Error('Token não recebido do servidor');
+    }
+    const newUser: User = { id: response.data.id, username, password, gender, token };
     console.log('Usuário cadastrado com sucesso:', newUser);
-    return newUser; 
+    return newUser;
   } catch (error) {
     throw new Error('Erro ao cadastrar: ' + error);
   }

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button } from 'react-native';
 import { loginService } from '../services/LoginService';
 import { StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Importe AsyncStorage
+
 interface LogiinProps {
   navigation: StackNavigationProp<any, 'Login'>;
 }
@@ -13,8 +15,11 @@ const LoginPage: React.FC<LogiinProps> = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-        await loginService({ username, password });
-        navigation.navigate('Home', { userId: username });
+      const user = await loginService({ username, password });
+      if (user && user.token) {
+        await AsyncStorage.setItem('token', user.token);
+        navigation.navigate('Home', { userId: user.token });
+      }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
     }
