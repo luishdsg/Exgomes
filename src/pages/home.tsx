@@ -1,40 +1,20 @@
-import { RouteProp } from '@react-navigation/native';
+// src/pages/home.tsx
 import { StackNavigationProp } from '@react-navigation/stack';
+import * as SecureStore from 'expo-secure-store';
 import React from 'react';
-import { View, Text, Button } from 'react-native';
+import { Button,Text, View } from 'react-native';
 
-type HomeScreenParams = {
-  userId: string;
-};
-
-type RootStackParamList = {
-  Signup: undefined;
-  Login: undefined;
-  Home: HomeScreenParams;
-};
-
-interface HomeScreenProps {
-  route: RouteProp<RootStackParamList, 'Home'>;
+type HomeScreenPageProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
-}
+};
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
-  const { userId } = route.params;
-
-
-
+const HomeScreen: React.FC<HomeScreenPageProps> = ({ navigation }) => {
   const handleLogout = async () => {
-    try {
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error('Erro ao remover o token:', error);
-    }
   };
 
   return (
-    <View>
-      <Text>Welcome to Home, User ID: {userId}</Text>
-      <Button title="Logout" onPress={handleLogout} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>HELLO WORLD!</Text>
     </View>
   );
 };
