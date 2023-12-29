@@ -1,0 +1,15 @@
+{
+    "greeting": "Olá!",
+    "welcome": "Bem-vindo ao nosso aplicativo!",
+    "login":{
+        "hny":"Feliz ano novo {{newyear}}",
+        "title": "Fale com mais Gente\ncomo você!",
+        "subtitle": "compartilhe ideias e opiniões com\namigos e familiares"
+    },
+    "Tools":{
+        "inputUser":"Nome de usuário",
+        "inputPass":"Senha",
+        "refresh": "Atualizando..."
+    }
+  }
+  

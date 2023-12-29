@@ -9,5 +9,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "src/i18n/i18n.ts"  ]
 }

@@ -5,10 +5,16 @@ export interface UserReq {
 export interface UserRes {
     _id: number;
     username: string;
-    password: string | undefined;
-    email?: string;
-    photo?: number;
-    gender?: string;
+    gender?: string,
+    photo?: string,
+    email?: string,
+    birth?: string,
+    local?: string,
+    lang?: string,
+    posts?: string[];
+    saved?: string[];
+    favorites?: string[];
+    trash?: string[];
 }
 export interface LoginUserReq {
     username: string;
