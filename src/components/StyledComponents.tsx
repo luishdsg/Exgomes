@@ -1,6 +1,6 @@
 import React from 'react';
-import { Image, ImageSourcePropType, View } from 'react-native';
-import { Text, TextProps } from '../constants/Themed';
+import { Image, ImageSourcePropType } from 'react-native';
+import { Text, TextProps, View, ViewProps } from '../constants/Themed';
 import { Images } from '../style';
 
 interface ImageComponentProps {
@@ -10,6 +10,11 @@ interface ImageComponentProps {
 const ImageMediumComponent: React.FC<ImageComponentProps> = ({ source }) => {
   return (
       <Image source={source} style={Images.MediumImage} resizeMode="cover" />
+  );
+};
+const ImageMinComponent: React.FC<ImageComponentProps> = ({ source }) => {
+  return (
+      <Image source={source} style={Images.MinImage} resizeMode="cover" />
   );
 };
 function TextRegular (props: TextProps) {
@@ -24,13 +29,17 @@ function TextBold (props: TextProps) {
 function TextLight (props: TextProps) {
   return <Text {...props} style={[props.style, { fontFamily: 'ProdLight' }]} />;
 }
-
+function ViewFull (props: ViewProps) {
+  return <View {...props} style={[props.style]}></View>;
+}
 
 export {
   ImageMediumComponent,
+  ImageMinComponent,
   TextRegular,
   TextThin,
   TextBold,
   TextLight,
+  ViewFull
 };
 

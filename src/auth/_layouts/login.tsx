@@ -1,51 +1,63 @@
 import axios from 'axios';
+import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Keyboard, KeyboardAvoidingView, ScrollView, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar } from 'react-native-ios-kit';
-import { ImageMediumComponent, TextBold } from '../../components/StyledComponents';
-import LoginErrorModal from '../../components/modal/ModalLogin';
+import { ImageMediumComponent, ImageMinComponent, TextBold, TextLight } from '../../components/StyledComponents';
+import { useFadeAnimationLogin } from '../../components/animations/login';
+import ForgotPassModal from '../../components/modal/ForgotPassModal';
+import PopUpError from '../../components/modal/PopUpError';
+import { colors } from '../../constants/Colors';
 import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
 import { loginStyle, rootStyle, text } from '../../style';
-import { API_URI, useAuth } from '../services/AuthService';
-import { colors } from '../../constants/Colors';
+import { useAuth } from '../services/AuthService';
+import { API_URL } from '@env';
 
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const inputRefPass = useRef(null);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [avatarUser, setavatarUser] = useState<UserRes | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
+  const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
+  const [avatarUser, setAvatarUser] = useState<UserRes | null>(null);
+  const [usernameExists, setUsernameExists] = useState(false);
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
   const [animationVisible, setAnimationVisible] = useState(true);
 
+
   useEffect(() => {
     const getUser = async () => {
       try {
-        const result = await axios.get(`${API_URI}users/${username}`);
-        console.log(result.data);
-        setavatarUser(result.data)
+        const result = await axios.get(`${API_URL}users/${username}`);
+        setAvatarUser(result.data);
+        setUsernameExists(!!result.data);
       } catch (error) {
-        setavatarUser(null);
+        setAvatarUser(null);
+        setUsernameExists(false);
       }
     };
-    if (username.length >= 3) setTimeout(() => {getUser()},1000) ;
-    else setavatarUser(null);
+    if (username.length >= 3) setTimeout(() => { getUser() }, 1000);
+    else setAvatarUser(null);
   }, [username]);
 
   const renderAvatarContent = () => {
-    // if (avatarUser && avatarUser?.photo) {
-    // } else if (avatarUser && avatarUser.username) {
-    //   const initials = avatarUser.username.split(' ').map((word) => word[0]).join('');
-    //   return <View style={loginStyle.profile}><Avatar initials={initials} size={40} theme={colors.patternColor}/></View>;
-    // } else {
-    //   return null;
-    // }
-    return <View style={loginStyle.profile}><Avatar url={avatarUser?.photo} size={40}/></View>;
+    if (avatarUser && avatarUser?.photo) {
+      return <View style={loginStyle.profile}><Avatar url={avatarUser?.photo} size={40} /></View>;
+    } else if (avatarUser && avatarUser.username) {
+      const initials = avatarUser.username.split(' ').map((word) => word[0]).join('');
+      return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
+    } else {
+      return null;
+    }
 
   };
 
@@ -64,18 +76,50 @@ const LoginPage: React.FC = () => {
     setLang(newLang)
   }
 
+  const vibrate = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+  const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimationLogin();
+  const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimationLogin();
+
+  const _handleNextInput = (nextInputRef: any) => {
+    if (nextInputRef.current) {
+      nextInputRef.current.focus();
+    }
+  };
+
   const _handleLogin = async () => {
     try {
       const login: LoginUserReq = {
         username: username,
         password: password,
       }
-      const user = await onLogin!(login);
-      if (user! && user.error) {
-        alert(user.msg)
+      if (username.trim() === '') {
+        setIsUsernameEmpty(true);
+        setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
+        fadeInUsername(); vibrate();
+      } else {
+        setIsUsernameEmpty(false);
+        fadeOutUsername();
+      }
+
+      if (password.trim() === '') {
+        setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
+        setIsPasswordEmpty(true);
+        fadeInPassword(); vibrate();
+      } else {
+        setIsPasswordEmpty(false);
+        fadeOutPassword();
+      }
+
+      if (username.trim() !== '' && password.trim() !== '') {
+        const user = await onLogin!(login);
+        if (user! && user.error) {
+          alert(user.msg)
+        }
       }
     } catch (error) {
-      setErrorMessage(`${error}Senha incorreta`);
+      setErrorMessage(`Usuario ou Senha incorreto(a)`);
       setErrorModalVisible(true);
     }
   };
@@ -86,17 +130,49 @@ const LoginPage: React.FC = () => {
         username: username,
         password: password,
       }
-      const user = await onSignUp!(signUp);
-      if (user! && user.error) {
-        alert(user.msg)
+      if (username.trim() === '') {
+        setIsUsernameEmpty(true);
+        setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
+        fadeInUsername();
       } else {
-        _handleLogin();
+        setIsUsernameEmpty(false);
+        fadeOutUsername();
+      }
+
+      if (password.trim() === '') {
+        setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
+        setIsPasswordEmpty(true);
+        fadeInPassword();
+      } else {
+        setIsPasswordEmpty(false);
+        fadeOutPassword();
+      }
+
+      if (usernameExists) {
+        setErrorMessage('Nome de usuário já existente. Escolha outro.');
+        setErrorModalVisible(true);
+        return;
+      }
+
+      if (username.trim() !== '' && password.trim() !== '') {
+        const user = await onSignUp!(signUp);
+        if (user! && user.error) {
+          alert(user.msg)
+        } else {
+          _handleLogin();
+        }
       }
     } catch (error) {
-      setErrorMessage(`${error}Senha incorreta`);
+      setErrorMessage(`Error ao criar conta,\n seridor em análise ⌛`);
       setErrorModalVisible(true);
     }
   }
+
+  const _handleForgotPass = async () => {
+    setModalVisible(!modalVisible);
+    setModalMessage("esqueceu a senha né")
+  }
+
 
   return (
     <KeyboardAvoidingView
@@ -105,32 +181,44 @@ const LoginPage: React.FC = () => {
       enabled
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView>
-          <View style={loginStyle.form}>
-            <View style={loginStyle.loginImage}>
-              <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
-            </View>
-            <View style={[rootStyle.px1, rootStyle.centralize, rootStyle.col]}>
-              <TextBold style={[text.fz30, rootStyle.centralizeText]}>{t('login.title')}</TextBold>
-              <TextBold style={[text.fz20, rootStyle.centralizeText, rootStyle.textGray, rootStyle.mt02]}>{t('login.subtitle')}</TextBold>
-            </View>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          style={rootStyle.view}>
+          <View style={loginStyle.loginImage}>
+            <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
+            <ImageMinComponent source={require('../../../assets/icon.png')} />
+          </View>
+          <View style={[rootStyle.p1, rootStyle.centralize]}>
+            <TextBold style={[text.fz30, rootStyle.centralizeText]}>{t('login.title')}</TextBold>
+            <Text style={[text.fz20, rootStyle.centralizeText, rootStyle.textGray, rootStyle.mt02, text.fontBold]}>{t('login.subtitle')}</Text>
+          </View>
+          <View style={[rootStyle.halfview]}>
+            <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
+              {t('Tools.userEmpty')}
+            </Animated.Text>
             <View style={loginStyle.inputContainer}>
               <TextInput
-                style={[loginStyle.input, text.fz20]}
+                style={[loginStyle.input, text.fz20, isUsernameEmpty && rootStyle.inputError]}
                 placeholder={t('Tools.inputUser')}
                 value={username} editable={true}
                 contextMenuHidden={false}
-                onChangeText={setUsername}
+                returnKeyType="next"
+                onSubmitEditing={() => { _handleNextInput(inputRefPass) }}
+                onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
               />
               {renderAvatarContent()}
             </View>
-
             <View style={loginStyle.inputContainer}>
               <TextInput
-                style={[loginStyle.input, text.fz20]}
+                style={[loginStyle.input, text.fz20, isPasswordEmpty && rootStyle.inputError]}
                 placeholder={t('Tools.inputPass')}
                 value={password} editable={true}
-                onChangeText={setPassword} onFocus={_handleAnimationStart}
+                ref={inputRefPass}
+                returnKeyType="done"
+                onSubmitEditing={() => { Keyboard.dismiss(); }}
+                onChangeText={(text) => { setPassword(text); setIsPasswordEmpty(false) }}
+                onFocus={_handleAnimationStart}
                 secureTextEntry
               />
               {animationVisible && (
@@ -142,19 +230,35 @@ const LoginPage: React.FC = () => {
                 />
               )}
             </View>
-            <View style={loginStyle.buttonArea}>
-              <Button title="Login" onPress={_handleLogin} />
-              <Button title="SignUp" onPress={_handleSignUp} />
+            <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimPassword }]}>
+              {t('Tools.passEmpty')}
+            </Animated.Text>
+            <View style={[loginStyle.buttonArea, rootStyle.px1,]}>
+              <TouchableOpacity style={[rootStyle.btnPatter, rootStyle.centralize]} onPress={_handleLogin}>
+                <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.white }]}>{t('login.login')}</TextBold>
+              </TouchableOpacity>
+              <TouchableOpacity style={[rootStyle.btnPatterpass, rootStyle.mt1, rootStyle.centralize]} onPress={_handleSignUp}>
+                <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</TextBold>
+              </TouchableOpacity>
+              <View style={[rootStyle.centralize, rootStyle.mt2]}>
+                <TextLight onPress={_handleForgotPass} style={[rootStyle.centralizeText]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</TextLight>
+              </View>
             </View>
           </View>
-          <LoginErrorModal
-            visible={errorModalVisible}
-            errorMessage={errorMessage}
-            onClose={() => setErrorModalVisible(false)}
-          />
         </ScrollView >
       </TouchableWithoutFeedback>
+      <ForgotPassModal
+        visible={modalVisible}
+        errorMessage={modalMessage}
+        onClose={_handleForgotPass}
+      />
+      <PopUpError
+        visible={errorModalVisible}
+        errorMessage={errorMessage}
+        onClose={() => setErrorModalVisible(false)}
+      />
     </KeyboardAvoidingView>
+
   );
 };
 

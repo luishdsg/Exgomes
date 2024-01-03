@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { LoginUserReq, LoginUserRes, UserReq, UserRes } from '../../interface/User.interface';
 import * as SecureStore from 'expo-secure-store';
-
+import { API_URL } from '@env';
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
   onSignUp?: (userData: UserReq) => Promise<any>;
@@ -15,7 +15,6 @@ export const useAuth = () => {
   return useContext(AuthContext);
 }
 
-export const API_URI = 'http://192.168.1.8:3001/'
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
@@ -45,9 +44,9 @@ export const AuthProvider = ({ children }: any) => {
   const signupService = async (userData: UserReq) => {
     try {
       const createdAt = new Date();
-      const response = await axios.post(`${API_URI}users`, { ...userData, createdAt });
+      const response = await axios.post(`${API_URL}users`, { ...userData, createdAt });
       console.log('Resposta do servidor:', response);
-      const newUser: UserRes = { _id: response.data._id, ...userData, password: undefined};
+      const newUser: UserRes = { _id: response.data._id, ...userData};
       console.log('Usuário cadastrado com sucesso:', newUser);
       return newUser;
     } catch (error) {
@@ -66,7 +65,7 @@ export const AuthProvider = ({ children }: any) => {
   const loginService = async (loginUserReq: LoginUserReq) => {
     try {
       const response: any = await axios.post(
-        `${API_URI}login`,loginUserReq,
+        `${API_URL}login`,loginUserReq,
         {
           withCredentials: true,
           headers: {
