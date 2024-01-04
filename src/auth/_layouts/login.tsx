@@ -3,13 +3,13 @@ import * as Haptics from 'expo-haptics';
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Keyboard, KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar } from 'react-native-ios-kit';
 import { ImageMediumComponent, ImageMinComponent, TextBold, TextLight } from '../../components/StyledComponents';
 import { useFadeAnimationLogin } from '../../components/animations/login';
 import ForgotPassModal from '../../components/modal/ForgotPassModal';
 import PopUpError from '../../components/modal/PopUpError';
-import { colors } from '../../constants/Colors';
+import { colors } from '../../style/Colors';
 import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
 import { loginStyle, rootStyle, text } from '../../style';
 import { useAuth } from '../services/AuthService';
@@ -26,6 +26,8 @@ const LoginPage: React.FC = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
+  const [isLoadingSignUp, setIsLoadingSignUp] = useState(false);
   const [avatarUser, setAvatarUser] = useState<UserRes | null>(null);
   const [usernameExists, setUsernameExists] = useState(false);
   const { onLogin, onSignUp } = useAuth();
@@ -37,9 +39,9 @@ const LoginPage: React.FC = () => {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const result = await axios.get(`${API_URL}users/${username}`);
+        const result = await axios.get(`${API_URL}/users/${username}`);
         setAvatarUser(result.data);
-        setUsernameExists(!!result.data);
+        setUsernameExists(!result.data);
       } catch (error) {
         setAvatarUser(null);
         setUsernameExists(false);
@@ -94,6 +96,7 @@ const LoginPage: React.FC = () => {
         username: username,
         password: password,
       }
+      setIsLoadingLogin(true);
       if (username.trim() === '') {
         setIsUsernameEmpty(true);
         setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
@@ -116,11 +119,13 @@ const LoginPage: React.FC = () => {
         const user = await onLogin!(login);
         if (user! && user.error) {
           alert(user.msg)
-        }
+        } 
       }
+      setIsLoadingLogin(false);
     } catch (error) {
-      setErrorMessage(`Usuario ou Senha incorreto(a)`);
+      setErrorMessage(`Usuario ou Senha incorreto(a)${API_URL}`);
       setErrorModalVisible(true);
+      setIsLoadingLogin(false);
     }
   };
 
@@ -130,6 +135,8 @@ const LoginPage: React.FC = () => {
         username: username,
         password: password,
       }
+      setIsLoadingSignUp(false);
+
       if (username.trim() === '') {
         setIsUsernameEmpty(true);
         setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
@@ -162,9 +169,11 @@ const LoginPage: React.FC = () => {
           _handleLogin();
         }
       }
+      setIsLoadingSignUp(false);
     } catch (error) {
-      setErrorMessage(`Error ao criar conta,\n seridor em análise ⌛`);
+      setErrorMessage(`Error ao criar conta,\n seridor em análise ⌛ ${API_URL}`);
       setErrorModalVisible(true);
+      setIsLoadingSignUp(false);
     }
   }
 
@@ -235,10 +244,18 @@ const LoginPage: React.FC = () => {
             </Animated.Text>
             <View style={[loginStyle.buttonArea, rootStyle.px1,]}>
               <TouchableOpacity style={[rootStyle.btnPatter, rootStyle.centralize]} onPress={_handleLogin}>
-                <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.white }]}>{t('login.login')}</TextBold>
+                {isLoadingLogin ? (
+                  <ActivityIndicator size="small" color="#0000ff" />
+                ) : (
+                  <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.white }]}>{t('login.login')}</TextBold>
+                )}
               </TouchableOpacity>
               <TouchableOpacity style={[rootStyle.btnPatterpass, rootStyle.mt1, rootStyle.centralize]} onPress={_handleSignUp}>
-                <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</TextBold>
+                {isLoadingSignUp ? (
+                  <ActivityIndicator size="small" color="#0000ff" />
+                ) : (
+                  <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</TextBold>
+                )}
               </TouchableOpacity>
               <View style={[rootStyle.centralize, rootStyle.mt2]}>
                 <TextLight onPress={_handleForgotPass} style={[rootStyle.centralizeText]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</TextLight>

@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: any) => {
   const signupService = async (userData: UserReq) => {
     try {
       const createdAt = new Date();
-      const response = await axios.post(`${API_URL}users`, { ...userData, createdAt });
+      const response = await axios.post(`${API_URL}/users`, { ...userData, createdAt });
       console.log('Resposta do servidor:', response);
       const newUser: UserRes = { _id: response.data._id, ...userData};
       console.log('Usuário cadastrado com sucesso:', newUser);
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: any) => {
   const loginService = async (loginUserReq: LoginUserReq) => {
     try {
       const response: any = await axios.post(
-        `${API_URL}login`,loginUserReq,
+        `${API_URL}/login`,loginUserReq,
         {
           withCredentials: true,
           headers: {
@@ -79,9 +79,11 @@ export const AuthProvider = ({ children }: any) => {
       if (!response.data) {
         throw new Error('Resposta do servidor sem dados');
       }
+      const usernameDataMatch = /usernamedata=(\w+)/.exec(response.headers['usernamedata'] || '');
+      const username = usernameDataMatch ? usernameDataMatch[1] : null;
 
-      const user: LoginUserRes = { ...response.data, password: undefined };
-      console.log('Resposta ao front:', user);
+      const user: LoginUserRes = { ...response.data, password: undefined, username: username };
+      console.log('Resposta ao front:', user.username);
       setAuthState({
         token: user.accessToken,
         authenticated: true
@@ -89,7 +91,9 @@ export const AuthProvider = ({ children }: any) => {
 
       axios.defaults.headers.common['Authorization'] = `Barrer ${user.accessToken}`
 
-      await SecureStore.setItemAsync('authToken', user.accessToken);
+
+      await SecureStore.setItemAsync('userAuthorizeName',  user.username);
+      await SecureStore.setItemAsync('userAuthorizeToken', user.accessToken);
 
       return user;
     } catch (error) {
@@ -99,7 +103,8 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync('authToken');
+    await SecureStore.deleteItemAsync('userAuthorizeToken');
+    await SecureStore.deleteItemAsync('userAuthorizeName');
     axios.defaults.headers.common['Authorization'] = '';
     setAuthState({
       token: null,

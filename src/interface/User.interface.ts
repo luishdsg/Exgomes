@@ -15,6 +15,7 @@ export interface UserRes {
     saved?: string[];
     favorites?: string[];
     trash?: string[];
+    accessToken?: string | null;
 }
 export interface LoginUserReq {
     username: string;

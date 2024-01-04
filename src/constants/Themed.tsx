@@ -1,6 +1,6 @@
 import { Text as DefaultText, useColorScheme, View as DefaultView } from 'react-native';
 
-import Colors from './Colors';
+import Colors from '../style/Colors';
 
 type ThemeProps = {
   lightColor?: string;
@@ -12,9 +12,9 @@ export type ViewProps = ThemeProps & DefaultView['props'];
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  colorName: keyof typeof Colors.dark & keyof typeof Colors.light
 ) {
-  const theme = useColorScheme() ?? 'light';
+  const theme = useColorScheme() ?? 'dark';
   const colorFromProps = props[theme];
 
   if (colorFromProps) {

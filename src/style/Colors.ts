@@ -21,15 +21,15 @@ export const themeAvatar = {
 };
 export default {
   light: {
-    text: colors.black,
-    background: colors.whiteIce,
+    text: colors.whiteIce,
+    background: colors.black,
     tint: colors.patternColor,
     tabIconDefault: colors.grayText,
     tabIconSelected: colors.patternColor,
   },
   dark: {
-    text: colors.whiteIce,
-    background: colors.black,
+    text: colors.black,
+    background: colors.whiteIce,
     tint: colors.patternColor,
     tabIconDefault: colors.grayText,
     tabIconSelected: colors.patternColor,

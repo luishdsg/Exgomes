@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { Modal, View, Text, Button, TextStyle, ViewStyle, StyleSheet, Animated, TouchableOpacity } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { colors } from '../../constants/Colors';
+import { colors } from '../../style/Colors';
 interface PopUpErrorProps {
   visible: boolean;
   errorMessage: string;

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors } from '../constants/Colors';
+import { colors } from './Colors';
 export const rootStyle = StyleSheet.create({
     mt01: {
         marginTop: '2%'
@@ -162,6 +162,11 @@ export const Images = StyleSheet.create({
         aspectRatio: 1,
         borderRadius: 100
     },
+    iconImage:{
+        width: 24,
+        height: 24,
+        resizeMode: 'contain'
+    }
 });
 
 export const text = StyleSheet.create({

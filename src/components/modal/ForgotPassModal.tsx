@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { View, Text } from '../../constants/Themed'; import Modal from 'react-native-modal';
 import { BlurView } from 'expo-blur';
-import { colors } from '../../constants/Colors';
+import { colors } from '../../style/Colors';
 import { rootStyle } from '../../style';
 import { ViewFull } from '../StyledComponents';
 
