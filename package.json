@@ -11,6 +11,7 @@
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^19.0.0",
+    "@react-icons/all-files": "^4.1.0",
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/blur": "^4.3.2",
     "@react-native-community/viewpager": "5.0.11",
@@ -18,6 +19,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@react-navigation/stack": "^6.3.20",
+    "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-navigation": "^3.4.0",
     "axios": "^1.6.2",
     "cors": "^2.8.5",
@@ -30,6 +32,7 @@
     "expo-router": "^2.0.4",
     "expo-secure-store": "~12.3.1",
     "expo-status-bar": "~1.6.0",
+    "expo-system-ui": "~2.4.0",
     "expo-web-browser": "~12.3.2",
     "i18next": "^23.7.11",
     "lottie-react-native": "5.1.6",

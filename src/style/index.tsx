@@ -1,34 +1,28 @@
 import { StyleSheet } from 'react-native';
 import { colors } from './Colors';
 export const rootStyle = StyleSheet.create({
-    mt01: {
-        marginTop: '2%'
-    },
-    mt02: {
-        marginTop: '5%'
-    },
-    mt03: {
-        marginTop: '10%'
-    },
-    mt04: {
-        marginTop: '15%'
-    },
+   
     centralize: {
         alignItems: 'center',
         justifyContent: 'center',
     },
-    centralizeText: {
-        textAlign: 'center',
+    alignCenter:{
+        alignItems: 'center',
     },
-    leftText: {
-        textAlign: 'left',
+    justifyCenter:{
+        justifyContent: 'center',
     },
-    rightText: {
-        textAlign: 'right',
+    justifyBetween:{
+        justifyContent: 'space-between',
     },
-    textGray: {
-        color: colors.gray
+   
+    container: {
+        flex: 1,
+        width: '100%',
+        position: 'relative',
+        // backgroundColor: colors.whiteIce,
     },
+   
     p1: {
         paddingHorizontal: '3%',
         paddingVertical: '3%',
@@ -43,6 +37,12 @@ export const rootStyle = StyleSheet.create({
     pt2: {
         paddingTop: '5%',
     },
+    pb1: {
+        paddingBottom: '3%',
+    },
+    pb2: {
+        paddingBottom: '5%',
+    },
     px2: {
         paddingHorizontal: '5%',
     },
@@ -55,7 +55,25 @@ export const rootStyle = StyleSheet.create({
     py1: {
         paddingVertical: '3%',
     },
-   
+    pl1:{
+        paddingLeft: '3%',
+    },
+    pl2:{
+        paddingLeft: '5%',
+    },
+    pl3:{
+        paddingLeft: '10%',
+    },
+    pr1:{
+        paddingRight: '3%',
+    },
+    pr2:{
+        paddingRight: '5%',
+    },
+    pr3:{
+        paddingRight: '10%',
+    },
+
     mt1: {
         marginTop: '3%',
     },
@@ -83,9 +101,45 @@ export const rootStyle = StyleSheet.create({
         marginVertical: '5%',
         marginHorizontal: '5%',
     },
+    mt01: {
+        marginTop: '2%'
+    },
+    mt02: {
+        marginTop: '5%'
+    },
+    mt03: {
+        marginTop: '10%'
+    },
+    mt04: {
+        marginTop: '15%'
+    },
+    h20:{
+        height: 20
+    },
+    h30:{
+        height: 30
+    },
+    h50:{
+        height: 50
+    },
+    h60:{
+        height: 60
+    },
+    h70:{
+        height: 70
+    },
+    h100:{
+        height: 100
+    },
+    h200:{
+        height: 200
+    },
     view: {
         //   backgroundColor: colors.patternColor,
         height: '100%',
+        width: '100%',
+    },
+    w100:{
         width: '100%',
     },
     halfview: {
@@ -94,20 +148,7 @@ export const rootStyle = StyleSheet.create({
         height: 490,
         width: '100%',
     },
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
-    col: {
-        marginHorizontal: 5,
-        padding: 10,
-        alignItems: 'center',
-    },
+
     btnPatter: {
         borderRadius: 15,
         backgroundColor: colors.patternColor,
@@ -118,7 +159,7 @@ export const rootStyle = StyleSheet.create({
         borderRadius: 15,
         borderWidth: 2,
         borderColor: colors.patternColor,
-        backgroundColor: colors.whiteIce,
+        backgroundColor: 'transparent',
         width: '100%',
         height: 70,
     },
@@ -132,7 +173,7 @@ export const rootStyle = StyleSheet.create({
         fontFamily: 'ProdBold',
         marginBottom: 10,
     },
-    lineIOS:{
+    lineIOS: {
         width: '39%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -140,10 +181,61 @@ export const rootStyle = StyleSheet.create({
         backgroundColor: colors.black,
         borderRadius: 100,
         height: 5
-    }
+    },
+    
 });
+export const Rowstyle = StyleSheet.create({
 
-
+    app: {
+        flex: 4,
+        marginHorizontal: "auto",
+        height: 200,
+        width: '100%',
+    },
+    row: {
+        flexDirection: "row"
+    },
+    col: {
+        flexDirection: "column",
+        flex: 1,
+    },
+    "1col": {
+        flex: 1
+    },
+    "2col": {
+        flex: 2
+    },
+    "3col": {
+        flex: 3
+    },
+    "4col": {
+        flex: 4
+    },
+    "5col": {
+        flex: 5
+    },
+    "6col": {
+        flex: 6
+    },
+    "7col": {
+        flex: 7
+    },
+    "8col": {
+        flex: 8
+    },
+    "9col": {
+        flex: 9
+    },
+    "10col": {
+        flex: 10
+    },
+    "11col": {
+        flex: 11
+    },
+    "12col": {
+        flex: 12
+    },
+});
 
 export const Images = StyleSheet.create({
     MediumImage: {
@@ -157,24 +249,46 @@ export const Images = StyleSheet.create({
     MinImage: {
         width: 100,
         height: 100,
-        marginTop: '3%',
-        // backgroundColor: 'blue',
         aspectRatio: 1,
         borderRadius: 100
     },
-    iconImage:{
-        width: 24,
-        height: 24,
+    iconImage: {
+        width: 29,
+        height: 29,
+        resizeMode: 'contain'
+    },
+    profileIcon: {
+        width: 29,
+        height: 29,
+        borderRadius: 200,
+        borderWidth: 1,
         resizeMode: 'contain'
     }
 });
-
 export const text = StyleSheet.create({
+    leftText: {
+        textAlign: 'left',
+    },
+    rightText: {
+        textAlign: 'right',
+    },
+    textGray: {
+        color: colors.gray
+    },
+    centralizeText: {
+        textAlign: 'center',
+    },
     fz10: {
         fontSize: 10,
     },
+    fz15: {
+        fontSize: 15,
+    },
     fz20: {
         fontSize: 20,
+    },
+    fz25: {
+        fontSize: 25,
     },
     fz30: {
         fontSize: 30,
@@ -231,50 +345,60 @@ export const loginStyle = StyleSheet.create({
     },
     pass: {
         marginStart: '2%',
-        width: '20%',
-        height: '100%',
+        width: 'auto',
+        // backgroundColor: 'blue',
+        height: 'auto',
     },
 
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: colors.white,
-        height: 55,
+        borderColor: colors.white,
+        borderWidth: 1,
         marginBottom: 10,
         borderRadius: 15,
         paddingLeft: '5%',
         marginHorizontal: '4%',
     },
     input: {
-        fontFamily: 'ProdRegular',
+        fontFamily: 'ProdBold',
         // backgroundColor: 'blue',
-        height: 55,
         width: '80%',
     },
 
-    ScrollView: {
-        width: '100%',
-        flex: 1,
-
-    },
-    container: {
-        flex: 1,
-        width: '100%',
-        position: 'relative',
-        // backgroundColor: colors.whiteIce,
-
-    },
-    scrollContainer: {
-        flexGrow: 1,
-        width: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     buttonArea: {
         // backgroundColor: 'red',
         width: '100%',
         paddingBottom: '20%',
         alignItems: 'center',
     },
+
+});
+
+export const profileStyle = StyleSheet.create({
+    seasonView: {
+        width: '100%',
+        height: 180
+    },
+    pressableBtn:{
+        borderRadius: 100,
+        paddingVertical: 5,
+        marginVertical: 10,
+        marginLeft: 10,
+        paddingHorizontal: 9,
+       
+    },
+    swipeableContent: {
+        width: 200,
+        height: 50,
+        backgroundColor: 'lightblue',
+        borderRadius: 10,
+        overflow: 'hidden',
+      },
+      button: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
 
 });

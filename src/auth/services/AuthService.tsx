@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: any) => {
 
   useEffect(() => {
     const loadToken = async () => {
-      const authToken = await SecureStore.getItemAsync('authToken');
+      const authToken = await SecureStore.getItemAsync('userAuthorizeName');
       if (authToken) {
         axios.defaults.headers.common['Authorization'] = `Barrer ${authToken}`
 

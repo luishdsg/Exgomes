@@ -25,3 +25,4 @@ export interface LoginUserRes {
     username: string;
     accessToken: string;
 }
+

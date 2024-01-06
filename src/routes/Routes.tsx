@@ -1,26 +1,26 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { API_URL } from '@env';
+import { Feather, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import axios from 'axios';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
-import * as SecureStore from 'expo-secure-store';
-import { useColorScheme, Image, Text, Pressable } from 'react-native';
+import { Image, Pressable, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginPage from '../auth/_layouts/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
+import { ProdBold, TruncatedTextBold } from '../components/StyledComponents';
+import getSecureStoreData from '../constants/SecureStore';
 import '../i18n/i18n';
+import { UserRes } from '../interface/User.interface';
 import ContactsScreen from '../pages/contacts';
 import HomeScreen from '../pages/home';
 import ProfileScreen from '../pages/profile';
-import { Images } from '../style';
+import { Images, Rowstyle, rootStyle, text } from '../style';
 import Colors from '../style/Colors';
-import { Feather, Octicons } from '@expo/vector-icons';
-import getSecureStoreData from '../constants/SecureStore';
-import axios from 'axios';
-import { API_URL } from '@env';
-import { UserRes } from '../interface/User.interface';
+import { useThemeController } from '../constants/Themed';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -30,52 +30,63 @@ const Stack = createStackNavigator();
 function HomeTabBarNavigator() {
   const colorScheme = useColorScheme();
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
+  const { themeText, themeView, themeTitle, toggleTheme } = useThemeController();
+  const isDarkLogo = colorScheme;
+  const logoSource = isDarkLogo
+    ? require('../../assets/logo-white.png')
+    : require('../../assets/logo-black.png');
   useEffect(() => {
     const getUserAuthorizeData = async () => {
       try {
         const data = await getSecureStoreData();
         if (data) {
           console.log(data?.username + 'os nomes')
-
           const getUserData = await axios.get<UserRes>(`${API_URL}/users/${data?.username}`);
-
           setUserSecureStoreData(getUserData.data);
           console.log(getUserData.data.photo + 'os dados')
         }
       } catch (error: any) {
-          console.log( '   <   deu riom ')
+        console.log('   <   deu rium ')
         return error.message;
       }
     };
     getUserAuthorizeData();
   }, []);
-  const colorTheme = Colors[colorScheme ?? 'light'].text;
-  console.log(colorTheme, userSecureStoreData?.photo + 'dhewwedouiduiweh')
+  const colorTheme = Colors[colorScheme ?? 'dark'].writeTheme;
+  console.log(colorTheme, colorScheme + '  <  dhewwedouiduiweh')
   return (
-    <Tab.Navigator screenOptions={{
-      tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-    }} initialRouteName="Feed">
+    <Tab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme ?? 'dark'].background,
+          height: 90
+        },
+        tabBarLabelStyle: { color: Colors[colorScheme ?? 'dark'].writeTheme },
+        tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
+      }} initialRouteName="Feed">
       <Tab.Screen
-        name="Home"
+        name="Feed"
         options={{
-          tabBarIcon: ({ color }) => <Feather name="home" size={24} color={color} />,
+          tabBarLabel: '',
+          tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt02, {}]} size={30} color={color} />,
           headerRight: () => (
             <Pressable>
               {({ pressed }) => (
                 <Octicons
                   name="gear"
                   size={25}
-                  color={colorTheme}
+                  themeText
                   style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                 />
               )}
             </Pressable>
           ),
+          headerBackground: () => (
+            <View style={[themeView, { flex: 1 }]} />
+          ),
           headerTitle: () => (
             <Image
-              source={
-                require('../../assets/logo-black.png')
-              }
+              source={logoSource}
               style={Images.iconImage}
             />
           )
@@ -84,7 +95,42 @@ function HomeTabBarNavigator() {
       <Tab.Screen
         name="Profile"
         options={{
-          tabBarIcon: ({ color }) =>   <Image source={{ uri: userSecureStoreData?.photo }} style={Images.iconImage} />
+          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.photo || 'https://twirpz.files.wordpress.com/2015/06/twitter-avi-gender-balanced-figure.png' }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
+          tabBarLabel: '',
+          headerTitle: () => (
+            <></>
+          ),
+          headerRight: () => (
+            <Pressable>
+              {({ pressed }) => (
+                <Octicons
+                  name="gear"
+                  size={25}
+                  themeText
+                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                />
+              )}
+            </Pressable>
+          ),
+          headerLeft: () => (
+            <Pressable>
+              {({ pressed }) => (
+                <View style={[Rowstyle.row, rootStyle.pl3, rootStyle.alignCenter, themeView, {}]}>
+                  <TruncatedTextBold content={userSecureStoreData?.username || `(ツ)`} maxSize={15} style={[text.fz25, { opacity: pressed ? 0.5 : 1 }]} />
+                  <MaterialIcons
+                    name="keyboard-arrow-down"
+                    size={25}
+                    themeText
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                </View>
+
+              )}
+            </Pressable>
+          ),
+          headerBackground: () => (
+            <View style={{ flex: 1 }} />
+          ),
         }}
         component={ProfileScreen} />
     </Tab.Navigator>
@@ -92,8 +138,8 @@ function HomeTabBarNavigator() {
 }
 
 function LayoutAuth() {
-  const { authState, onLogout } = useAuth();
-  const colorScheme = useColorScheme();
+  const { authState } = useAuth();
+
 
   SplashScreen.preventAutoHideAsync();
   const [loaded, error] = useFonts({
@@ -102,7 +148,6 @@ function LayoutAuth() {
     ProdLight: require('../../assets/fonts/ProductSans-Light.ttf'),
     ProdRegular: require('../../assets/fonts/ProductSans-Regular.ttf'),
     ProdThin: require('../../assets/fonts/ProductSans-Thin.ttf'),
-    ...FontAwesome.font,
   });
   useEffect(() => {
     if (error) throw error;
@@ -120,18 +165,20 @@ function LayoutAuth() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <ThemeProvider value={colorScheme === 'light' ? DarkTheme : DefaultTheme}>
-          <Stack.Navigator>
-            {authState?.authenticated ? (
-              <>
-                <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeTabBarNavigator} />
-                <Stack.Screen name="Contacts" options={{ presentation: 'modal' }} component={ContactsScreen} />
-              </>
-            ) : (
-              <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginPage} />
-            )}
-          </Stack.Navigator>
-        </ThemeProvider>
+        <Stack.Navigator>
+          {authState?.authenticated ? (
+            <>
+              <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeTabBarNavigator} />
+
+              <Stack.Screen name="Contacts" options={{ presentation: 'modal' }} component={ContactsScreen} />
+            </>
+          ) : (
+
+            <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginPage} />
+
+
+          )}
+        </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
 

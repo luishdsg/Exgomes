@@ -9,6 +9,18 @@
         "title": "Fale com mais Gente\ncomo você!",
         "subtitle": "compartilhe ideias e opiniões com\namigos e familiares"
     },
+    "profile": {
+        "youremail": "seu email",
+        "editprofile": "editar perfil",
+        "followers": "Seguidores",
+        "following": "Seguindo",
+        "favorites": "Favoritos",
+        "save": "Salvos",
+        "start": "Inicio",
+        "block": "Bloqueados",
+        "trash": "Lixeira",
+        "media": "Mídia"
+    },
     "Tools":{
         "inputUser":"Nome de usuário",
         "inputPass":"Senha",

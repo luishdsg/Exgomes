@@ -4,6 +4,7 @@ export const colors = {
   grayText: '#ccc',
   gray: '#ACACAC',
   patternColor: '#2f95dc',
+  textDark: '#464646',
   black: '#000',
   orange: '#FF7700',
   red: '#FF3C3C',
@@ -19,17 +20,21 @@ export const themeAvatar = {
   primaryLightColor: 'red',
   disabledColor: 'yellow',
 };
+
+ 
 export default {
   light: {
-    text: colors.whiteIce,
-    background: colors.black,
+    text: colors.black,
+    writeTheme: colors.textDark,
+    background: colors.white,
     tint: colors.patternColor,
     tabIconDefault: colors.grayText,
     tabIconSelected: colors.patternColor,
   },
   dark: {
-    text: colors.black,
-    background: colors.whiteIce,
+    text: colors.white,
+    writeTheme: colors.whiteIce,
+    background: colors.black,
     tint: colors.patternColor,
     tabIconDefault: colors.grayText,
     tabIconSelected: colors.patternColor,

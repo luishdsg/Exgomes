@@ -1,24 +1,29 @@
+import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
-import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { Avatar } from 'react-native-ios-kit';
-import { ImageMediumComponent, ImageMinComponent, TextBold, TextLight } from '../../components/StyledComponents';
+import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Avatar, Switch } from 'react-native-ios-kit';
+import Icon from 'react-native-vector-icons/Octicons';
+import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../../components/StyledComponents';
 import { useFadeAnimationLogin } from '../../components/animations/login';
 import ForgotPassModal from '../../components/modal/ForgotPassModal';
 import PopUpError from '../../components/modal/PopUpError';
-import { colors } from '../../style/Colors';
+import { useThemeController } from '../../constants/Themed';
 import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
 import { loginStyle, rootStyle, text } from '../../style';
+import { colors } from '../../style/Colors';
 import { useAuth } from '../services/AuthService';
 import { API_URL } from '@env';
-
+import { StatusBar } from 'expo-status-bar';
+import { useTheme } from '@react-navigation/native';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSwitched, setIsEnabled] = useState(false);
   const inputRefPass = useRef(null);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -33,8 +38,10 @@ const LoginPage: React.FC = () => {
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
-  const [animationVisible, setAnimationVisible] = useState(true);
+  const { themeText, themeLabel, Theme, themeView, ThemeStatus, Status, themeViewWhite, ThemeDark, themeTitle, toggleTheme } = useThemeController();
+  const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
+  // Define o estilo da barra de status com base no tema
 
   useEffect(() => {
     const getUser = async () => {
@@ -63,15 +70,7 @@ const LoginPage: React.FC = () => {
 
   };
 
-  const _handleAnimationStart = () => {
-    if (setPassword.length > 0) {
-      setAnimationVisible(true);
-      setTimeout(() => {
-        setAnimationVisible(false);
-      }, 40000);
-    }
 
-  };
   const _handlerChangeLanguage = () => {
     const newLang = lang === 'pt' ? 'pt' : 'en'
     changeLanguage(newLang);
@@ -81,6 +80,16 @@ const LoginPage: React.FC = () => {
   const vibrate = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
+
+  const clearInput = () => {
+    setUsername('');
+    vibrate();
+  };
+
+  const _handleShowPass = () => {
+    setShowPassword(!showPassword);
+  };
+
   const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimationLogin();
   const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimationLogin();
 
@@ -119,7 +128,7 @@ const LoginPage: React.FC = () => {
         const user = await onLogin!(login);
         if (user! && user.error) {
           alert(user.msg)
-        } 
+        }
       }
       setIsLoadingLogin(false);
     } catch (error) {
@@ -185,58 +194,62 @@ const LoginPage: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={loginStyle.container}
+      style={rootStyle.container}
       behavior="padding"
       enabled
+      keyboardVerticalOffset={keyboardVerticalOffset}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={rootStyle.view}>
+          style={[rootStyle.view, themeView]}>
           <View style={loginStyle.loginImage}>
             <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
             <ImageMinComponent source={require('../../../assets/icon.png')} />
           </View>
           <View style={[rootStyle.p1, rootStyle.centralize]}>
-            <TextBold style={[text.fz30, rootStyle.centralizeText]}>{t('login.title')}</TextBold>
-            <Text style={[text.fz20, rootStyle.centralizeText, rootStyle.textGray, rootStyle.mt02, text.fontBold]}>{t('login.subtitle')}</Text>
+            <ProdBold style={[text.fz30, text.centralizeText, themeLabel]}>{t('login.title')}</ProdBold>
+            <ProdRegular style={[text.fz20, text.centralizeText, themeTitle, rootStyle.mt02, text.fontBold]}>{t('login.subtitle')}</ProdRegular>
           </View>
           <View style={[rootStyle.halfview]}>
             <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
               {t('Tools.userEmpty')}
             </Animated.Text>
-            <View style={loginStyle.inputContainer}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, themeViewWhite]}>
               <TextInput
-                style={[loginStyle.input, text.fz20, isUsernameEmpty && rootStyle.inputError]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, themeLabel, isUsernameEmpty && rootStyle.inputError,]}
                 placeholder={t('Tools.inputUser')}
+                placeholderTextColor={colors.gray}
                 value={username} editable={true}
                 contextMenuHidden={false}
                 returnKeyType="next"
                 onSubmitEditing={() => { _handleNextInput(inputRefPass) }}
                 onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
               />
+              {username.length > 0 && (
+                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -4, right: 0 }]} onPress={clearInput}>
+                  <EvilIcons name="close" color={Theme} size={24} themeText />
+                </TouchableOpacity>
+              )}
               {renderAvatarContent()}
             </View>
-            <View style={loginStyle.inputContainer}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, themeViewWhite]}>
               <TextInput
-                style={[loginStyle.input, text.fz20, isPasswordEmpty && rootStyle.inputError]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, themeLabel, isPasswordEmpty && rootStyle.inputError]}
                 placeholder={t('Tools.inputPass')}
+                placeholderTextColor={colors.gray}
                 value={password} editable={true}
                 ref={inputRefPass}
                 returnKeyType="done"
                 onSubmitEditing={() => { Keyboard.dismiss(); }}
                 onChangeText={(text) => { setPassword(text); setIsPasswordEmpty(false) }}
-                onFocus={_handleAnimationStart}
-                secureTextEntry
+                secureTextEntry={!showPassword}
               />
-              {animationVisible && (
-                <LottieView
-                  loop
-                  autoPlay
-                  style={loginStyle.pass}
-                  source={require('../../../assets/json/pass.json')}
-                />
+              {password.length > 0 && (
+                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { right: -5 }]} onPress={_handleShowPass}>
+                  <Icon name={showPassword ? 'eye' : 'eye-closed'} color={ThemeDark} style={loginStyle.pass} size={24} />
+                </TouchableOpacity>
               )}
             </View>
             <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimPassword }]}>
@@ -247,19 +260,27 @@ const LoginPage: React.FC = () => {
                 {isLoadingLogin ? (
                   <ActivityIndicator size="small" color="#0000ff" />
                 ) : (
-                  <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.white }]}>{t('login.login')}</TextBold>
+                  <ProdBold style={[text.fz20, text.centralizeText, { color: colors.white }]}>{t('login.login')}</ProdBold>
                 )}
               </TouchableOpacity>
               <TouchableOpacity style={[rootStyle.btnPatterpass, rootStyle.mt1, rootStyle.centralize]} onPress={_handleSignUp}>
                 {isLoadingSignUp ? (
                   <ActivityIndicator size="small" color="#0000ff" />
                 ) : (
-                  <TextBold style={[text.fz20, rootStyle.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</TextBold>
+                  <ProdBold style={[text.fz20, text.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</ProdBold>
                 )}
               </TouchableOpacity>
               <View style={[rootStyle.centralize, rootStyle.mt2]}>
-                <TextLight onPress={_handleForgotPass} style={[rootStyle.centralizeText]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</TextLight>
+                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText, text.textGray]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
               </View>
+              <Switch
+                trackColor={{ false: ThemeDark, true: colors.patternColor }}
+                onValueChange={() => {
+                  setIsEnabled(previousState => !previousState);
+                  toggleTheme();
+                }}
+                value={isSwitched}
+              />
             </View>
           </View>
         </ScrollView >
@@ -274,12 +295,13 @@ const LoginPage: React.FC = () => {
         errorMessage={errorMessage}
         onClose={() => setErrorModalVisible(false)}
       />
+      <Status/>
     </KeyboardAvoidingView>
 
   );
 };
 
 export default LoginPage;
-{/* <TextBold style={text.fz30}>{t('login.hny', {
+{/* <ProdBold style={text.fz30}>{t('login.hny', {
   newyear: new Date().getFullYear(),
-})}</TextBold> */}
+})}</ProdBold> */}
