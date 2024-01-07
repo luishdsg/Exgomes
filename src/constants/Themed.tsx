@@ -54,13 +54,17 @@
 // }
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { colors } from '../style/Colors';
 import { StatusBar } from 'expo-status-bar';
+import * as SecureStore from 'expo-secure-store';
 
 export const useThemeController = () => {
-  const [theme, setTheme] = useState('');
+  const [theme, setTheme] = useState('dark');
+
+
+
   const colorScheme = useColorScheme();
 
   const themeText =
@@ -73,21 +77,27 @@ export const useThemeController = () => {
     colorScheme === theme ? { backgroundColor: colors.black } : { backgroundColor: colors.whiteIce };
   const themeViewWhite =
     colorScheme === theme ? { backgroundColor: colors.black } : { backgroundColor: colors.white };
-  const Theme =
+    const ThemeColorBWI =
+    colorScheme === theme ? colors.black : colors.whiteIce;
+    const Theme =
     colorScheme === theme ? colors.whiteIce : colors.black;
+    const ThemeWD =
+    colorScheme === theme ? colors.whiteIce : colors.textDark;
   const ThemeDark =
     colorScheme === theme ? colors.gray : colors.textDark;
+    const ThemePG =
+    colorScheme === theme ? colors.patternColor : colors.gray;
   const ThemeStatus =
     colorScheme === theme ? 'light' : 'dark';
   function Status() {
     return <StatusBar style={ThemeStatus} />
   }
 
-  const toggleTheme = () => {
+  const _toggleTheme = async () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
-    console.log('chegou theme > ' + ThemeStatus)
+    console.log('chegou theme >' + newTheme + ' tambem ')
     setTheme(newTheme);
   };
 
-  return { themeText, Theme, themeView, themeLabel, Status, ThemeStatus, themeViewWhite, ThemeDark, themeTitle, toggleTheme };
+  return { themeText, Theme, themeView, ThemeWD, ThemeColorBWI, ThemePG, themeLabel, Status, ThemeStatus,  themeViewWhite, ThemeDark, themeTitle, _toggleTheme};
 };

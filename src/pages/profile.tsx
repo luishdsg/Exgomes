@@ -3,7 +3,7 @@ import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, View, useColorScheme } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, View, useColorScheme } from 'react-native';
 import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
 import { ImageMinComponent, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
@@ -14,6 +14,7 @@ import Colors from '../style/Colors';
 
 const ProfileScreen: React.FC = () => {
   const colorScheme = useColorScheme();
+  const [refreshing, setRefreshing] = useState(false);
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const colorThemePolar = Colors[colorScheme ?? 'dark'].writeTheme;
@@ -25,9 +26,7 @@ const ProfileScreen: React.FC = () => {
         const data = await getSecureStoreData();
         if (data) {
           console.log(data?.username + 'os nomes')
-
           const getUserData = await axios.get<UserRes>(`${API_URL}/users/${data?.username}`);
-
           setUserSecureStoreData(getUserData.data);
           console.log(getUserData.data.photo + 'os dados')
         }
@@ -39,10 +38,41 @@ const ProfileScreen: React.FC = () => {
     getUserAuthorizeData();
   }, []);
 
+
+  const onRefresh = async () => {
+
+    try {
+      const data = await getSecureStoreData();
+      if (data) {
+        console.log(data?.username + 'os nomes')
+        const getUserData = await axios.get<UserRes>(`${API_URL}/users/${data?.username}`);
+        setUserSecureStoreData(getUserData.data);
+        console.log(getUserData.data.photo + 'os dados')
+        setRefreshing(false);
+      }
+    } catch (error: any) {
+      console.log('   <   deu riom ')
+      setRefreshing(false);
+      return error.message;
+    }
+  };
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="#007AFF"
+          title="Atualizando..."
+          titleColor="#007AFF"
+          progressViewOffset={0}
+          colors={['#007AFF']}
+          progressBackgroundColor="#F8F8F8"
+        />
+      }
       style={rootStyle.view}>
       <View style={[Rowstyle.app]}>
         <View style={[Rowstyle.row, rootStyle.px1, rootStyle.container]}>
@@ -146,8 +176,8 @@ const ProfileScreen: React.FC = () => {
                   </>
                 )}
               </Pressable>
-                {/* Media */}
-                <Pressable style={[
+              {/* Media */}
+              <Pressable style={[
                 Rowstyle.row,
                 profileStyle.pressableBtn,
                 rootStyle.centralize,
@@ -180,8 +210,8 @@ const ProfileScreen: React.FC = () => {
                   </>
                 )}
               </Pressable>
-               {/* Block */}
-               <Pressable style={[
+              {/* Block */}
+              <Pressable style={[
                 Rowstyle.row,
                 profileStyle.pressableBtn,
                 rootStyle.centralize,
@@ -202,6 +232,7 @@ const ProfileScreen: React.FC = () => {
         </View>
 
       </View>
+      {refreshing && <ActivityIndicator size="small" color="#007AFF" />}
     </ScrollView>
   )
 }

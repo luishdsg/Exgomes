@@ -19,7 +19,7 @@ import ContactsScreen from '../pages/contacts';
 import HomeScreen from '../pages/home';
 import ProfileScreen from '../pages/profile';
 import { Images, Rowstyle, rootStyle, text } from '../style';
-import Colors from '../style/Colors';
+import Colors, { colors } from '../style/Colors';
 import { useThemeController } from '../constants/Themed';
 
 const Tab = createBottomTabNavigator();
@@ -30,11 +30,9 @@ const Stack = createStackNavigator();
 function HomeTabBarNavigator() {
   const colorScheme = useColorScheme();
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
-  const { themeText, themeView, themeTitle, toggleTheme } = useThemeController();
-  const isDarkLogo = colorScheme;
-  const logoSource = isDarkLogo
-    ? require('../../assets/logo-white.png')
-    : require('../../assets/logo-black.png');
+  const { themeText, themeView, Theme, ThemeStatus, ThemeWD, ThemeColorBWI, themeTitle } = useThemeController();
+  const isDarkLogo = ThemeStatus === 'light' ? require('../../assets/logo-white.png') : require('../../assets/logo-black.png');
+
   useEffect(() => {
     const getUserAuthorizeData = async () => {
       try {
@@ -52,17 +50,15 @@ function HomeTabBarNavigator() {
     };
     getUserAuthorizeData();
   }, []);
-  const colorTheme = Colors[colorScheme ?? 'dark'].writeTheme;
-  console.log(colorTheme, colorScheme + '  <  dhewwedouiduiweh')
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? 'dark'].background,
+          backgroundColor: ThemeColorBWI,
           height: 90
         },
-        tabBarLabelStyle: { color: Colors[colorScheme ?? 'dark'].writeTheme },
-        tabBarActiveTintColor: Colors[colorScheme ?? 'dark'].tint,
+        tabBarLabelStyle: { color: ThemeWD },
+        tabBarActiveTintColor: colors.patternColor,
       }} initialRouteName="Feed">
       <Tab.Screen
         name="Feed"
@@ -86,7 +82,7 @@ function HomeTabBarNavigator() {
           ),
           headerTitle: () => (
             <Image
-              source={logoSource}
+              source={isDarkLogo}
               style={Images.iconImage}
             />
           )

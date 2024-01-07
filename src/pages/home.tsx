@@ -16,11 +16,11 @@ const HomeScreen: React.FC<HomeScreenPageProps> = ({ navigation }) => {
   const handleLogout = async () => {
   };
   const { onLogout } = useAuth();
-  const { themeText, themeView, themeTitle, toggleTheme } = useThemeController();
+  const { themeText, themeView, themeTitle } = useThemeController();
 
   return (
-    <View style={[ themeView, rootStyle.centralize, Rowstyle['1col'] ]}>
-      <ProdBold>HELLO WORLD!</ProdBold>
+    <View style={[ themeView, rootStyle.centralize, {height: 300} ]}>
+      <ProdBold style={[themeText,{}]}>HELLO WORLD!</ProdBold>
       <Button onPress={onLogout} title="SIgn Out" />
     </View>
   );

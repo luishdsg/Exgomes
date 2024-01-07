@@ -1,3 +1,4 @@
+import { API_URL } from '@env';
 import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import * as Haptics from 'expo-haptics';
@@ -15,9 +16,6 @@ import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
 import { loginStyle, rootStyle, text } from '../../style';
 import { colors } from '../../style/Colors';
 import { useAuth } from '../services/AuthService';
-import { API_URL } from '@env';
-import { StatusBar } from 'expo-status-bar';
-import { useTheme } from '@react-navigation/native';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -38,7 +36,7 @@ const LoginPage: React.FC = () => {
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
-  const { themeText, themeLabel, Theme, themeView, ThemeStatus, Status, themeViewWhite, ThemeDark, themeTitle, toggleTheme } = useThemeController();
+  const { themeText, themeLabel, Theme, themeView, ThemeStatus, Status, themeViewWhite, ThemeDark, themeTitle, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
   // Define o estilo da barra de status com base no tema
@@ -191,6 +189,11 @@ const LoginPage: React.FC = () => {
     setModalMessage("esqueceu a senha né")
   }
 
+  const _changeThemeSwitch = async () => {
+    setIsEnabled(previousState => !previousState);
+    _toggleTheme();
+  }
+
 
   return (
     <KeyboardAvoidingView
@@ -275,10 +278,7 @@ const LoginPage: React.FC = () => {
               </View>
               <Switch
                 trackColor={{ false: ThemeDark, true: colors.patternColor }}
-                onValueChange={() => {
-                  setIsEnabled(previousState => !previousState);
-                  toggleTheme();
-                }}
+                onValueChange={_changeThemeSwitch}
                 value={isSwitched}
               />
             </View>
