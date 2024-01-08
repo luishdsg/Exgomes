@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
-  const { themeText, themeLabel, Theme, themeView, ThemeStatus, Status, themeViewWhite, ThemeDark, themeTitle, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeDGL , themePG,  Status, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
   // Define o estilo da barra de status com base no tema
@@ -206,22 +206,22 @@ const LoginPage: React.FC = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={[rootStyle.view, themeView]}>
+          style={[rootStyle.view, {backgroundColor: themeWIB}]}>
           <View style={loginStyle.loginImage}>
             <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
             <ImageMinComponent source={require('../../../assets/icon.png')} />
           </View>
           <View style={[rootStyle.p1, rootStyle.centralize]}>
-            <ProdBold style={[text.fz30, text.centralizeText, themeLabel]}>{t('login.title')}</ProdBold>
-            <ProdRegular style={[text.fz20, text.centralizeText, themeTitle, rootStyle.mt02, text.fontBold]}>{t('login.subtitle')}</ProdRegular>
+            <ProdBold style={[text.fz30, text.centralizeText, {color: themeBWI}]}>{t('login.title')}</ProdBold>
+            <ProdRegular style={[text.fz20, text.centralizeText, rootStyle.mt02, text.fontBold, {color: themeGTD}]}>{t('login.subtitle')}</ProdRegular>
           </View>
           <View style={[rootStyle.halfview]}>
             <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
               {t('Tools.userEmpty')}
             </Animated.Text>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, themeViewWhite]}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, {backgroundColor: themeWB}]}>
               <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, themeLabel, isUsernameEmpty && rootStyle.inputError,]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError,{color: themeBWI}]}
                 placeholder={t('Tools.inputUser')}
                 placeholderTextColor={colors.gray}
                 value={username} editable={true}
@@ -232,14 +232,14 @@ const LoginPage: React.FC = () => {
               />
               {username.length > 0 && (
                 <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -4, right: 0 }]} onPress={clearInput}>
-                  <EvilIcons name="close" color={Theme} size={24} themeText />
+                  <EvilIcons name="close" color={themeBW} size={24} themeText />
                 </TouchableOpacity>
               )}
               {renderAvatarContent()}
             </View>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, themeViewWhite]}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, {backgroundColor: themeWB}]}>
               <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, themeLabel, isPasswordEmpty && rootStyle.inputError]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError,{color: themeBWI}]}
                 placeholder={t('Tools.inputPass')}
                 placeholderTextColor={colors.gray}
                 value={password} editable={true}
@@ -251,7 +251,7 @@ const LoginPage: React.FC = () => {
               />
               {password.length > 0 && (
                 <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { right: -5 }]} onPress={_handleShowPass}>
-                  <Icon name={showPassword ? 'eye' : 'eye-closed'} color={ThemeDark} style={loginStyle.pass} size={24} />
+                  <Icon name={showPassword ? 'eye' : 'eye-closed'} color={colors.gray} style={loginStyle.pass} size={24} />
                 </TouchableOpacity>
               )}
             </View>
@@ -274,10 +274,10 @@ const LoginPage: React.FC = () => {
                 )}
               </TouchableOpacity>
               <View style={[rootStyle.centralize, rootStyle.mt2]}>
-                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText, text.textGray]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
+                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText,{color: themeBWI}]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
               </View>
               <Switch
-                trackColor={{ false: ThemeDark, true: colors.patternColor }}
+                trackColor={{ false: themeGTD, true: colors.patternColor }}
                 onValueChange={_changeThemeSwitch}
                 value={isSwitched}
               />

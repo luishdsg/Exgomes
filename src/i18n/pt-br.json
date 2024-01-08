@@ -28,6 +28,9 @@
         "passEmpty":"Senha não pode ficar vazia",
         "inputPass":"Senha",
         "refresh": "Atualizando..."
+    },
+    "settings":{
+        "settings": "configurações"
     }
   }
   

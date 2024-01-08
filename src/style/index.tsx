@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { colors } from './Colors';
+ 
 export const rootStyle = StyleSheet.create({
    
     centralize: {
@@ -374,7 +375,6 @@ export const loginStyle = StyleSheet.create({
     },
 
 });
-
 export const profileStyle = StyleSheet.create({
     seasonView: {
         width: '100%',
@@ -382,10 +382,11 @@ export const profileStyle = StyleSheet.create({
     },
     pressableBtn:{
         borderRadius: 100,
-        paddingVertical: 5,
+        paddingVertical: 10,
         marginVertical: 10,
         marginLeft: 10,
-        paddingHorizontal: 9,
+        transition: '.7s',
+        paddingHorizontal: 10,
        
     },
     swipeableContent: {

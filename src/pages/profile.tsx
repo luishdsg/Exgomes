@@ -1,60 +1,69 @@
 import { API_URL } from '@env';
 import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, View, useColorScheme } from 'react-native';
+import { ActivityIndicator, Animated, Pressable, RefreshControl, ScrollView, View, useColorScheme } from 'react-native';
 import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
-import { ImageMinComponent, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
+import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
 import { UserRes } from '../interface/User.interface';
 import { Rowstyle, profileStyle, rootStyle, text } from '../style';
 import Colors from '../style/Colors';
+import { useThemeController } from '../constants/Themed';
 
 
 const ProfileScreen: React.FC = () => {
   const colorScheme = useColorScheme();
   const [refreshing, setRefreshing] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const colorThemePolar = Colors[colorScheme ?? 'dark'].writeTheme;
   const colorThemeSomeWhat = Colors[colorScheme ?? 'dark'].text;
+  const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
 
   useEffect(() => {
-    const getUserAuthorizeData = async () => {
-      try {
-        const data = await getSecureStoreData();
-        if (data) {
-          console.log(data?.username + 'os nomes')
-          const getUserData = await axios.get<UserRes>(`${API_URL}/users/${data?.username}`);
-          setUserSecureStoreData(getUserData.data);
-          console.log(getUserData.data.photo + 'os dados')
-        }
-      } catch (error: any) {
-        console.log('   <   deu riom ')
-        return error.message;
-      }
-    };
+
     getUserAuthorizeData();
   }, []);
-
-
-  const onRefresh = async () => {
-
+  const getUserAuthorizeData = async () => {
     try {
       const data = await getSecureStoreData();
       if (data) {
         console.log(data?.username + 'os nomes')
         const getUserData = await axios.get<UserRes>(`${API_URL}/users/${data?.username}`);
         setUserSecureStoreData(getUserData.data);
-        console.log(getUserData.data.photo + 'os dados')
         setRefreshing(false);
+        console.log(getUserData.data.photo + 'os dados')
       }
     } catch (error: any) {
       console.log('   <   deu riom ')
       setRefreshing(false);
       return error.message;
     }
+  };
+  const _handleMenuOptionProfile = async () => {
+    setTimeout(() => {
+      setIsPressed(false);
+    }, 500);
+  }
+  const scaleValue = useRef(new Animated.Value(1)).current;
+
+  const _handlePressInMenuOption = () => {
+    Animated.timing(scaleValue, {
+      toValue: 0.7,
+      duration: 200, // Duração da animação em milissegundos
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const _handlePressOutMenuOption = () => {
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      duration: 200, // Duração da animação em milissegundos
+      useNativeDriver: true,
+    }).start();
   };
 
   return (
@@ -64,7 +73,7 @@ const ProfileScreen: React.FC = () => {
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
-          onRefresh={onRefresh}
+          onRefresh={getUserAuthorizeData}
           tintColor="#007AFF"
           title="Atualizando..."
           titleColor="#007AFF"
@@ -73,7 +82,7 @@ const ProfileScreen: React.FC = () => {
           progressBackgroundColor="#F8F8F8"
         />
       }
-      style={rootStyle.view}>
+      style={[rootStyle.view, , { backgroundColor: themeWIB }]}>
       <View style={[Rowstyle.app]}>
         <View style={[Rowstyle.row, rootStyle.px1, rootStyle.container]}>
           <View style={[Rowstyle[`2col`], rootStyle.justifyCenter,]}>
@@ -82,11 +91,11 @@ const ProfileScreen: React.FC = () => {
           <View style={[Rowstyle[`4col`], rootStyle.justifyCenter]}>
             <View style={[Rowstyle.col, rootStyle.h50]}>
               <View style={[Rowstyle[`1col`], rootStyle.justifyCenter]}>
-                <ProdBold style={[text.fz25, text.leftText,]}>{userSecureStoreData?.username}</ProdBold>
+                <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.username}</ProdBold>
                 <View style={[Rowstyle.row, rootStyle.h20]}>
-                  <ProdRegular style={[text.fz15, text.leftText,]}>@{userSecureStoreData?.email || `${t('profile.youremail')}`}</ProdRegular>
-                  <ProdRegular style={[rootStyle.px1]}>•</ProdRegular>
-                  <ProdThin style={[rootStyle.px1]}>{t('profile.editprofile')}</ProdThin>
+                  <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.email || `${t('profile.youremail')}`}</ProdRegular>
+                  <ProdRegular style={[rootStyle.px1, { color: themeTDG }]}>•</ProdRegular>
+                  <ProdThin style={[rootStyle.px1, { color: themeTDG }]}>{t('profile.editprofile')}</ProdThin>
                 </View>
               </View>
             </View>
@@ -97,142 +106,103 @@ const ProfileScreen: React.FC = () => {
             showsHorizontalScrollIndicator={false} horizontal>
             <View style={[Rowstyle.row, rootStyle.h60]}>
               {/* Start */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <MaterialCommunityIcons name={pressed ? 'tree' : 'tree-outline'} size={20}
-                      color={colorThemePolar}
-                      style={[{ opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}>  {t('profile.start')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <MaterialCommunityIcons name='tree-outline' size={23}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[text.fz15, { color: themeTDGT }]}>  {t('profile.start')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Followers */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <ProdBold style={[text.fz20, { opacity: pressed ? 0.5 : 1 }]}>220</ProdBold>
-                    <ProdRegular style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}>  {t('profile.followers')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <ProdBold style={[text.fz20, text.centralizeText, { marginTop: -2, color: themeBW, }]}>220</ProdBold>
+                  <ProdRegular style={[text.fz15, text.centralizeText, { color: themeTDGT, }]}>  {t('profile.followers')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Following */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <ProdBold style={[text.fz20, { opacity: pressed ? 0.5 : 1 }]}>220</ProdBold>
-
-                    <ProdRegular style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}>  {t('profile.following')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <ProdBold style={[text.fz20, text.centralizeText, { marginTop: -2, color: themeBW, }]}>220</ProdBold>
+                  <ProdRegular style={[text.fz15, text.centralizeText,{ color: themeTDGT, }]}>  {t('profile.following')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Favorite */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <Ionicons name={pressed ? 'heart-sharp' : 'heart-outline'} size={20}
-                      color={colorThemePolar}
-                      style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[{ opacity: pressed ? 0.5 : 1 }]}>  {t('profile.favorites')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <Ionicons name='heart-outline' size={19}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[{ color: themeTDGT, }]}>  {t('profile.favorites')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Save */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <Ionicons name={pressed ? 'bookmark' : 'bookmark-outline'} size={20}
-                      color={colorThemePolar}
-                      style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[{ opacity: pressed ? 0.5 : 1 }]}>  {t('profile.save')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <Ionicons name='bookmark-outline' size={19}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[{ color: themeTDGT, }]}>  {t('profile.save')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Media */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <Ionicons name={pressed ? 'image-sharp' : 'image-outline'} size={20}
-                      color={colorThemePolar}
-                      style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[{ opacity: pressed ? 0.5 : 1 }]}>  {t('profile.media')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <Ionicons name='image-sharp' size={19}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[{ color: themeTDGT, }]}>  {t('profile.media')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Trash */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <Feather name={pressed ? 'trash-2' : 'trash'} size={20}
-                      color={colorThemePolar}
-                      style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[{ opacity: pressed ? 0.5 : 1 }]}>  {t('profile.trash')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <Feather name='trash-2' size={19}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[{ color: themeTDGT, }]}>  {t('profile.trash')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
               {/* Block */}
-              <Pressable style={[
-                Rowstyle.row,
-                profileStyle.pressableBtn,
-                rootStyle.centralize,
-                { backgroundColor: colorThemeSomeWhat },
-              ]}>
-                {({ pressed }) => (
-                  <>
-                    <MaterialCommunityIcons name="block-helper" size={20}
-                      color={colorThemePolar}
-                      style={[text.fz15, { opacity: pressed ? 0.5 : 1 }]}
-                    />
-                    <ProdRegular style={[{ opacity: pressed ? 0.5 : 1 }]}>  {t('profile.block')}</ProdRegular>
-                  </>
-                )}
-              </Pressable>
+              <MenuOptionProfile
+                onPressIn={_handlePressInMenuOption}
+                onPressOut={_handlePressOutMenuOption}
+              >
+                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                  <MaterialCommunityIcons name="block-helper" size={19}
+                    color={themeTDW}
+                  />
+                  <ProdRegular style={[{ color: themeTDGT, }]}>  {t('profile.block')}</ProdRegular>
+                </View>
+              </MenuOptionProfile>
             </View>
           </GestureScrollView>
         </View>
 
       </View>
-      {refreshing && <ActivityIndicator size="small" color="#007AFF" />}
+      <Status />
     </ScrollView>
   )
 }
