@@ -6,12 +6,13 @@ import { ActivityIndicator, Button, RefreshControl, ScrollView, StatusBar, View 
 import { useAuth } from '../auth/services/AuthService';
 import { ProdBold } from '../components/StyledComponents';
 import { useThemeController } from '../constants/Themed';
-import { Rowstyle, rootStyle } from '../style';
+import { rowstyle, rootStyle } from '../style';
 import getSecureStoreData from '../constants/SecureStore';
 import * as Haptics from 'expo-haptics';
 import axios from 'axios';
 import { UserRes } from '../interface/User.interface';
 import { API_URL } from '@env';
+import { RootStackParamList } from '../interface/RootStackParamList';
 
 type HomeScreenPageProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
@@ -63,7 +64,7 @@ const HomeScreen: React.FC<HomeScreenPageProps> = ({ navigation }) => {
         />
       }
       style={[rootStyle.view, {backgroundColor: themeWIB}]}>
-      <View style={[Rowstyle.app, rootStyle.centralize]}>
+      <View style={[rowstyle.app, rootStyle.centralize]}>
 
         <ProdBold style={[{color: themeBWI}]}>HELLO WORLD!</ProdBold>
         <Button onPress={onLogout} title="SIgn Out" />

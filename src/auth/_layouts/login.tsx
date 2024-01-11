@@ -25,6 +25,7 @@ const LoginPage: React.FC = () => {
   const inputRefPass = useRef(null);
   const [errorModalVisible, setErrorModalVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [illustrationError, setillustrationError] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
@@ -36,8 +37,9 @@ const LoginPage: React.FC = () => {
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
-  const { themeWB, themeWTD, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeDGL , themePG,  Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeDGL, themePG, Status, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
+
 
   // Define o estilo da barra de status com base no tema
 
@@ -46,19 +48,23 @@ const LoginPage: React.FC = () => {
       try {
         const result = await axios.get(`${API_URL}/users/${username}`);
         setAvatarUser(result.data);
-        setUsernameExists(!result.data);
+        setTimeout(() => {
+          setUsernameExists(result.data.username)
+        }, 1000);
+
       } catch (error) {
         setAvatarUser(null);
         setUsernameExists(false);
       }
     };
-    if (username.length >= 3) setTimeout(() => { getUser() }, 1000);
+    if (username.length >= 3) getUser();
     else setAvatarUser(null);
   }, [username]);
 
   const renderAvatarContent = () => {
+
     if (avatarUser && avatarUser?.photo) {
-      return <View style={loginStyle.profile}><Avatar url={avatarUser?.photo} size={40} /></View>;
+      return <Animated.View style={[loginStyle.profile]}><Avatar url={avatarUser?.photo} size={40} /></Animated.View>;
     } else if (avatarUser && avatarUser.username) {
       const initials = avatarUser.username.split(' ').map((word) => word[0]).join('');
       return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
@@ -148,6 +154,8 @@ const LoginPage: React.FC = () => {
         setIsUsernameEmpty(true);
         setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
         fadeInUsername();
+    vibrate();
+        
       } else {
         setIsUsernameEmpty(false);
         fadeOutUsername();
@@ -157,14 +165,19 @@ const LoginPage: React.FC = () => {
         setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
         setIsPasswordEmpty(true);
         fadeInPassword();
+    vibrate();
+
       } else {
         setIsPasswordEmpty(false);
         fadeOutPassword();
       }
 
       if (usernameExists) {
-        setErrorMessage('Nome de usuário já existente. Escolha outro.');
+        setErrorMessage(`usuario fudido`);
+        setillustrationError('https://i.ibb.co/tqMjnVX/ill-02.png')
         setErrorModalVisible(true);
+    vibrate();
+
         return;
       }
 
@@ -206,22 +219,22 @@ const LoginPage: React.FC = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
-          style={[rootStyle.view, {backgroundColor: themeWIB}]}>
+          style={[rootStyle.view, { backgroundColor: themeWIB }]}>
           <View style={loginStyle.loginImage}>
             <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
             <ImageMinComponent source={require('../../../assets/icon.png')} />
           </View>
           <View style={[rootStyle.p1, rootStyle.centralize]}>
-            <ProdBold style={[text.fz30, text.centralizeText, {color: themeBWI}]}>{t('login.title')}</ProdBold>
-            <ProdRegular style={[text.fz20, text.centralizeText, rootStyle.mt02, text.fontBold, {color: themeGTD}]}>{t('login.subtitle')}</ProdRegular>
+            <ProdBold style={[text.fz30, text.centralizeText, { color: themeBWI }]}>{t('login.title')}</ProdBold>
+            <ProdRegular style={[text.fz20, text.centralizeText, rootStyle.mt02, text.fontBold, { color: themeGTD }]}>{t('login.subtitle')}</ProdRegular>
           </View>
           <View style={[rootStyle.halfview]}>
             <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
               {t('Tools.userEmpty')}
             </Animated.Text>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, {backgroundColor: themeWB}]}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
               <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError,{color: themeBWI}]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError, { color: themeBWI }]}
                 placeholder={t('Tools.inputUser')}
                 placeholderTextColor={colors.gray}
                 value={username} editable={true}
@@ -231,15 +244,15 @@ const LoginPage: React.FC = () => {
                 onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
               />
               {username.length > 0 && (
-                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -4, right: 0 }]} onPress={clearInput}>
+                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -1, right: 0, }]} onPress={clearInput}>
                   <EvilIcons name="close" color={themeBW} size={24} themeText />
                 </TouchableOpacity>
               )}
               {renderAvatarContent()}
             </View>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, {backgroundColor: themeWB}]}>
+            <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
               <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError,{color: themeBWI}]}
+                style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError, { color: themeBWI }]}
                 placeholder={t('Tools.inputPass')}
                 placeholderTextColor={colors.gray}
                 value={password} editable={true}
@@ -274,7 +287,7 @@ const LoginPage: React.FC = () => {
                 )}
               </TouchableOpacity>
               <View style={[rootStyle.centralize, rootStyle.mt2]}>
-                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText,{color: themeBWI}]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
+                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText, { color: themeBWI }]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
               </View>
               <Switch
                 trackColor={{ false: themeGTD, true: colors.patternColor }}
@@ -291,17 +304,17 @@ const LoginPage: React.FC = () => {
         onClose={_handleForgotPass}
       />
       <PopUpError
+        username={username}
+        image={illustrationError}
         visible={errorModalVisible}
-        errorMessage={errorMessage}
+        errorMessage={t('login.userexist', { userexist: username })}
         onClose={() => setErrorModalVisible(false)}
       />
-      <Status/>
+      <Status />
     </KeyboardAvoidingView>
 
   );
 };
 
 export default LoginPage;
-{/* <ProdBold style={text.fz30}>{t('login.hny', {
-  newyear: new Date().getFullYear(),
-})}</ProdBold> */}
+{/* <ProdBold style={text.fz30}>{t('login.hny', {newyear: new Date().getFullYear(),})}</ProdBold> */}

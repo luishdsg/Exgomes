@@ -8,7 +8,7 @@ import { ScrollView as GestureScrollView } from 'react-native-gesture-handler';
 import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
 import { UserRes } from '../interface/User.interface';
-import { Rowstyle, profileStyle, rootStyle, text } from '../style';
+import { rowstyle, profileStyle, rootStyle, text } from '../style';
 import Colors from '../style/Colors';
 import { useThemeController } from '../constants/Themed';
 
@@ -83,16 +83,16 @@ const ProfileScreen: React.FC = () => {
         />
       }
       style={[rootStyle.view, , { backgroundColor: themeWIB }]}>
-      <View style={[Rowstyle.app]}>
-        <View style={[Rowstyle.row, rootStyle.px1, rootStyle.container]}>
-          <View style={[Rowstyle[`2col`], rootStyle.justifyCenter,]}>
+      <View style={[rowstyle.app]}>
+        <View style={[rowstyle.row, rootStyle.px1, rootStyle.container]}>
+          <View style={[rowstyle[`2col`], rootStyle.justifyCenter,]}>
             <ImageMinComponent source={{ uri: userSecureStoreData?.photo }} />
           </View>
-          <View style={[Rowstyle[`4col`], rootStyle.justifyCenter]}>
-            <View style={[Rowstyle.col, rootStyle.h50]}>
-              <View style={[Rowstyle[`1col`], rootStyle.justifyCenter]}>
+          <View style={[rowstyle[`4col`], rootStyle.justifyCenter]}>
+            <View style={[rowstyle.col, rootStyle.h50]}>
+              <View style={[rowstyle[`1col`], rootStyle.justifyCenter]}>
                 <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.username}</ProdBold>
-                <View style={[Rowstyle.row, rootStyle.h20]}>
+                <View style={[rowstyle.row, rootStyle.h20]}>
                   <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.email || `${t('profile.youremail')}`}</ProdRegular>
                   <ProdRegular style={[rootStyle.px1, { color: themeTDG }]}>•</ProdRegular>
                   <ProdThin style={[rootStyle.px1, { color: themeTDG }]}>{t('profile.editprofile')}</ProdThin>
@@ -104,13 +104,13 @@ const ProfileScreen: React.FC = () => {
         <View style={[rootStyle.h70, {}]}>
           <GestureScrollView showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false} horizontal>
-            <View style={[Rowstyle.row, rootStyle.h60]}>
+            <View style={[rowstyle.row, rootStyle.h60]}>
               {/* Start */}
               <MenuOptionProfile
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <MaterialCommunityIcons name='tree-outline' size={23}
                     color={themeTDW}
                   />
@@ -122,7 +122,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <ProdBold style={[text.fz20, text.centralizeText, { marginTop: -2, color: themeBW, }]}>220</ProdBold>
                   <ProdRegular style={[text.fz15, text.centralizeText, { color: themeTDGT, }]}>  {t('profile.followers')}</ProdRegular>
                 </View>
@@ -132,7 +132,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                 <ProdBold style={[text.fz20, text.centralizeText, { marginTop: -2, color: themeBW, }]}>220</ProdBold>
                   <ProdRegular style={[text.fz15, text.centralizeText,{ color: themeTDGT, }]}>  {t('profile.following')}</ProdRegular>
                 </View>
@@ -142,7 +142,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <Ionicons name='heart-outline' size={19}
                     color={themeTDW}
                   />
@@ -154,7 +154,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <Ionicons name='bookmark-outline' size={19}
                     color={themeTDW}
                   />
@@ -166,7 +166,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <Ionicons name='image-sharp' size={19}
                     color={themeTDW}
                   />
@@ -178,7 +178,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <Feather name='trash-2' size={19}
                     color={themeTDW}
                   />
@@ -190,7 +190,7 @@ const ProfileScreen: React.FC = () => {
                 onPressIn={_handlePressInMenuOption}
                 onPressOut={_handlePressOutMenuOption}
               >
-                <View style={[Rowstyle.row, rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.centralize, {}]}>
                   <MaterialCommunityIcons name="block-helper" size={19}
                     color={themeTDW}
                   />

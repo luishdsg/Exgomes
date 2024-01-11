@@ -10,6 +10,9 @@ export const rootStyle = StyleSheet.create({
     alignCenter:{
         alignItems: 'center',
     },
+    justifyEnd: {
+        justifyContent: 'flex-end',
+    },
     justifyCenter:{
         justifyContent: 'center',
     },
@@ -175,17 +178,14 @@ export const rootStyle = StyleSheet.create({
         marginBottom: 10,
     },
     lineIOS: {
-        width: '39%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        textAlign: 'center',
-        backgroundColor: colors.black,
-        borderRadius: 100,
+        width: 40,
+        backgroundColor: colors.gray,
+        borderRadius: 1000,
         height: 5
     },
     
 });
-export const Rowstyle = StyleSheet.create({
+export const rowstyle = StyleSheet.create({
 
     app: {
         flex: 4,
@@ -239,6 +239,13 @@ export const Rowstyle = StyleSheet.create({
 });
 
 export const Images = StyleSheet.create({
+    MaxImage: {
+        width: "100%",
+        height: "100%",
+        position: 'absolute',
+        // right: 0,
+        // bottom: 0
+    },
     MediumImage: {
         width: '95%',
         height: '80%',
@@ -336,7 +343,8 @@ export const loginStyle = StyleSheet.create({
         width: 'auto',
         height: 'auto',
         // backgroundColor: 'blue',
-        marginStart: '2%',
+        position: 'absolute',
+        right: 55,
         justifyContent: 'center',
         borderRadius: 100,
         padding: 2,
@@ -403,3 +411,23 @@ export const profileStyle = StyleSheet.create({
       },
 
 });
+export const popUpStyle = StyleSheet.create({
+    container: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+       
+      },
+      body: {
+        height: '100%',
+        maxHeight: 200,
+        paddingLeft: 16,
+        paddingRight: 0,
+        paddingTop: 16,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+      },
+});
+
+

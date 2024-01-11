@@ -1,4 +1,4 @@
-import { API_URL } from '@env';
+import { API_URL, USER_ICON } from '@env';
 import { Feather, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DarkTheme, DefaultTheme, NavigationContainer, NavigationProp, RouteProp, ThemeProvider, useNavigation } from '@react-navigation/native';
@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useFonts } from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, Pressable, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { Animated, Image, Pressable, TouchableOpacity, View, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginPage from '../auth/_layouts/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
@@ -18,26 +18,26 @@ import { UserRes } from '../interface/User.interface';
 import ContactsScreen from '../pages/contacts';
 import HomeScreen from '../pages/home';
 import ProfileScreen from '../pages/profile';
-import { Images, Rowstyle, rootStyle, text } from '../style';
+import { Images, rowstyle, rootStyle, text } from '../style';
 import Colors, { colors } from '../style/Colors';
 import { useThemeController } from '../constants/Themed';
 import SettingsScreen from '../pages/settings';
 import { RootStackParamList } from '../interface/RootStackParamList';
 import { goBack } from '../constants/NavigationService';
 import { useTranslation } from 'react-i18next';
+import PopUpErrorModal from '../components/modal/PopUpError';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-type HomeScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
-type SettingsScreenNavigationProp = NavigationProp<RootStackParamList, 'Settings'>;
+type ScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 
 function HomeTabBarNavigator() {
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const navigation = useNavigation<ScreenNavigationProp>();
 
   useEffect(() => {
     const getUserAuthorizeData = async () => {
@@ -74,8 +74,8 @@ function HomeTabBarNavigator() {
           tabBarLabel: '',
           tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt02, {}]} size={30} color={color} />,
           headerRight: () => (
-            <Pressable 
-            onPress={() => navigation.navigate('Settings')} 
+            <Pressable
+              onPress={() => navigation.navigate('Settings')}
             >
               {({ pressed }) => (
 
@@ -102,14 +102,14 @@ function HomeTabBarNavigator() {
       <Tab.Screen
         name="Profile"
         options={{
-          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.photo }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
+          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
           tabBarLabel: '',
           headerTitle: () => (
             <></>
           ),
           headerRight: () => (
-            <Pressable 
-            onPress={() => navigation.navigate('Settings')}
+            <Pressable
+              onPress={() => navigation.navigate('Settings')}
             >
               {({ pressed }) => (
                 <Octicons
@@ -124,7 +124,7 @@ function HomeTabBarNavigator() {
           headerLeft: () => (
             <Pressable>
               {({ pressed }) => (
-                <View style={[Rowstyle.row, rootStyle.pl2, rootStyle.alignCenter, { backgroundColor: themeWIB }]}>
+                <View style={[rowstyle.row, rootStyle.pl2, rootStyle.alignCenter, { backgroundColor: themeWIB }]}>
                   <TruncatedTextBold content={userSecureStoreData?.username || `(ツ)`} maxSize={15} style={[text.fz25, { color: themeBW, opacity: pressed ? 0.5 : 1 }]} />
                   <MaterialIcons
                     name="keyboard-arrow-down"
@@ -160,10 +160,6 @@ function LayoutAuth() {
     ProdThin: require('../../assets/fonts/ProductSans-Thin.ttf'),
   });
   useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
@@ -171,6 +167,7 @@ function LayoutAuth() {
 
   if (!loaded) {
     console.log('sem fonte' + error);
+    return null;
   }
 
   return (
@@ -179,10 +176,11 @@ function LayoutAuth() {
         <Stack.Navigator
           screenOptions={{
             ...TransitionPresets.ModalSlideFromBottomIOS.cardStyleInterpolator,
+            cardStyle: { backgroundColor: 'transparent' },
             cardOverlayEnabled: true,
             gestureEnabled: true,
           }}
-          >
+        >
           {authState?.authenticated ? (
             <>
               <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeTabBarNavigator} />
@@ -193,23 +191,30 @@ function LayoutAuth() {
 
 
           )}
-          
-           <Stack.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{
-              headerLeft: () => (<></>),
-              headerTitle: () => (
-                <ProdBold
-                  style={[text.fz20]}
-                >
-                  {t('settings.settings')}
-                </ProdBold>
-              ),
-              cardStyle: { backgroundColor: themeWIB, top: 80, borderTopLeftRadius: 25, borderTopRightRadius: 25},
-              presentation: 'modal',
-            }}
-          />
+          <Stack.Group screenOptions={{ presentation: 'modal' }}>
+
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                headerLeft: () => (<></>),
+                headerTitle: () => (
+                  <ProdBold
+                    style={[text.fz20]}
+                  >
+                    {t('settings.settings')}
+                  </ProdBold>
+                ),
+                cardStyle: {
+                  backgroundColor: themeWIB,
+                  top: 80,
+                  borderTopLeftRadius: 25,
+                  borderTopRightRadius: 25
+                },
+              }}
+            />
+          </Stack.Group>
+
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

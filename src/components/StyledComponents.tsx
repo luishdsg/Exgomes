@@ -1,16 +1,16 @@
 import React, { ReactNode, useRef } from 'react';
 import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle } from 'react-native';
-import { Images, Rowstyle, profileStyle, rootStyle, text } from '../style';
+import { Images, rowstyle, profileStyle, rootStyle, text } from '../style';
 import { Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView, } from 'react-native';
 import { useThemeController } from '../constants/Themed';
 import { colors } from '../style/Colors';
 
 interface ImageComponentProps {
-  source: ImageSourcePropType;
+  source: any;
 }
 interface TruncatedTextProps {
   content: string;
-  maxSize?: number;
+  maxSize: number;
   style?: object;
 }
 type ThemeProps = {
@@ -27,7 +27,7 @@ interface MenuOptionProfileProps {
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
 
-const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize = 20, style }) => {
+const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize, style }) => {
   const truncateText = (content: string) => {
     if (content.length > maxSize) {
       return content.substring(0, maxSize) + '...';
@@ -43,6 +43,11 @@ const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize = 20
 const ImageMediumComponent: React.FC<ImageComponentProps> = ({ source }) => {
   return (
     <Image source={source} style={Images.MediumImage} resizeMode="cover" />
+  );
+};
+const ImageMaxComponent: React.FC<ImageComponentProps> = ({ source }) => {
+  return (
+    <Image source={source} style={Images.MaxImage} resizeMode="cover" />
   );
 };
 const ImageMinComponent: React.FC<ImageComponentProps> = ({ source }) => {
@@ -75,7 +80,7 @@ const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
       {({ pressed }) => (
         <Animated.View
           style={[
-            Rowstyle.row,
+            rowstyle.row,
             rootStyle.centralize,
             profileStyle.pressableBtn,
             {
@@ -105,6 +110,7 @@ export {
   TruncatedTextBold,
   MenuOptionProfile,
   ImageMinComponent,
+  ImageMaxComponent,
   ProdRegular,
   ProdThin,
   ProdBold,
