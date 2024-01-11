@@ -8,6 +8,8 @@
         "hny":"Feliz ano novo {{newyear}}",
         "title": "Fale com mais Gente\ncomo você!",
         "userexist": "já está\nem uso",
+        "errorserver": "Servidor em análise\nPor favor aguarde alguns minutos",
+        "incorrectLogin": "Usuario ou Senha\nIncorreto",
         "subtitle": "compartilhe ideias e opiniões com\namigos e familiares"
     },
     "profile": {

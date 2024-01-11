@@ -13,6 +13,9 @@ export const rootStyle = StyleSheet.create({
     justifyEnd: {
         justifyContent: 'flex-end',
     },
+    justifyStart: {
+        justifyContent: 'flex-start',
+    },
     justifyCenter:{
         justifyContent: 'center',
     },
@@ -26,14 +29,21 @@ export const rootStyle = StyleSheet.create({
         position: 'relative',
         // backgroundColor: colors.whiteIce,
     },
-   
+    borderTop:{
+        borderTopRightRadius: 20,borderTopLeftRadius: 20,
+    },
+    backgroundImage: {
+        ...StyleSheet.absoluteFillObject, 
+        resizeMode: 'contain', 
+      },
     p1: {
-        paddingHorizontal: '3%',
-        paddingVertical: '3%',
+        padding: '3%',
     },
     p2: {
-        paddingVertical: '5%',
-        paddingHorizontal: '5%',
+        padding: '5%',
+    },
+    p16:{
+        padding: 16
     },
     pt1: {
         paddingTop: '3%',
@@ -137,6 +147,9 @@ export const rootStyle = StyleSheet.create({
     },
     h200:{
         height: 200
+    },
+    Pabsolute:{
+        position: 'absolute'
     },
     view: {
         //   backgroundColor: colors.patternColor,
@@ -274,6 +287,11 @@ export const Images = StyleSheet.create({
     }
 });
 export const text = StyleSheet.create({
+    shadow:{
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 10,
+    },
     leftText: {
         textAlign: 'left',
     },
@@ -422,12 +440,14 @@ export const popUpStyle = StyleSheet.create({
       body: {
         height: '100%',
         maxHeight: 200,
-        paddingLeft: 16,
-        paddingRight: 0,
-        paddingTop: 16,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
       },
+      content:{
+        paddingLeft: 16,
+        paddingRight: 0,
+        paddingTop: 16,
+      }
 });
 
 

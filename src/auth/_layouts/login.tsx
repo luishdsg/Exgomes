@@ -118,7 +118,6 @@ const LoginPage: React.FC = () => {
         setIsUsernameEmpty(false);
         fadeOutUsername();
       }
-
       if (password.trim() === '') {
         setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
         setIsPasswordEmpty(true);
@@ -136,8 +135,10 @@ const LoginPage: React.FC = () => {
       }
       setIsLoadingLogin(false);
     } catch (error) {
-      setErrorMessage(`Usuario ou Senha incorreto(a)${API_URL}`);
+      setErrorMessage(t('login.incorrectLogin'));
+      setillustrationError('https://i.ibb.co/4JMjJMw/Sem-t-tulo.png')
       setErrorModalVisible(true);
+      vibrate();
       setIsLoadingLogin(false);
     }
   };
@@ -154,8 +155,8 @@ const LoginPage: React.FC = () => {
         setIsUsernameEmpty(true);
         setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
         fadeInUsername();
-    vibrate();
-        
+        vibrate();
+
       } else {
         setIsUsernameEmpty(false);
         fadeOutUsername();
@@ -165,7 +166,7 @@ const LoginPage: React.FC = () => {
         setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
         setIsPasswordEmpty(true);
         fadeInPassword();
-    vibrate();
+        vibrate();
 
       } else {
         setIsPasswordEmpty(false);
@@ -173,11 +174,10 @@ const LoginPage: React.FC = () => {
       }
 
       if (usernameExists) {
-        setErrorMessage(`usuario fudido`);
-        setillustrationError('https://i.ibb.co/tqMjnVX/ill-02.png')
+        setErrorMessage(t('login.userexist', { userexist: username }));
+        setillustrationError('https://i.ibb.co/TcV2dRb/ill-02.png')
         setErrorModalVisible(true);
-    vibrate();
-
+        vibrate();
         return;
       }
 
@@ -191,8 +191,10 @@ const LoginPage: React.FC = () => {
       }
       setIsLoadingSignUp(false);
     } catch (error) {
-      setErrorMessage(`Error ao criar conta,\n seridor em análise ⌛ ${API_URL}`);
+      setErrorMessage(t('login.errorserver'));
+      setillustrationError('https://i.ibb.co/VJSh8vQ/ill-04.jpg')
       setErrorModalVisible(true);
+      vibrate();
       setIsLoadingSignUp(false);
     }
   }
@@ -307,8 +309,11 @@ const LoginPage: React.FC = () => {
         username={username}
         image={illustrationError}
         visible={errorModalVisible}
-        errorMessage={t('login.userexist', { userexist: username })}
-        onClose={() => setErrorModalVisible(false)}
+        errorMessage={errorMessage}
+        onClose={() => {
+          setErrorModalVisible(false),
+            setUsername('')
+        }}
       />
       <Status />
     </KeyboardAvoidingView>
@@ -317,4 +322,4 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
-{/* <ProdBold style={text.fz30}>{t('login.hny', {newyear: new Date().getFullYear(),})}</ProdBold> */}
+{/* <ProdBold style={text.fz30}>{t('login.hny', {newyear: new Date().getFullYear(),})}</ProdBold> */ }
