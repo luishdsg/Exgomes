@@ -1,13 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { colors } from './Colors';
- 
+
 export const rootStyle = StyleSheet.create({
-   
+
     centralize: {
         alignItems: 'center',
         justifyContent: 'center',
     },
-    alignCenter:{
+    alignCenter: {
         alignItems: 'center',
     },
     justifyEnd: {
@@ -16,34 +16,40 @@ export const rootStyle = StyleSheet.create({
     justifyStart: {
         justifyContent: 'flex-start',
     },
-    justifyCenter:{
+    justifyCenter: {
         justifyContent: 'center',
     },
-    justifyBetween:{
+    justifyBetween: {
         justifyContent: 'space-between',
     },
-   
+
     container: {
         flex: 1,
         width: '100%',
         position: 'relative',
         // backgroundColor: colors.whiteIce,
     },
-    borderTop:{
-        borderTopRightRadius: 20,borderTopLeftRadius: 20,
+    borderTop: {
+        borderTopRightRadius: 20, borderTopLeftRadius: 20,
     },
     backgroundImage: {
-        ...StyleSheet.absoluteFillObject, 
-        resizeMode: 'contain', 
-      },
+        ...StyleSheet.absoluteFillObject,
+        resizeMode: 'contain',
+    },
+    br100: {
+        borderRadius: 100,
+    },
     p1: {
         padding: '3%',
     },
     p2: {
         padding: '5%',
     },
-    p16:{
+    p16: {
         padding: 16
+    },
+    p10: {
+        padding: 10
     },
     pt1: {
         paddingTop: '3%',
@@ -69,22 +75,22 @@ export const rootStyle = StyleSheet.create({
     py1: {
         paddingVertical: '3%',
     },
-    pl1:{
+    pl1: {
         paddingLeft: '3%',
     },
-    pl2:{
+    pl2: {
         paddingLeft: '5%',
     },
-    pl3:{
+    pl3: {
         paddingLeft: '10%',
     },
-    pr1:{
+    pr1: {
         paddingRight: '3%',
     },
-    pr2:{
+    pr2: {
         paddingRight: '5%',
     },
-    pr3:{
+    pr3: {
         paddingRight: '10%',
     },
 
@@ -127,28 +133,34 @@ export const rootStyle = StyleSheet.create({
     mt04: {
         marginTop: '15%'
     },
-    h20:{
+    mr1: {
+        marginRight: '3%'
+    },
+    mr2: {
+        marginRight: '5%'
+    },
+    h20: {
         height: 20
     },
-    h30:{
+    h30: {
         height: 30
     },
-    h50:{
+    h50: {
         height: 50
     },
-    h60:{
+    h60: {
         height: 60
     },
-    h70:{
+    h70: {
         height: 70
     },
-    h100:{
+    h100: {
         height: 100
     },
-    h200:{
+    h200: {
         height: 200
     },
-    Pabsolute:{
+    Pabsolute: {
         position: 'absolute'
     },
     view: {
@@ -156,7 +168,7 @@ export const rootStyle = StyleSheet.create({
         height: '100%',
         width: '100%',
     },
-    w100:{
+    w100: {
         width: '100%',
     },
     halfview: {
@@ -196,12 +208,12 @@ export const rootStyle = StyleSheet.create({
         borderRadius: 1000,
         height: 5
     },
-    
+
 });
 export const rowstyle = StyleSheet.create({
 
     app: {
-        flex: 4,
+        flex: 1,
         marginHorizontal: "auto",
         height: 200,
         width: '100%',
@@ -287,10 +299,10 @@ export const Images = StyleSheet.create({
     }
 });
 export const text = StyleSheet.create({
-    shadow:{
+    shadow: {
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 10,
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 10,
     },
     leftText: {
         textAlign: 'left',
@@ -406,14 +418,12 @@ export const profileStyle = StyleSheet.create({
         width: '100%',
         height: 180
     },
-    pressableBtn:{
+    pressableBtn: {
         borderRadius: 100,
-        paddingVertical: 10,
         marginVertical: 10,
         marginLeft: 10,
         transition: '.7s',
-        paddingHorizontal: 10,
-       
+
     },
     swipeableContent: {
         width: 200,
@@ -421,12 +431,12 @@ export const profileStyle = StyleSheet.create({
         backgroundColor: 'lightblue',
         borderRadius: 10,
         overflow: 'hidden',
-      },
-      button: {
+    },
+    button: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-      },
+    },
 
 });
 export const popUpStyle = StyleSheet.create({
@@ -435,19 +445,19 @@ export const popUpStyle = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-       
-      },
-      body: {
+
+    },
+    body: {
         height: '100%',
         maxHeight: 200,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-      },
-      content:{
+    },
+    content: {
         paddingLeft: 16,
         paddingRight: 0,
         paddingTop: 16,
-      }
+    }
 });
 
 

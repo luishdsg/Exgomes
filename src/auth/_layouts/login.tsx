@@ -311,8 +311,7 @@ const LoginPage: React.FC = () => {
         visible={errorModalVisible}
         errorMessage={errorMessage}
         onClose={() => {
-          setErrorModalVisible(false),
-            setUsername('')
+          setErrorModalVisible(false)
         }}
       />
       <Status />

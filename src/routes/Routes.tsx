@@ -63,7 +63,7 @@ function HomeTabBarNavigator() {
           backgroundColor: themeWIB,
           height: 90,
           borderTopWidth: 1,
-          borderTopColor: themeDGL
+          borderTopColor: themeDGL,
         },
         tabBarLabelStyle: { color: themeBW },
         tabBarActiveTintColor: colors.patternColor,

@@ -18,8 +18,8 @@ type ThemeProps = {
   darkColor?: string;
 };
 interface MenuOptionProfileProps {
-  onPressIn: () => void;
-  onPressOut: () => void;
+  // onPressIn: () => void;
+  // onPressOut: () => void;
   // style?: StyleProp<ViewStyle>;
   children?: React.ReactNode;
 }
@@ -69,14 +69,12 @@ function ProdLight(props: TextProps) {
 }
 
 const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
-  onPressIn,
-  onPressOut,
   children,
 }) => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const { themeWTD} = useThemeController();
   return (
-    <Pressable onPressIn={onPressIn} onPressOut={onPressOut}>
+    <Pressable>
       {({ pressed }) => (
         <Animated.View
           style={[
@@ -88,10 +86,7 @@ const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
               backgroundColor: themeWTD,
               transform: [
                 {
-                  scale: scaleValue.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.8, 1],
-                  }),
+                  scale: pressed ? .8: 1,
                 },
               ],
             },

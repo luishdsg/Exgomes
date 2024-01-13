@@ -3,4 +3,6 @@ export type RootStackParamList = {
   Login: any;
   Settings: any;
   Error: any;
+  Profile: any;
+  ProfileViews: any;
 };
