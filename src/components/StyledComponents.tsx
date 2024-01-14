@@ -40,6 +40,19 @@ const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize, sty
   );
 };
 
+const TruncatedTextRegular: React.FC<TruncatedTextProps> = ({ content, maxSize, style }) => {
+  const truncateText = (content: string) => {
+    if (content.length > maxSize) {
+      return content.substring(0, maxSize) + '...';
+    }
+    return content;
+  };
+
+  return (
+    <ProdRegular style={[style]} >{truncateText(content)}</ProdRegular>
+  );
+};
+
 const ImageMediumComponent: React.FC<ImageComponentProps> = ({ source }) => {
   return (
     <Image source={source} style={Images.MediumImage} resizeMode="cover" />
@@ -48,6 +61,11 @@ const ImageMediumComponent: React.FC<ImageComponentProps> = ({ source }) => {
 const ImageMaxComponent: React.FC<ImageComponentProps> = ({ source }) => {
   return (
     <Image source={source} style={Images.MaxImage} resizeMode="cover" />
+  );
+};
+const ImageProfileComponent: React.FC<ImageComponentProps> = ({ source }) => {
+  return (
+    <Image source={source} style={Images.PostProfileIco} resizeMode="cover" />
   );
 };
 const ImageMinComponent: React.FC<ImageComponentProps> = ({ source }) => {
@@ -71,7 +89,7 @@ function ProdLight(props: TextProps) {
 const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
   children,
 }) => {
-  const scaleValue = useRef(new Animated.Value(1)).current;
+  // const scaleValue = useRef(new Animated.Value(1)).current;
   const { themeWTD} = useThemeController();
   return (
     <Pressable>
@@ -103,9 +121,11 @@ const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
 export {
   ImageMediumComponent,
   TruncatedTextBold,
+  TruncatedTextRegular,
   MenuOptionProfile,
   ImageMinComponent,
   ImageMaxComponent,
+  ImageProfileComponent,
   ProdRegular,
   ProdThin,
   ProdBold,

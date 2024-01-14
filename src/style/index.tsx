@@ -10,6 +10,9 @@ export const rootStyle = StyleSheet.create({
     alignCenter: {
         alignItems: 'center',
     },
+    alignBase:{
+        alignItems: 'baseline'
+    },
     justifyEnd: {
         justifyContent: 'flex-end',
     },
@@ -296,6 +299,13 @@ export const Images = StyleSheet.create({
         borderRadius: 200,
         borderWidth: 1,
         resizeMode: 'contain'
+    },
+    PostProfileIco: {
+        width: 45,
+        height: 45,
+        borderRadius: 200,
+        borderWidth: 1,
+        resizeMode: 'contain'
     }
 });
 export const text = StyleSheet.create({
@@ -321,6 +331,9 @@ export const text = StyleSheet.create({
     },
     fz15: {
         fontSize: 15,
+    },
+    fz17: {
+        fontSize: 17,
     },
     fz20: {
         fontSize: 20,

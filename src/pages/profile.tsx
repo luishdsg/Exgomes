@@ -1,35 +1,28 @@
 import { API_URL } from '@env';
 import { Feather, Ionicons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import axios from 'axios';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Animated, Text, Pressable, RefreshControl, ScrollView, View, useColorScheme } from 'react-native';
+import { Dimensions, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { ScrollView as GestureScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
-import getSecureStoreData from '../constants/SecureStore';
-import { UserRes } from '../interface/User.interface';
-import { rowstyle, profileStyle, rootStyle, text } from '../style';
-import Colors, { colors } from '../style/Colors';
-import { useThemeController } from '../constants/Themed';
 import ProfileViews from '../components/views/profile';
+import getSecureStoreData from '../constants/SecureStore';
+import { useThemeController } from '../constants/Themed';
+import { UserRes } from '../interface/User.interface';
+import { rootStyle, rowstyle, text } from '../style';
+import { colors } from '../style/Colors';
 
 
 const ProfileScreen: React.FC = () => {
-  const colorScheme = useColorScheme();
+  const viewRef = useRef<View>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [isPressed, setIsPressed] = useState(false);
   const [selectedPage, setSelectedPage] = useState(1);
-  // const [selectedPage, setSelectedPage] = useState(1);
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
-  const colorThemePolar = Colors[colorScheme ?? 'dark'].writeTheme;
-  const colorThemeSomeWhat = Colors[colorScheme ?? 'dark'].text;
   const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const [infoSectionProfile, setInfoSectionProfile] = useState(false);
 
-  useEffect(() => {
-    getUserAuthorizeData();
-    setSelectedPage(1)
-  }, []);
   const getUserAuthorizeData = async () => {
     try {
       const data = await getSecureStoreData();
@@ -46,8 +39,6 @@ const ProfileScreen: React.FC = () => {
       return error.message;
     }
   };
-
-
   const renderContent = () => {
     switch (selectedPage) {
       case 1:
@@ -90,10 +81,36 @@ const ProfileScreen: React.FC = () => {
         return null;
     }
   };
+  const _handleLayoutInfoSection = () => {
+    if (viewRef.current) {
+      viewRef.current.measure((x, y, width, height, pageX, pageY) => {
+        const screenHeight = Dimensions.get('window').height;
+        const isVisibleNow = pageY < 0 || pageY + height > screenHeight;
+        setInfoSectionProfile(isVisibleNow);
+        _handleVisibilityInfoSection(isVisibleNow);
+      });
+    }
+  };
+  const _handleScrollInfoSection = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const isVisibleNow = offsetY < 0 || offsetY > 0;
+    setInfoSectionProfile(isVisibleNow);
+  };
+  const _handleVisibilityInfoSection = (visible: boolean) => {
+    if (visible) {
+      console.log('amor');
+    }
+  };
+  useEffect(() => {
+    getUserAuthorizeData();
+    setSelectedPage(1)
+  }, []);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      onScroll={_handleScrollInfoSection}
+      scrollEventThrottle={0} 
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -107,7 +124,10 @@ const ProfileScreen: React.FC = () => {
         />
       }
       style={[rootStyle.view, , { backgroundColor: themeWIB }]}>
-      <View style={[rowstyle.app]}>
+      <View 
+      ref={viewRef}
+      onLayout={_handleLayoutInfoSection}
+      style={[rowstyle.app]}>
         <View style={[rowstyle.row, rootStyle.px1, rootStyle.container]}>
           <View style={[rowstyle[`2col`], rootStyle.justifyCenter,]}>
             <ImageMinComponent source={{ uri: userSecureStoreData?.photo }} />
@@ -201,28 +221,9 @@ const ProfileScreen: React.FC = () => {
           </GestureScrollView>
         </View>
       </View>
-      <View style={[{ backgroundColor: 'red',  flex: 1 }]}>
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-          {renderContent()}
-        </View>
+        {renderContent()}
       <Status />
     </ScrollView>
   )
 }
-
 export default ProfileScreen;
