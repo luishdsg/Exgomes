@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Animated, Modal, PanResponder, SectionList, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Animated, Modal, Image, PanResponder, SectionList, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { PinchGestureHandler, State } from 'react-native-gesture-handler';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import getSecureStoreData from "../../constants/SecureStore";
@@ -83,8 +83,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
     const _timeLinePub = ({ item }: { item: PubRes }) => {
         const [isViewVisible, setIsViewVisible] = useState(false);
         const position = new Animated.ValueXY({ x: 0, y: 0 });
-
-        const scale = useRef(new Animated.Value(1)).current;
+        const [modalVisible, setModalVisible] = useState(false);
 
         const panResponder = PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -106,26 +105,8 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
         };
 
 
-        const onPinchGestureEvent = Animated.event(
-            [{ nativeEvent: { scale } }],
-            { useNativeDriver: false }
-        );
 
-        const onPinchHandlerStateChange = (event: { nativeEvent: { oldState: number; }; }) => {
-            if (event.nativeEvent.oldState === State.ACTIVE) {
-                Animated.spring(scale, { toValue: 1, useNativeDriver: false }).start();
-            }
-        };
 
-        const [modalVisible, setModalVisible] = useState(false);
-
-        const handleImagePress = () => {
-            setModalVisible(true);
-        };
-
-        const handleCloseModal = () => {
-            setModalVisible(false);
-        };
         return (
             <View style={[rootStyle.w100, { flex: 1, backgroundColor: 'red', position: 'relative' }]}>
                 <View style={[rowstyle.row, { position: 'relative' }]}>
@@ -158,25 +139,19 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                         </View>
                     )}
                     {item.photo && (
-                        <PinchGestureHandler
-                            onGestureEvent={onPinchGestureEvent}
-                            onHandlerStateChange={onPinchHandlerStateChange}
-                        >
-                            <Animated.View style={[rootStyle.justifyStart, rootStyle.w100, { flex: 1, backgroundColor: 'orange' }]}>
-                            <TouchableWithoutFeedback  onPress={handleImagePress}>
-                                <Animated.Image
+                        <View style={[rootStyle.justifyStart, rootStyle.w100, { flex: 1, backgroundColor: 'orange' }]}>
+                            <TouchableWithoutFeedback onPress={() => setModalVisible(true)}>
+                                <Image
                                     resizeMode="contain"
                                     style={[{
                                         width: '100%',
                                         maxHeight: 400,
                                         minHeight: 200,
                                         backgroundColor: 'black',
-                                        transform: [{ scale }],
                                     }]}
                                     source={{ uri: item.photo }} />
-                                    </TouchableWithoutFeedback >
-                            </Animated.View>
-                        </PinchGestureHandler>
+                            </TouchableWithoutFeedback >
+                        </View>
                     )}
 
 
@@ -222,7 +197,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                     // ListHeaderComponent={_timeLinePub}
                     keyExtractor={(item: PubRes, index) => `${item._id.toString()}_${index}`}
                     // onEndReached={_handleCheckEndPage}
-                    ItemSeparatorComponent={() => { return <View style={[rootStyle.w100, { height: 1, backgroundColor: colors.textDark }]} /> }}
+                    // ItemSeparatorComponent={() => { return <View style={[rootStyle.w100, { height: 1, backgroundColor: colors.textDark }]} /> }}
                     onEndReachedThreshold={0.5}
                     // onRefresh={onRefresh}
                     // ListEmptyComponent={<ActivityIndicator />}
@@ -259,6 +234,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         backgroundColor: 'red',
         padding: 20,
+        zIndex: 10,
         borderRadius: 10,
     },
     draggableText: {

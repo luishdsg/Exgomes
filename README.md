@@ -6,7 +6,7 @@
 ### 4° Parei no profile e começar a home com o gringo expo
 ### 5° COISAS NUM PERFIL = local, data de entrada,niver,  seguidores, hearseguindo, postagens, bio, link, favoritos, salvos, lixo, numero da pessao que entrou, ranking(de alguam coisa), bloqueados
 ### 6° TEMA DARK NO LOGIN QUANDO DENTRO FICA CLARO (COLOCAR TEMA NOS DADOS DO USUÁRIO E LOCALSTORAGE)
-### 7° 
+### 7° MARCAR PESSOAS OCULTAMENTE
 ### 8° 
 ### 9° 
 ### 10° 
