@@ -42,6 +42,9 @@ export const rootStyle = StyleSheet.create({
     br100: {
         borderRadius: 100,
     },
+    br30:{
+        borderRadius: 10,
+    },
     p1: {
         padding: '3%',
     },
@@ -170,6 +173,9 @@ export const rootStyle = StyleSheet.create({
         //   backgroundColor: colors.patternColor,
         height: '100%',
         width: '100%',
+    },
+    w100hauto:{
+        height: 'auto', width:'100%'
     },
     w100: {
         width: '100%',

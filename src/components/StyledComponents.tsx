@@ -1,9 +1,7 @@
 import React, { ReactNode, useRef } from 'react';
-import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle } from 'react-native';
+import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle ,Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView,} from 'react-native';
 import { Images, rowstyle, profileStyle, rootStyle, text } from '../style';
-import { Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView, } from 'react-native';
 import { useThemeController } from '../constants/Themed';
-import { colors } from '../style/Colors';
 
 interface ImageComponentProps {
   source: any;

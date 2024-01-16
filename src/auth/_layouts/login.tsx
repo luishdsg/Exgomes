@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/Octicons';
 import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../../components/StyledComponents';
 import { useFadeAnimationLogin } from '../../components/animations/login';
 import ForgotPassModal from '../../components/modal/ForgotPassModal';
-import PopUpError from '../../components/modal/PopUpError';
+import PopUpError from '../../components/modal/PopUpErrorModal';
 import { useThemeController } from '../../constants/Themed';
 import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
 import { loginStyle, rootStyle, text } from '../../style';
@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
-  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeDGL, themePG, Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, Status, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
 

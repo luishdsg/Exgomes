@@ -22,7 +22,7 @@ const HomeScreen: React.FC<HomeScreenPageProps> = ({ navigation }) => {
   const handleLogout = async () => {
   };
   const { onLogout } = useAuth();
-  const { themeWB, themeWTD, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeDGL , themePG,  Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeGLD , themePG,  Status, _toggleTheme } = useThemeController();
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {

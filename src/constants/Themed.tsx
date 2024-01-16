@@ -20,7 +20,8 @@ export const useThemeController = () => {
   const themeBW = colorScheme === theme ? colors.black : colors.white;
   const themeWIB = colorScheme === theme ? colors.whiteIce : colors.black;
   const themeWITD = colorScheme === theme ? colors.whiteIce : colors.textDark;
-  const themeDGL = colorScheme === theme ? colors.grayLight : colors.dark;
+  const themeGLD = colorScheme === theme ? colors.grayLight : colors.dark;
+  const themeDG = colorScheme === theme ? colors.dark : colors.gray;
   const themePG = colorScheme === theme ? colors.patternColor : colors.gray;
   const themeStatus = colorScheme === theme ? 'dark' : 'light';
   function Status() {
@@ -33,5 +34,5 @@ export const useThemeController = () => {
     setTheme(newTheme);
   };
 
-  return { themeWB, themeWTD,themeTDW,themeTDG,themeTDGT, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeDGL , themePG,  themeStatus, Status, _toggleTheme };
+  return { themeWB, themeWTD,themeTDW,themeTDG,themeTDGT,themeDG, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeGLD , themePG,  themeStatus, Status, _toggleTheme };
 };

@@ -12,3 +12,7 @@ export interface PopUpErrorProps {
   export interface ProfileViewsProps {
     user: UserRes | null;
   }
+  export interface ZoomableImageProps {
+    uri: string;
+    onClose: () => void;
+  }

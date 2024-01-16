@@ -20,7 +20,7 @@ const ProfileScreen: React.FC = () => {
   const [selectedPage, setSelectedPage] = useState(1);
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
-  const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const [infoSectionProfile, setInfoSectionProfile] = useState(false);
 
   const getUserAuthorizeData = async () => {
@@ -110,7 +110,7 @@ const ProfileScreen: React.FC = () => {
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
       onScroll={_handleScrollInfoSection}
-      scrollEventThrottle={0} 
+      scrollEventThrottle={0}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -124,10 +124,10 @@ const ProfileScreen: React.FC = () => {
         />
       }
       style={[rootStyle.view, , { backgroundColor: themeWIB }]}>
-      <View 
-      ref={viewRef}
-      onLayout={_handleLayoutInfoSection}
-      style={[rowstyle.app]}>
+      <View
+        ref={viewRef}
+        onLayout={_handleLayoutInfoSection}
+        style={[rowstyle.app]}>
         <View style={[rowstyle.row, rootStyle.px1, rootStyle.container]}>
           <View style={[rowstyle[`2col`], rootStyle.justifyCenter,]}>
             <ImageMinComponent source={{ uri: userSecureStoreData?.photo }} />
@@ -221,9 +221,18 @@ const ProfileScreen: React.FC = () => {
           </GestureScrollView>
         </View>
       </View>
-        {renderContent()}
+      {renderContent()}
+      
+      {/* {selectedPage == 1 ? (
+        <ProfileViews
+          user={userSecureStoreData}
+        />) : (
+        <></>
+      )} */}
       <Status />
     </ScrollView>
+
+
   )
 }
 export default ProfileScreen;

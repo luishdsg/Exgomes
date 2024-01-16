@@ -25,7 +25,7 @@ import SettingsScreen from '../pages/settings';
 import { RootStackParamList } from '../interface/RootStackParamList';
 import { goBack } from '../constants/NavigationService';
 import { useTranslation } from 'react-i18next';
-import PopUpErrorModal from '../components/modal/PopUpError';
+import PopUpErrorModal from '../components/modal/PopUpErrorModal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -35,7 +35,7 @@ type ScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 function HomeTabBarNavigator() {
   const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
-  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
   const navigation = useNavigation<ScreenNavigationProp>();
 
@@ -63,7 +63,7 @@ function HomeTabBarNavigator() {
           backgroundColor: themeWIB,
           height: 90,
           borderTopWidth: 1,
-          borderTopColor: themeDGL,
+          borderTopColor: themeGLD,
         },
         tabBarLabelStyle: { color: themeBW },
         tabBarActiveTintColor: colors.patternColor,
@@ -148,7 +148,7 @@ function HomeTabBarNavigator() {
 
 function LayoutAuth() {
   const { authState } = useAuth();
-  const { themeWB, themeWTD, themeTDW, themeBWI, themeBW, themeWIB, themeWITD, themeDGL, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeTDW, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
 
   SplashScreen.preventAutoHideAsync();
