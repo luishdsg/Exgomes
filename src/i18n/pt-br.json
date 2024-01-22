@@ -16,6 +16,7 @@
         "youremail": "seu email",
         "editprofile": "editar perfil",
         "followers": "Seguidores",
+        "follow": "seguir",
         "following": "Seguindo",
         "favorites": "Favoritos",
         "save": "Salvos",
@@ -30,10 +31,15 @@
         "userEmpty":"Usuário não pode ficar vazio",
         "passEmpty":"Senha não pode ficar vazia",
         "inputPass":"Senha",
-        "refresh": "Atualizando..."
+        "refresh": "Atualizando...",
+        "comments": "comentários"
     },
     "settings":{
         "settings": "configurações"
+    },
+    "post": {
+        "safe": "salvo",
+        "removed": "removido"
     }
   }
   

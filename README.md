@@ -7,10 +7,10 @@
 ### 5° COISAS NUM PERFIL = local, data de entrada,niver,  seguidores, hearseguindo, postagens, bio, link, favoritos, salvos, lixo, numero da pessao que entrou, ranking(de alguam coisa), bloqueados
 ### 6° TEMA DARK NO LOGIN QUANDO DENTRO FICA CLARO (COLOCAR TEMA NOS DADOS DO USUÁRIO E LOCALSTORAGE)
 ### 7° MARCAR PESSOAS OCULTAMENTE
-### 8° 
-### 9° 
-### 10° 
-### 11° 
+### 8° BOTÕES DE REAÇÃO (POST)
+### 9° CONFIGURAÇÃOES (POST)
+### 10° SEGUIR
+### 11° MODAL (COMENTÁRIOS) POST
 ### 12° 
 ### 13° 
 ### 14° 

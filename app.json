@@ -21,7 +21,7 @@
       "backgroundColor": "#31b3ff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "**/*",
     ],
     "developer": {
       "tool": "exponent"

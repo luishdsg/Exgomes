@@ -10,7 +10,10 @@ export const rootStyle = StyleSheet.create({
     alignCenter: {
         alignItems: 'center',
     },
-    alignBase:{
+    alignRight: {
+        alignItems: 'flex-end',
+    },
+    alignBase: {
         alignItems: 'baseline'
     },
     justifyEnd: {
@@ -25,7 +28,9 @@ export const rootStyle = StyleSheet.create({
     justifyBetween: {
         justifyContent: 'space-between',
     },
-
+    z10: {
+        zIndex: 10,
+    },
     container: {
         flex: 1,
         width: '100%',
@@ -42,14 +47,20 @@ export const rootStyle = StyleSheet.create({
     br100: {
         borderRadius: 100,
     },
-    br30:{
+    br10: {
         borderRadius: 10,
+    },
+    br30: {
+        borderRadius: 30,
     },
     p1: {
         padding: '3%',
     },
     p2: {
         padding: '5%',
+    },
+    p3: {
+        padding: '7%',
     },
     p16: {
         padding: 16
@@ -63,23 +74,31 @@ export const rootStyle = StyleSheet.create({
     pt2: {
         paddingTop: '5%',
     },
+    pt3: {
+        paddingTop: '7%',
+    },
     pb1: {
         paddingBottom: '3%',
     },
     pb2: {
         paddingBottom: '5%',
     },
+
+    px1: {
+        paddingHorizontal: '3%',
+    }, 
     px2: {
         paddingHorizontal: '5%',
     },
-    px1: {
-        paddingHorizontal: '3%',
+    px3: {
+        paddingHorizontal: '7%',
     },
-    py2: {
-        paddingVertical: '5%',
-    },
+
     py1: {
         paddingVertical: '3%',
+    }, 
+    py2: {
+        paddingVertical: '5%',
     },
     pl1: {
         paddingLeft: '3%',
@@ -89,6 +108,12 @@ export const rootStyle = StyleSheet.create({
     },
     pl3: {
         paddingLeft: '10%',
+    },
+    pl4: {
+        paddingLeft: '14%',
+    },
+    pl5: {
+        paddingLeft: '15%',
     },
     pr1: {
         paddingRight: '3%',
@@ -145,6 +170,21 @@ export const rootStyle = StyleSheet.create({
     mr2: {
         marginRight: '5%'
     },
+    mb1: {
+        marginBottom: '3%'
+    },
+    mb2: {
+        marginBottom: '5%'
+    },
+    ml1: {
+        marginLeft: '3%'
+    },
+    ml2: {
+        marginLeft: '5%'
+    },
+    ml3: {
+        marginLeft: '7%'
+    },
     h20: {
         height: 20
     },
@@ -169,13 +209,17 @@ export const rootStyle = StyleSheet.create({
     Pabsolute: {
         position: 'absolute'
     },
+    iconVerified: {
+        width: 15,
+        height: 15,
+    },
     view: {
         //   backgroundColor: colors.patternColor,
         height: '100%',
         width: '100%',
     },
-    w100hauto:{
-        height: 'auto', width:'100%'
+    w100hauto: {
+        height: 'auto', width: '100%'
     },
     w100: {
         width: '100%',
@@ -310,7 +354,7 @@ export const Images = StyleSheet.create({
         width: 45,
         height: 45,
         borderRadius: 200,
-        borderWidth: 1,
+        // borderWidth: 1,
         resizeMode: 'contain'
     }
 });
@@ -442,7 +486,9 @@ export const profileStyle = StyleSheet.create({
         marginVertical: 10,
         marginLeft: 10,
         transition: '.7s',
-
+    },
+    settingspopup: {
+        width: 155, height: 200, right: 0, borderRadius: 30
     },
     swipeableContent: {
         width: 200,

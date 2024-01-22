@@ -14,6 +14,7 @@ declare module 'react-native-ios-kit' {
   const SearchBar: any;
   const SegmentedControl: any;
   const Slider: any;
+  const Slider: any;
   const Spinner: any;
   const Stepper: any;
   const Switch: any;

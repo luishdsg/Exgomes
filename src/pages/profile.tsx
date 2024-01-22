@@ -145,6 +145,7 @@ const ProfileScreen: React.FC = () => {
             </View>
           </View>
         </View>
+
         <View style={[rootStyle.h70, {}]}>
           <GestureScrollView style={[rootStyle.mr2]} showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false} horizontal>
@@ -222,7 +223,7 @@ const ProfileScreen: React.FC = () => {
         </View>
       </View>
       {renderContent()}
-      
+
       {/* {selectedPage == 1 ? (
         <ProfileViews
           user={userSecureStoreData}

@@ -26,6 +26,7 @@ import { RootStackParamList } from '../interface/RootStackParamList';
 import { goBack } from '../constants/NavigationService';
 import { useTranslation } from 'react-i18next';
 import PopUpErrorModal from '../components/modal/PopUpErrorModal';
+import { CommentsPostModal } from '../components/modal/CommentsPostModal';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -186,10 +187,7 @@ function LayoutAuth() {
               <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeTabBarNavigator} />
             </>
           ) : (
-
             <Stack.Screen name="Login" options={{ headerShown: false }} component={LoginPage} />
-
-
           )}
           <Stack.Group screenOptions={{ presentation: 'modal' }}>
 
@@ -199,11 +197,7 @@ function LayoutAuth() {
               options={{
                 headerLeft: () => (<></>),
                 headerTitle: () => (
-                  <ProdBold
-                    style={[text.fz20]}
-                  >
-                    {t('settings.settings')}
-                  </ProdBold>
+                  <ProdBold style={[text.fz20]}>{t('settings.settings')}</ProdBold>
                 ),
                 cardStyle: {
                   backgroundColor: themeWIB,
@@ -213,6 +207,7 @@ function LayoutAuth() {
                 },
               }}
             />
+         
           </Stack.Group>
 
         </Stack.Navigator>
