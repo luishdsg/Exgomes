@@ -1,6 +1,10 @@
 {
     "greeting": "Olá!",
     "welcome": "Bem-vindo ao nosso aplicativo!",
+
+    "home": {
+        "moredata": "+ postagens"
+    },
     "login":{
         "signup": "Criar conta",
         "login": "Entrar",
@@ -27,7 +31,6 @@
     },
     "Tools":{
         "inputUser":"Nome de usuário",
-        "inputPass":"Senha",
         "userEmpty":"Usuário não pode ficar vazio",
         "passEmpty":"Senha não pode ficar vazia",
         "inputPass":"Senha",

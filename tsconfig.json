@@ -1,17 +1,10 @@
 {
+  "compilerOptions": {},
   "extends": "expo/tsconfig.base",
-  "compilerOptions": {
-    "module": "esnext",
-    "jsx": "react-native",
-    "strict": true
-  },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "src/tools/expo-env.d.ts",
-    "src/i18n/i18n.ts",
-    "src/tools/expo-env.d.ts",
     "expo-env.d.ts"
   ]
 }

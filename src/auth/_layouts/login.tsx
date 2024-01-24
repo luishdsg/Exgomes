@@ -41,28 +41,32 @@ const LoginPage: React.FC = () => {
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
 
-  // Define o estilo da barra de status com base no tema
-
   useEffect(() => {
     const getUser = async () => {
       try {
-        const result = await axios.get(`${API_URL}/users/${username}`);
+        const result = await axios.get(`${API_URL}/users/username${username}`);
         setAvatarUser(result.data);
         setTimeout(() => {
           setUsernameExists(result.data.username)
         }, 1000);
+        console.log('peguei o usuario no login')
 
       } catch (error) {
+        console.error('Não peguei o usuario no login')
+
         setAvatarUser(null);
         setUsernameExists(false);
       }
     };
-    if (username.length >= 3) getUser();
+    if (username.length >= 3) {
+      getUser();
+    }
     else setAvatarUser(null);
   }, [username]);
 
-  const renderAvatarContent = () => {
 
+
+  const renderAvatarContent = () => {
     if (avatarUser && avatarUser?.photo) {
       return <Animated.View style={[loginStyle.profile]}><Avatar url={avatarUser?.photo} size={40} /></Animated.View>;
     } else if (avatarUser && avatarUser.username) {
@@ -136,7 +140,7 @@ const LoginPage: React.FC = () => {
       setIsLoadingLogin(false);
     } catch (error) {
       setErrorMessage(t('login.incorrectLogin'));
-      setillustrationError('https://i.ibb.co/4JMjJMw/Sem-t-tulo.png')
+      setillustrationError('https://i.imgur.com/yybex4u.png')
       setErrorModalVisible(true);
       vibrate();
       setIsLoadingLogin(false);
@@ -175,7 +179,7 @@ const LoginPage: React.FC = () => {
 
       if (usernameExists) {
         setErrorMessage(t('login.userexist', { userexist: username }));
-        setillustrationError('https://i.ibb.co/TcV2dRb/ill-02.png')
+        setillustrationError('https://i.imgur.com/UAxKfJA.png')
         setErrorModalVisible(true);
         vibrate();
         return;
@@ -192,7 +196,7 @@ const LoginPage: React.FC = () => {
       setIsLoadingSignUp(false);
     } catch (error) {
       setErrorMessage(t('login.errorserver'));
-      setillustrationError('https://i.ibb.co/VJSh8vQ/ill-04.jpg')
+      setillustrationError('https://i.imgur.com/4NaFeXr.jpg')
       setErrorModalVisible(true);
       vibrate();
       setIsLoadingSignUp(false);
@@ -230,73 +234,76 @@ const LoginPage: React.FC = () => {
             <ProdBold style={[text.fz30, text.centralizeText, { color: themeBWI }]}>{t('login.title')}</ProdBold>
             <ProdRegular style={[text.fz20, text.centralizeText, rootStyle.mt02, text.fontBold, { color: themeGTD }]}>{t('login.subtitle')}</ProdRegular>
           </View>
-          <View style={[rootStyle.halfview]}>
-            <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
-              {t('Tools.userEmpty')}
-            </Animated.Text>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
-              <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError, { color: themeBWI }]}
-                placeholder={t('Tools.inputUser')}
-                placeholderTextColor={colors.gray}
-                value={username} editable={true}
-                contextMenuHidden={false}
-                returnKeyType="next"
-                onSubmitEditing={() => { _handleNextInput(inputRefPass) }}
-                onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
-              />
-              {username.length > 0 && (
-                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -1, right: 0, }]} onPress={clearInput}>
-                  <EvilIcons name="close" color={themeBW} size={24} themeText />
-                </TouchableOpacity>
-              )}
-              {renderAvatarContent()}
-            </View>
-            <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
-              <TextInput
-                style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError, { color: themeBWI }]}
-                placeholder={t('Tools.inputPass')}
-                placeholderTextColor={colors.gray}
-                value={password} editable={true}
-                ref={inputRefPass}
-                returnKeyType="done"
-                onSubmitEditing={() => { Keyboard.dismiss(); }}
-                onChangeText={(text) => { setPassword(text); setIsPasswordEmpty(false) }}
-                secureTextEntry={!showPassword}
-              />
-              {password.length > 0 && (
-                <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { right: -5 }]} onPress={_handleShowPass}>
-                  <Icon name={showPassword ? 'eye' : 'eye-closed'} color={colors.gray} style={loginStyle.pass} size={24} />
-                </TouchableOpacity>
-              )}
-            </View>
-            <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimPassword }]}>
-              {t('Tools.passEmpty')}
-            </Animated.Text>
-            <View style={[loginStyle.buttonArea, rootStyle.px1,]}>
-              <TouchableOpacity style={[rootStyle.btnPatter, rootStyle.centralize]} onPress={_handleLogin}>
-                {isLoadingLogin ? (
-                  <ActivityIndicator size="small" color="#0000ff" />
-                ) : (
-                  <ProdBold style={[text.fz20, text.centralizeText, { color: colors.white }]}>{t('login.login')}</ProdBold>
+          <View style={[rootStyle.halfview, rootStyle.centralize]}>
+            <View style={[rootStyle.view, { maxWidth: 500 }]}>
+              <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
+                {t('Tools.userEmpty')}
+              </Animated.Text>
+              <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
+                <TextInput
+                  style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError, { color: themeBWI }]}
+                  placeholder={t('Tools.inputUser')}
+                  placeholderTextColor={colors.gray}
+                  value={username} editable={true}
+                  contextMenuHidden={false}
+                  returnKeyType="next"
+                  onSubmitEditing={() => { _handleNextInput(inputRefPass) }}
+                  onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
+                />
+                {renderAvatarContent()}
+                {username.length > 0 && (
+                  <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -2, right: 0, }]} onPress={clearInput}>
+                    <EvilIcons name="close" color={themeBW} size={24} themeText />
+                  </TouchableOpacity>
                 )}
-              </TouchableOpacity>
-              <TouchableOpacity style={[rootStyle.btnPatterpass, rootStyle.mt1, rootStyle.centralize]} onPress={_handleSignUp}>
-                {isLoadingSignUp ? (
-                  <ActivityIndicator size="small" color="#0000ff" />
-                ) : (
-                  <ProdBold style={[text.fz20, text.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</ProdBold>
-                )}
-              </TouchableOpacity>
-              <View style={[rootStyle.centralize, rootStyle.mt2]}>
-                <ProdLight onPress={_handleForgotPass} style={[text.centralizeText, { color: themeBWI }]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
               </View>
-              <Switch
-                trackColor={{ false: themeGTD, true: colors.patternColor }}
-                onValueChange={_changeThemeSwitch}
-                value={isSwitched}
-              />
+              <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
+                <TextInput
+                  style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError, { color: themeBWI }]}
+                  placeholder={t('Tools.inputPass')}
+                  placeholderTextColor={colors.gray}
+                  value={password} editable={true}
+                  ref={inputRefPass}
+                  returnKeyType="done"
+                  onSubmitEditing={() => { Keyboard.dismiss(); }}
+                  onChangeText={(text) => { setPassword(text); setIsPasswordEmpty(false) }}
+                  secureTextEntry={!showPassword}
+                />
+                {password.length > 0 && (
+                  <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { right: -5 }]} onPress={_handleShowPass}>
+                    <Icon name={showPassword ? 'eye' : 'eye-closed'} color={colors.gray} style={loginStyle.pass} size={24} />
+                  </TouchableOpacity>
+                )}
+              </View>
+              <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimPassword }]}>
+                {t('Tools.passEmpty')}
+              </Animated.Text>
+              <View style={[loginStyle.buttonArea, rootStyle.px1,]}>
+                <TouchableOpacity style={[rootStyle.btnPatter, rootStyle.centralize]} onPress={_handleLogin}>
+                  {isLoadingLogin ? (
+                    <ActivityIndicator size="small" color="#0000ff" />
+                  ) : (
+                    <ProdBold style={[text.fz20, text.centralizeText, { color: colors.white }]}>{t('login.login')}</ProdBold>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity style={[rootStyle.btnPatterpass, rootStyle.mt1, rootStyle.centralize]} onPress={_handleSignUp}>
+                  {isLoadingSignUp ? (
+                    <ActivityIndicator size="small" color="#0000ff" />
+                  ) : (
+                    <ProdBold style={[text.fz20, text.centralizeText, { color: colors.patternColor }]}>{t('login.signup')}</ProdBold>
+                  )}
+                </TouchableOpacity>
+                <View style={[rootStyle.centralize, rootStyle.mt2]}>
+                  <ProdLight onPress={_handleForgotPass} style={[text.centralizeText, { color: themeBWI }]}>━━━━━━  {t('login.forgotPass')}¯\_(ツ)_/¯  ━━━━━━</ProdLight>
+                </View>
+                <Switch
+                  trackColor={{ false: themeGTD, true: colors.patternColor }}
+                  onValueChange={_changeThemeSwitch}
+                  value={isSwitched}
+                />
+              </View>
             </View>
+
           </View>
         </ScrollView >
       </TouchableWithoutFeedback>

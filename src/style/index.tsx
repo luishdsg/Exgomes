@@ -29,7 +29,10 @@ export const rootStyle = StyleSheet.create({
         justifyContent: 'space-between',
     },
     z10: {
-        zIndex: 10,
+        zIndex: 10000,
+    },
+    z_1: {
+        zIndex: -1,
     },
     container: {
         flex: 1,
@@ -43,6 +46,12 @@ export const rootStyle = StyleSheet.create({
     backgroundImage: {
         ...StyleSheet.absoluteFillObject,
         resizeMode: 'contain',
+    },
+    maxW50: {
+        maxWidth: 50
+    },
+    maxW100: {
+        maxWidth: 100
     },
     br100: {
         borderRadius: 100,
@@ -61,6 +70,9 @@ export const rootStyle = StyleSheet.create({
     },
     p3: {
         padding: '7%',
+    },
+    p4: {
+        padding: '10%',
     },
     p16: {
         padding: 16
@@ -93,12 +105,21 @@ export const rootStyle = StyleSheet.create({
     px3: {
         paddingHorizontal: '7%',
     },
+    px4: {
+        paddingHorizontal: '10%',
+    },
 
     py1: {
         paddingVertical: '3%',
     }, 
     py2: {
         paddingVertical: '5%',
+    },
+    py3: {
+        paddingVertical: '7%',
+    },
+    py4: {
+        paddingVertical: '10%',
     },
     pl1: {
         paddingLeft: '3%',
@@ -190,6 +211,12 @@ export const rootStyle = StyleSheet.create({
     },
     h30: {
         height: 30
+    },
+    h40: {
+        height: 40
+    },
+    h45: {
+        height: 45
     },
     h50: {
         height: 50
@@ -459,8 +486,8 @@ export const loginStyle = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         borderRadius: 15,
-        paddingLeft: '5%',
-        marginHorizontal: '4%',
+        paddingLeft: 15,
+        marginHorizontal: 20,
     },
     input: {
         fontFamily: 'ProdBold',

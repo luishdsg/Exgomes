@@ -8,23 +8,23 @@ import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Animated, Modal, Image, Text, PanResponder, SectionList, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ImageBackground, Dimensions } from 'react-native';
 import { PinchGestureHandler, State } from 'react-native-gesture-handler';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
-import getSecureStoreData from "../../constants/SecureStore";
-import { useThemeController } from "../../constants/Themed";
-import { ProfileViewsProps } from "../../interface/Props.interface";
-import { PubRes } from "../../interface/Pub.interface";
-import { RootStackParamList } from "../../interface/RootStackParamList";
-import { UserRes } from "../../interface/User.interface";
-import { profileStyle, rootStyle, rowstyle, text } from "../../style";
-import { colors } from "../../style/Colors";
-import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "../StyledComponents";
-import ZoomableImage from "../modal/ViewImageModal";
+import getSecureStoreData from "../constants/SecureStore";
+import { useThemeController } from "../constants/Themed";
+import { ProfileViewsProps } from "../interface/Props.interface";
+import { PubRes } from "../interface/Pub.interface";
+import { RootStackParamList } from "../interface/RootStackParamList";
+import { UserRes } from "../interface/User.interface";
+import { profileStyle, rootStyle, rowstyle, text } from "../style";
+import { colors } from "../style/Colors";
+import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "./StyledComponents";
+import ZoomableImage from "./modal/ViewImageModal";
 import { BlurView } from "expo-blur";
 import { Button } from "react-native-ios-kit";
 import { Icon } from 'react-native-ios-kit';
 import { SvgXml } from 'react-native-svg';
-import { verifiedAccount } from "../../../assets/svg/IconsSVG";
-import { ReactButtonsPost } from "../ReactButtonsPost";
-import { LoadProfilePost } from "../LoadContent";
+import { verifiedAccount } from "../../assets/svg/IconsSVG";
+import { ReactButtonsPost } from "./ReactButtonsPost";
+import { LoadProfilePost } from "./LoadContent";
 
 type ScreenPageProps = {
     navigation: StackNavigationProp<RootStackParamList, 'ProfileViews'>;
@@ -94,16 +94,17 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
 
     const _timeLinePub = ({ item }: { item: PubRes }) => {
         const [isViewVisible, setIsViewVisible] = useState(false);
-        const [imageUri, setImageUri] = useState(item.photo);
+        const [imageUri, setImageUri] = useState(item?.photo);
+        const [imageLoaded, setImageLoaded] = useState(false);
         const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
-        const position = new Animated.ValueXY({ x: -105, y: 85 });
+        const position = new Animated.ValueXY({ x: -50, y: 85 });
         const [modalVisible, setModalVisible] = useState(false);
 
         const panResponderSettingsPopUp = PanResponder.create({
             onStartShouldSetPanResponder: () => true,
-            onPanResponderMove: (_, gesture) => { position.setValue({ x: gesture.dx - 105, y: gesture.dy + 85 }); },
+            onPanResponderMove: (_, gesture) => { position.setValue({ x: gesture.dx - 50, y: gesture.dy + 85 }); },
             onPanResponderRelease: (_, gesture) => {
-                if (isViewVisible && gesture.dx === -105 && gesture.dy === 85) setIsViewVisible(false); else Animated.spring(position, { toValue: { x: -105, y: 85 }, useNativeDriver: false }).start();
+                if (isViewVisible && gesture.dx === -50 && gesture.dy === 85) setIsViewVisible(false); else Animated.spring(position, { toValue: { x: -50, y: 85 }, useNativeDriver: false }).start();
             },
         });
         const fadeInOut = (visible: boolean) => { setModalVisible(visible); };
@@ -111,15 +112,25 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
 
 
         useEffect(() => {
-            if (imageUri) Image.getSize(imageUri, (width, height) => { setImageDimensions({ width, height }) });
-        }, [imageUri]);
+            if (imageLoaded) {
+            Image.getSize(
+                imageUri,
+                (width, height) => {
+                  setImageDimensions({ width, height});
+                },
+                (error) => {
+                  console.warn(`Failed to get size for image: ${imageDimensions}`);
+                }
+                );
+              }
+            }, [imageUri, imageLoaded]);
         return (
             <View style={[rootStyle.w100, rootStyle.pt2, { flex: 1, position: 'relative' }]}>
-                <View style={[rowstyle.row, { position: 'relative' }]}>
-                    <View style={[rowstyle["1col"], rootStyle.centralize, {}]}>
+                <View style={[rowstyle.row, rootStyle.px1, { backgroundColor: 'transparent', position: 'relative' }]}>
+                    <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.maxW50, { backgroundColor: 'transparent' }]}>
                         <ImageProfileComponent source={{ uri: userSecureStoreData?.photo }} />
                     </View>
-                    <View style={[rowstyle["2col"], rootStyle.justifyCenter, { }]}>
+                    <View style={[rowstyle["6col"], rootStyle.pl1,rootStyle.justifyCenter, {}]}>
                         <View style={[rowstyle.row, { position: 'relative' }]}>
                             <View style={[rowstyle["1col"], rowstyle.row, rootStyle.alignCenter, {}]}>
                                 <TruncatedTextBold content={String(userSecureStoreData?.username)} maxSize={20} style={[text.fz17, text.leftText, { color: themeBWI, }]} />
@@ -130,35 +141,34 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                             {format(new Date(item.createdAt), 'dd•MMM yyyy-HH:mm',)}
                         </ProdLight>
                     </View>
-                    <View style={[rowstyle["2col"], rowstyle.row, rootStyle.justifyStart, rootStyle.alignCenter, {}]}>
-                        <Button style={[rowstyle.row, rootStyle.centralize, rootStyle.br100, rootStyle.px3, rootStyle.py2, { backgroundColor: themeWIB, borderColor: themeTDG, borderWidth: 1 }]}>
-                            <ProdLight style={[text.fz15, {color: themeTDWI}]} >{t('profile.follow')} </ProdLight>
+                    <View style={[rowstyle["2col"], rowstyle.row, rootStyle.justifyEnd, rootStyle.alignCenter, { backgroundColor: 'transparent' }]}>
+                        <Button style={[rowstyle.row, rootStyle.centralize, rootStyle.br100, rootStyle.px3, rootStyle.py2, rootStyle.mx2, { backgroundColor: themeWIB, borderColor: themeTDG, borderWidth: 1 }]}>
+                            <ProdLight style={[text.fz15, { color: themeTDWI }]} >{t('profile.follow')} </ProdLight>
                         </Button>
-                    </View>
-                    <View style={styles.container}>
-                        <TouchableOpacity onPress={() => setIsViewVisible(!isViewVisible)} style={[rootStyle.br100, rootStyle.p2, {}]}>
+                        <TouchableOpacity onPress={() => setIsViewVisible(!isViewVisible)} style={[rootStyle.br100, rootStyle.p2, { backgroundColor: 'transparent' }]}>
                             <Icon name={"ellipsis-horizontal-outline"} size={24} color={themeTDWI} />
                         </TouchableOpacity>
                         {isViewVisible && (
                             <Animated.View {...panResponderSettingsPopUp.panHandlers} style={[rootStyle.Pabsolute, rootStyle.z10, animatedStyle, { borderRadius: 100, }]}>
                                 <BlurView
-                                    style={[profileStyle.settingspopup, { backgroundImage: colors.whiteOp }]}
-                                    intensity={80}>
-                                    <Text>Width: {imageDimensions.width}</Text>
-                                    <Text>Height: {imageDimensions.height}</Text>
+                                    // tint={'dark'}
+                                    style={[profileStyle.settingspopup, rootStyle.z10, {}]}
+                                    intensity={150}>
+                                    {/* <Text>Width: {imageDimensions.width}</Text>
+                                    <Text>Height: {imageDimensions.height}</Text> */}
                                 </BlurView>
                             </Animated.View>
                         )}
                     </View>
                 </View>
-                <View style={[rootStyle.w100, { flex: 1,  }]}>
+                <View style={[rootStyle.w100, { flex: 1, }]}>
                     {item.content && (
-                        <View style={[rootStyle.w100, rootStyle.p1, { flexDirection: 'row', flexWrap: 'wrap', }]}>
+                        <View style={[rootStyle.w100, rootStyle.p1, rootStyle.z_1, { flexDirection: 'row', flexWrap: 'wrap', }]}>
                             <ProdRegular style={[{ color: themeBWI }]}>{item.content}</ProdRegular>
                         </View>
                     )}
                     {item.photo && (
-                        <View style={[rootStyle.justifyCenter, rootStyle.w100, { flex: 1, backgroundColor: 'blue' }]}>
+                        <View style={[rootStyle.justifyCenter, rootStyle.w100, rootStyle.z_1, { flex: 1, backgroundColor: 'blue' }]}>
                             <TouchableWithoutFeedback onPress={() => fadeInOut(true)}>
                                 <ImageBackground
                                     resizeMode="cover"
@@ -168,15 +178,16 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                                         height: imageDimensions.height * 0.3,
                                         maxHeight: screenHeight * 0.7
                                     }]}
-                                    source={{ uri: item.photo }} />
+                                    source={{ uri: item?.photo }}
+                                    onLoad={() => setImageLoaded(true)} />
                             </TouchableWithoutFeedback >
                         </View>
                     )}
-                 <ReactButtonsPost/>
+                    <ReactButtonsPost />
                 </View>
-                <Modal visible={modalVisible} transparent  statusBarTranslucent={true}>
+                <Modal visible={modalVisible} transparent statusBarTranslucent={true}>
                     {/* <StatusBar hidden={true} /> */}
-                    <ZoomableImage uri={item.photo} fadeInOut={fadeInOut} onClose={() => setModalVisible(false)} />
+                    <ZoomableImage uri={item?.photo} fadeInOut={fadeInOut} onClose={() => setModalVisible(false)} />
                 </Modal>
             </View>
         );
@@ -185,7 +196,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
         return (
             <View>
                 <LoadProfilePost
-                showLoad={!loading}
+                    showLoad={!loading}
                 />
             </View>
         );

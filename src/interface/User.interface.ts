@@ -3,14 +3,18 @@ export interface UserReq {
     password: string | undefined;
 }
 export interface UserRes {
-    _id: number;
+    _id: string;
     username: string;
     gender?: string,
     photo?: string,
     email?: string,
-    birth?: string,
+    birth?: Date,
     local?: string,
+    verified?: boolean,
     lang?: string,
+    block?: string[];
+    following?: string[];
+    followers?: string[];
     posts?: string[];
     saved?: string[];
     favorites?: string[];

@@ -74,32 +74,32 @@ const PopUpError: React.FC<PopUpErrorProps> = ({ visible, username, errorMessage
                 flexDirection: 'column',
               },
             ]}>
-            <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.Pabsolute, rootStyle.p16, {zIndex: 10}]}><View style={[rootStyle.lineIOS, {}]}></View></View>
+            <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.Pabsolute, rootStyle.p16, { zIndex: 10 }]}><View style={[rootStyle.lineIOS, {}]}></View></View>
             {errorMessage == `${t('login.userexist', { userexist: username })}` && (
-              <View style={[rowstyle.row, rootStyle.justifyCenter, popUpStyle.content, { height: '97%' ,}]}>
+              <View style={[rowstyle.row, rootStyle.justifyCenter, popUpStyle.content, { height: '97%', }]}>
                 <View style={[rowstyle['3col'], rootStyle.justifyCenter, {}]}>
                   <TruncatedTextBold content={username} maxSize={20} style={[text.fz30, text.leftText, { color: colors.black }]} />
                   <ProdBold style={[text.fz25, text.leftText, { color: colors.textDark }]}>{errorMessage}</ProdBold>
                 </View>
                 <View style={[rowstyle['4col'], rootStyle.justifyEnd, {}]}>
-                  <Image style={[{ width: '100%', height: '100%', position: 'absolute', right: -45, bottom: 0 }]} resizeMode="contain" source={{ uri: image }} />
+                  <Image style={[{ width: '100%', height: '100%', position: 'absolute', right: -45, bottom: 0 }]} resizeMode="contain" source={{ uri: `${image}` }} />
                 </View>
               </View>
             )}
             {errorMessage == `${t('login.errorserver')}` && (
-              <View style={[rowstyle.row, rootStyle.justifyCenter, rootStyle.borderTop, { height: '100%',  backgroundColor: colors.red}]}>
-                <Image style={[rootStyle.backgroundImage, rootStyle.borderTop, {}]} source={{ uri: image }} />
-                <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.justifyStart, rootStyle.Pabsolute,{bottom:0, height:90, backgroundColor: 'transparent' }]}>
-                  <ProdBold style={[text.fz25, text.leftText, text.centralizeText,text.shadow, { color: colors.white }]}>{errorMessage}</ProdBold>
+              <View style={[rowstyle.row, rootStyle.justifyCenter, rootStyle.borderTop, { height: '100%', backgroundColor: colors.red }]}>
+                <Image style={[rootStyle.backgroundImage, rootStyle.borderTop, {}]} source={{ uri: `${image}` }} />
+                <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.justifyStart, rootStyle.Pabsolute, { bottom: 0, height: 90, backgroundColor: 'transparent' }]}>
+                  <ProdBold style={[text.fz25, text.leftText, text.centralizeText, text.shadow, { color: colors.white }]}>{errorMessage}</ProdBold>
                 </View>
               </View>
             )}
             {errorMessage == `${t('login.incorrectLogin')}` && (
-                <View style={[rowstyle.row, rootStyle.justifyCenter, rootStyle.p16, { height: '97%' ,}]}>
-                <View style={[rowstyle['1col'], rootStyle.justifyCenter, {zIndex: 10}]}>
-                  <ProdBold style={[text.fz25, text.leftText, {color: colors.black }]}>{errorMessage}</ProdBold>
+              <View style={[rowstyle.row, rootStyle.centralize, rootStyle.p16, { height: '97%', }]}>
+                <View style={[rowstyle['1col'], rootStyle.justifyCenter, { zIndex: 10 }]}>
+                  <ProdBold style={[text.fz25, text.leftText, { color: colors.black }]}>{errorMessage}</ProdBold>
                 </View>
-                  <Image style={[{ width: '100%', height: '100%', position: 'absolute', right: -30, bottom:0, }]} resizeMode="contain" source={{ uri: image }} />
+                <Image style={[{ width: '100%', height: '100%', position: 'absolute', right: '-20%', bottom: 0, }]} resizeMode="contain" source={{ uri: `${image}` }} />
               </View>
             )}
 

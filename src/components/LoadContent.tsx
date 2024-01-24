@@ -12,17 +12,39 @@ const LoadProfilePost: React.FC<AlternativeProps> = ({ showLoad }) => {
     const { themeWB, themeGD, themeTDWI, themeTDD, themeOpacityWB, themeWITD, themeGLTD, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
 
     return (
-        <View style={[rootStyle.view, rootStyle.px1,{}]}>
+        <View style={[rootStyle.view, rootStyle.px1, {}]}>
             <View style={[rowstyle.row, {}]}>
                 <View style={[rowstyle["1col"], {}]}>
-                    <ShimmerPlaceholder  shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[Images.PostProfileIco,{}]} />
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[Images.PostProfileIco, {}]} />
                 </View>
                 <View style={[rowstyle["5col"], {}]}>
-                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]}  style={[rootStyle.br10, rootStyle.view,{flex: 1}]} />
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1 }]} />
                 </View>
             </View>
-            <View style={[rootStyle.view, rootStyle.py2,{height: 200}]}>
-            <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view,{flex: 1, color: 'red'}]} />
+            <View style={[rootStyle.view, rootStyle.py2, { height: 200 }]}>
+                <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1, color: 'red' }]} />
+            </View>
+            <View style={[rowstyle.row, {}]}>
+                <View style={[rowstyle["1col"], {}]}>
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[Images.PostProfileIco, {}]} />
+                </View>
+                <View style={[rowstyle["5col"], {}]}>
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1 }]} />
+                </View>
+            </View>
+            <View style={[rootStyle.view, rootStyle.py2, { height: 200 }]}>
+                <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1, color: 'red' }]} />
+            </View>
+            <View style={[rowstyle.row, {}]}>
+                <View style={[rowstyle["1col"], {}]}>
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[Images.PostProfileIco, {}]} />
+                </View>
+                <View style={[rowstyle["5col"], {}]}>
+                    <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1 }]} />
+                </View>
+            </View>
+            <View style={[rootStyle.view, rootStyle.py2, { height: 200 }]}>
+                <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[rootStyle.br10, rootStyle.view, { flex: 1, color: 'red' }]} />
             </View>
         </View>
 

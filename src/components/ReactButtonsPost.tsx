@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,13 +7,10 @@ import * as Animatable from 'react-native-animatable';
 import { Icon } from 'react-native-ios-kit';
 import { HateIcon } from "../../assets/svg/IconsSVG";
 import { useThemeController } from "../constants/Themed";
+import { ReactButtonsPostProps } from '../interface/Props.interface';
 import { rootStyle, rowstyle } from "../style";
 import { colors } from "../style/Colors";
 import { ProdRegular } from "./StyledComponents";
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../interface/RootStackParamList';
-import { ReactButtonsPostProps } from '../interface/Props.interface';
-import { useNavigation } from '@react-navigation/native';
 import { CommentsPostModal } from './modal/CommentsPostModal';
 
 const ReactButtonsPost: React.FC = () => {
@@ -110,7 +108,7 @@ const ReactButtonsPost: React.FC = () => {
     return (
 
         <View style={[rowstyle.row, rootStyle.centralize, rootStyle.px1, { height: 60 }]}>
-            <View style={[rowstyle["2col"], rootStyle.centralize, {}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,{}]}>
                 {likedVisible ? (
                     <TouchableOpacity style={[rootStyle.centralize, rootStyle.pt2, {}]} onPress={_liked}>
                         <Icon size={50 * 0.6} name={"heart-outline"} color={themeGTD} />
@@ -130,7 +128,7 @@ const ReactButtonsPost: React.FC = () => {
                     </TouchableWithoutFeedback>
                 )}
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize, {}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,{}]}>
                 {hateVisible ? (
                     <TouchableOpacity style={[rootStyle.pl3, {}]} onPress={_hated}>
                         <HateIcon color={themeGTD} />
@@ -151,7 +149,7 @@ const ReactButtonsPost: React.FC = () => {
                     </TouchableWithoutFeedback>
                 )}
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize, {}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize,  rootStyle.maxW50,{}]}>
                 <TouchableOpacity style={[{}]} onPress={_comments}>
                     <Icon name={'chatbubble-outline'} size={50 * 0.5} color={commentsVisible} />
                 </TouchableOpacity>
@@ -162,8 +160,10 @@ const ReactButtonsPost: React.FC = () => {
                     <Animatable.View
                         animation={isSaveVisible ? 'fadeIn' : 'fadeOut'}
                         style={[
-                            safeStyles, rootStyle.br100, rootStyle.px2, rootStyle.mr2, rootStyle.py1,
+                            safeStyles, rootStyle.br100,  rootStyle.mr2,
                             {
+                                paddingVertical:8,
+                                paddingHorizontal: 10,
                                 borderWidth: 1,
                                 borderColor: themeBW,
                             }]}

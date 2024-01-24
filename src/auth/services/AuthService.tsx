@@ -11,7 +11,7 @@ interface AuthProps {
 }
 const AuthContext = createContext<AuthProps>({});
 
-export const useAuth = () => { 
+export const useAuth = () => {
   return useContext(AuthContext);
 }
 
@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: any) => {
       const authToken = await SecureStore.getItemAsync('userAuthorizeName');
       if (authToken) {
         axios.defaults.headers.common['Authorization'] = `Barrer ${authToken}`
-
         setAuthState({
           token: authToken,
           authenticated: true
@@ -45,27 +44,16 @@ export const AuthProvider = ({ children }: any) => {
     try {
       const createdAt = new Date();
       const response = await axios.post(`${API_URL}/users`, { ...userData, createdAt });
-      console.log('Resposta do servidor:', response);
-      const newUser: UserRes = { _id: response.data._id, ...userData};
-      console.log('Usuário cadastrado com sucesso:', newUser);
+      const newUser: UserRes = { _id: response.data._id, ...userData };
       return newUser;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError;
-        console.error('Erro ao fazer a solicitação:', axiosError.message);
-        if (axiosError.response) {
-          console.error('Resposta do servidor:', axiosError.response.data);
-        }
-      } else {
-        console.error('Erro ao cadastrar:', error);
-      }
       throw new Error('Erro ao cadastrar: ' + error);
     }
   };
   const loginService = async (loginUserReq: LoginUserReq) => {
     try {
       const response: any = await axios.post(
-        `${API_URL}/login`,loginUserReq,
+        `${API_URL}/login`, loginUserReq,
         {
           withCredentials: true,
           headers: {
@@ -74,8 +62,6 @@ export const AuthProvider = ({ children }: any) => {
           },
         });
 
-      console.log('Resposta do servidor:', response);
-
       if (!response.data) {
         throw new Error('Resposta do servidor sem dados');
       }
@@ -83,7 +69,6 @@ export const AuthProvider = ({ children }: any) => {
       const username = usernameDataMatch ? usernameDataMatch[1] : null;
 
       const user: LoginUserRes = { ...response.data, password: undefined, username: username };
-      console.log('Resposta ao front:', user.username);
       setAuthState({
         token: user.accessToken,
         authenticated: true
@@ -91,11 +76,14 @@ export const AuthProvider = ({ children }: any) => {
 
       axios.defaults.headers.common['Authorization'] = `Barrer ${user.accessToken}`
 
-
-      await SecureStore.setItemAsync('userAuthorizeName',  user.username);
-      await SecureStore.setItemAsync('userAuthorizeToken', user.accessToken);
-
-      return user;
+      try {
+        await SecureStore.setItemAsync('userAuthorizeName', user.username);
+        await SecureStore.setItemAsync('userAuthorizeToken', user.accessToken);
+        console.warn('salvou no store')
+        return user;
+      } catch (error) {
+        console.warn('não salvou no store')
+      }
     } catch (error) {
       console.error('Erro ao fazer login:', error);
       throw new Error('Erro ao fazer login');
@@ -113,7 +101,7 @@ export const AuthProvider = ({ children }: any) => {
   }
 
 
- 
+
   const value = {
     onSignUp: signupService,
     onLogin: loginService,

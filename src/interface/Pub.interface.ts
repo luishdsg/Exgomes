@@ -1,3 +1,7 @@
+export interface Comment {
+    id: string;
+    content: string;
+  }
 export interface PubRes {
     _id: string;
     userId: string;
@@ -8,6 +12,6 @@ export interface PubRes {
     views: number;
     likes: number;
     hates: number;
-    comments: number;
+    comments: Comment[];
     reposts: number;
 }
