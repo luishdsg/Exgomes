@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { colors } from './Colors';
 
 export const rootStyle = StyleSheet.create({
@@ -38,14 +38,24 @@ export const rootStyle = StyleSheet.create({
         flex: 1,
         width: '100%',
         position: 'relative',
-        // backgroundColor: colors.whiteIce,
     },
-    borderTop: {
-        borderTopRightRadius: 20, borderTopLeftRadius: 20,
-    },
+
     backgroundImage: {
         ...StyleSheet.absoluteFillObject,
         resizeMode: 'contain',
+    },
+    boxShadow: {
+        ...Platform.select({
+            ios: {
+                shadowColor: 'black',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+            },
+            android: {
+                elevation: 29,
+            },
+        }),
     },
     maxW50: {
         maxWidth: 50
@@ -61,6 +71,20 @@ export const rootStyle = StyleSheet.create({
     },
     br30: {
         borderRadius: 30,
+    },
+    brTop: {
+        borderTopRightRadius: 30,
+        borderTopLeftRadius: 30,
+    },
+    borderTop: {
+        borderTopWidth: 1
+    },
+    borderBottom: {
+        borderBottomWidth: 1
+    },
+    borderHorizontal: {
+        borderLeftWidth: 1,
+        borderRightWidth: 1
     },
     p1: {
         padding: '3%',
@@ -95,10 +119,16 @@ export const rootStyle = StyleSheet.create({
     pb2: {
         paddingBottom: '5%',
     },
+    pb3: {
+        paddingBottom: '7%',
+    },
+    pb4: {
+        paddingBottom: '10%',
+    },
 
     px1: {
         paddingHorizontal: '3%',
-    }, 
+    },
     px2: {
         paddingHorizontal: '5%',
     },
@@ -111,7 +141,7 @@ export const rootStyle = StyleSheet.create({
 
     py1: {
         paddingVertical: '3%',
-    }, 
+    },
     py2: {
         paddingVertical: '5%',
     },
@@ -162,6 +192,12 @@ export const rootStyle = StyleSheet.create({
     my2: {
         marginVertical: '5%',
     },
+    my3: {
+        marginVertical: '7%',
+    },
+    my4: {
+        marginVertical: '10%',
+    },
     my1: {
         marginVertical: '3%',
     },
@@ -191,11 +227,29 @@ export const rootStyle = StyleSheet.create({
     mr2: {
         marginRight: '5%'
     },
+    mr3: {
+        marginRight: '7%'
+    },
+    mr4: {
+        marginRight: '10%'
+    },
     mb1: {
         marginBottom: '3%'
     },
     mb2: {
         marginBottom: '5%'
+    },
+    mb3: {
+        marginBottom: '7%'
+    },
+    mb4: {
+        marginBottom: '10%'
+    },
+    mb5: {
+        marginBottom: '15%'
+    },
+    mb6: {
+        marginBottom: '20%'
     },
     ml1: {
         marginLeft: '3%'
@@ -250,6 +304,21 @@ export const rootStyle = StyleSheet.create({
     },
     w100: {
         width: '100%',
+    },
+    w75: {
+        width: '75%'
+    },
+    w85: {
+        width: '85%'
+    },
+    maxH500: {
+        maxHeight: 500
+    },
+    maxW500: {
+        maxWidth: 500
+    },
+    overflowH: {
+        overflow: 'hidden'
     },
     halfview: {
         // backgroundColor: colors.patternColor,
@@ -406,6 +475,10 @@ export const text = StyleSheet.create({
     fz10: {
         fontSize: 10,
     },
+    fz13: {
+        fontSize: 13,
+    },
+
     fz15: {
         fontSize: 15,
     },

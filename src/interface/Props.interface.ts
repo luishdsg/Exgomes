@@ -3,7 +3,7 @@ import { UserRes } from "./User.interface";
 import { RootStackParamList } from "./RootStackParamList";
 import { NavigationProp } from "@react-navigation/native";
 import { PubRes } from "./Pub.interface";
-import { ScrollView } from "react-native";
+import { ScrollView, SectionList } from "react-native";
 
 export interface PopUpErrorProps {
   visible?: boolean;
@@ -36,11 +36,17 @@ export type SectionDataPostProps = {
   data: Array<{ post: PubRes; user: UserRes }>;
 };
 
-export interface ScrollToTopButtonComponentProps {
-  scrollViewRef: React.RefObject<ScrollView>
-  onPress: (page: number) => void;
+export interface SettingsPostModalProps {
+  onClose: () => void;
+  followUnfollow: () => void;
+  isUserFollowing: boolean;
+  Ids: string
 }
 
+export interface ScrollToTopButtonComponentProps {
+  sectionListRef: React.RefObject<SectionList>
+  onPress: (page: number) => void;
+}
 export interface ZoomableImageProps {
   uri: string;
   onClose: () => void;

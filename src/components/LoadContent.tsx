@@ -9,10 +9,10 @@ import { colors } from "../style/Colors";
 
 const LoadProfilePost: React.FC<AlternativeProps> = ({ showLoad }) => {
     const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
-    const { themeWB, themeGD, themeTDWI, themeTDD, themeOpacityWB, themeWITD, themeGLTD, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+    const { themeWIB, themeGD, themeTDWI, themeTDD, themeOpacityWB, themeWITD, themeGLTD, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
 
     return (
-        <View style={[rootStyle.view, rootStyle.px1, {}]}>
+        <View style={[rootStyle.view, rootStyle.px1, {backgroundColor: themeWIB}]}>
             <View style={[rowstyle.row, {}]}>
                 <View style={[rowstyle["1col"], {}]}>
                     <ShimmerPlaceholder shimmerColors={[themeGLD, themeOpacityWB, themeGLD]} style={[Images.PostProfileIco, {}]} />

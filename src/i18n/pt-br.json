@@ -1,15 +1,14 @@
 {
     "greeting": "Olá!",
     "welcome": "Bem-vindo ao nosso aplicativo!",
-
     "home": {
         "moredata": "+ postagens"
     },
-    "login":{
+    "login": {
         "signup": "Criar conta",
         "login": "Entrar",
         "forgotPass": "Esqueci a senha",
-        "hny":"Feliz ano novo {{newyear}}",
+        "hny": "Feliz ano novo {{newyear}}",
         "title": "Fale com mais Gente\ncomo você!",
         "userexist": "já está\nem uso",
         "errorserver": "Servidor em análise\nPor favor aguarde alguns minutos",
@@ -19,9 +18,6 @@
     "profile": {
         "youremail": "seu email",
         "editprofile": "editar perfil",
-        "followers": "Seguidores",
-        "follow": "seguir",
-        "following": "Seguindo",
         "favorites": "Favoritos",
         "save": "Salvos",
         "start": "Inicio",
@@ -29,20 +25,31 @@
         "trash": "Lixeira",
         "media": "Mídia"
     },
-    "Tools":{
-        "inputUser":"Nome de usuário",
-        "userEmpty":"Usuário não pode ficar vazio",
-        "passEmpty":"Senha não pode ficar vazia",
-        "inputPass":"Senha",
+    "Tools": {
+        "inputUser": "Nome de usuário",
+        "userEmpty": "Usuário não pode ficar vazio",
+        "passEmpty": "Senha não pode ficar vazia",
+        "inputPass": "Senha",
         "refresh": "Atualizando...",
         "comments": "comentários"
     },
-    "settings":{
-        "settings": "configurações"
+    "settings": {
+        "settings": "configurações",
+        "uninteresting": "não tenho interesse",
+        "views": "visualizações",
+        "block": "bloquear",
+        "notification":"notificações",
+        "notnotfy": "não ser notificado(a)",
+        "notify": "todas as notificações",
+        "report" : "denunciar"
     },
     "post": {
         "safe": "salvo",
-        "removed": "removido"
+        "removed": "removido",
+        "unfollow": "Desseguir",
+        "followers": "Seguidores",
+        "follow": "seguir",
+        "following": "Seguindo",
+        "cancel": "cancelar"
     }
-  }
-  
+}

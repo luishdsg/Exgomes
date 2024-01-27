@@ -44,20 +44,33 @@ const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize, sty
   );
 };
 
-const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({ scrollViewRef, onPress }) => {
+
+const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({ sectionListRef, onPress }) => {
   const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const { t } = useTranslation();
   const handleScrollToTop = () => {
     onPress(null);
-    if (scrollViewRef.current) {
+    if (sectionListRef.current) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      scrollViewRef.current.scrollTo({ y: 0, animated: false });
+       sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, animated: false });
     }
   };
 
   return (
     <TouchableOpacity onPress={handleScrollToTop} style={{}}>
-      <View  style={[rowstyle.row, rootStyle.centralize, rootStyle.my1, rootStyle.br100, rootStyle.px1, rootStyle.h40, { backgroundColor: themeGTD }]}>
+      <LottieView
+        loop={true}
+        autoPlay
+        duration={7000}
+        style={[
+          {
+            width: 140 * 0.7,
+            height: 140 * 0.7,
+          }]}
+        source={require('../../assets/json/nomore.json')}
+      />
+      <View style={[rowstyle.row, rootStyle.centralize, rootStyle.my1, rootStyle.br100, rootStyle.px1, rootStyle.h40, { backgroundColor: themeGTD }]}>
+
         <LottieView
           loop={true}
           autoPlay
@@ -72,6 +85,13 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
         <ProdRegular style={[{ color: themeBW }]}>{t('home.moredata')}</ProdRegular>
       </View>
     </TouchableOpacity>
+  );
+};
+const LineiOSComponent: React.FC = () => {
+  return (
+    <View style={[rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >
+      <View style={[rootStyle.lineIOS, {}]}></View>
+    </View>
   );
 };
 
@@ -162,6 +182,7 @@ export {
   ImageMaxComponent,
   ImageProfileComponent,
   ScrollToTopButtonComponent,
+  LineiOSComponent,
   ProdRegular,
   ProdThin,
   ProdBold,

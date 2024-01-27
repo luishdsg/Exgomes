@@ -13,12 +13,12 @@ export interface UserRes {
     verified?: boolean,
     lang?: string,
     block?: string[];
-    following?: string[];
-    followers?: string[];
-    posts?: string[];
-    saved?: string[];
-    favorites?: string[];
-    trash?: string[];
+    following?: Object[];
+    followers?: Object[];
+    posts?: Object[];
+    saved?: Object[];
+    favorites?: Object[];
+    trash?: Object[];
     accessToken?: string | null;
 }
 export interface LoginUserReq {

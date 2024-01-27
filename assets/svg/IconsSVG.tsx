@@ -1,4 +1,4 @@
-import Svg, { Path } from "react-native-svg";
+import Svg, { G, Path } from "react-native-svg";
 import { colors } from "../../src/style/Colors";
 import { HateIconProps } from "../../src/interface/Props.interface";
 
@@ -12,6 +12,19 @@ const verifiedAccount = `
         </svg>
     `;
 
+const Uninteresting: React.FC<HateIconProps> = ({ color }) => {
+    return (
+        <Svg
+            height={25}
+            width={25}
+            viewBox="0 0 512.000000 512.000000"
+        >
+            <G transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill={color} stroke="none">
+                <Path d="M2270 4835 c-810 -109 -1493 -623 -1815 -1367 -136 -316 -193 -619 -182 -982 6 -199 21 -313 63 -481 216 -861 913 -1524 1779 -1694 333 -65 706 -53 1039 34 665 174 1239 673 1516 1318 243 568 241 1235 -5 1803 -191 443 -522 820 -937 1067 -240 143 -493 236 -788 289 -151 27 -514 34 -670 13z m-223 -1707 c74 -41 105 -142 64 -215 -30 -52 -65 -75 -121 -81 l-47 -4 -1 -64 c-1 -120 -67 -221 -180 -276 -55 -27 -77 -32 -137 -32 -175 0 -315 139 -315 314 l0 60 -39 0 c-107 0 -183 129 -133 226 47 93 55 94 502 91 334 -2 378 -4 407 -19z m1876 -7 c51 -31 81 -91 74 -149 -8 -76 -77 -142 -148 -142 l-39 0 0 -60 c0 -123 -65 -227 -177 -282 -56 -27 -77 -32 -138 -32 -174 0 -315 137 -317 309 l-1 65 -35 0 c-77 0 -152 76 -152 154 0 45 20 95 48 119 49 44 77 47 472 44 374 -2 375 -2 413 -26z m-443 -1273 c66 -34 93 -79 88 -149 -5 -65 -32 -109 -82 -133 -31 -14 -124 -16 -926 -16 -802 0 -895 2 -926 16 -50 24 -77 68 -82 133 -5 70 22 115 88 149 l44 22 876 0 876 0 44 -22z" />
+            </G>
+        </Svg>
+    );
+}
 
 const HateIcon: React.FC<HateIconProps> = ({ color }) => {
     return (
@@ -49,4 +62,5 @@ const HateIcon: React.FC<HateIconProps> = ({ color }) => {
 export {
     verifiedAccount,
     HateIcon,
+    Uninteresting
 };

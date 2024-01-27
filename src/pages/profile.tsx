@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+
 import { API_URL } from '@env';
 import { Feather, Ionicons, MaterialCommunityIcons, } from '@expo/vector-icons';
 import axios from 'axios';

@@ -49,7 +49,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ onClose }) => {
                     console.log('ATUALIZOU segundo' + modalHeight)
                     Animated.timing(animatedModalHeight, {
                         toValue: 0,
-                        duration: 1000,
+                        duration: 200,
                         easing: Easing.linear,
                         useNativeDriver: false,
                     }).start(() => onClose());
@@ -59,7 +59,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ onClose }) => {
             onPanResponderRelease: (_, gestureState) => {
                 Animated.timing(animatedModalHeight, {
                     toValue: modalHeight + (gestureState.dy > 0 ? 5 : -5),
-                    duration: 3000,
+                    duration: 200,
                     easing: Easing.linear,
                     useNativeDriver: false,
                 }).start();

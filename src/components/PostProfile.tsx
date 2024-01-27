@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+
 import { API_URL } from "@env";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";

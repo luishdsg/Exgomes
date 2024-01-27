@@ -5,7 +5,7 @@ import { Animated, Image, TouchableOpacity, View } from 'react-native';
 import { PopUpErrorProps } from '../../interface/Props.interface';
 import { popUpStyle, rootStyle, rowstyle, text } from '../../style';
 import { colors } from '../../style/Colors';
-import { ProdBold, ProdRegular, ProdThin, TruncatedTextBold } from '../StyledComponents';
+import { LineiOSComponent, ProdBold, ProdRegular, ProdThin, TruncatedTextBold } from '../StyledComponents';
 import { BlurView } from 'expo-blur';
 
 
@@ -74,7 +74,9 @@ const PopUpError: React.FC<PopUpErrorProps> = ({ visible, username, errorMessage
                 flexDirection: 'column',
               },
             ]}>
-            <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.Pabsolute, rootStyle.p16, { zIndex: 10 }]}><View style={[rootStyle.lineIOS, {}]}></View></View>
+            <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.Pabsolute, rootStyle.p16, { zIndex: 10 }]} >
+              <View style={[rootStyle.lineIOS, {}]}></View>
+            </View>
             {errorMessage == `${t('login.userexist', { userexist: username })}` && (
               <View style={[rowstyle.row, rootStyle.justifyCenter, popUpStyle.content, { height: '97%', }]}>
                 <View style={[rowstyle['3col'], rootStyle.justifyCenter, {}]}>
