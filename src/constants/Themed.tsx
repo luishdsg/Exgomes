@@ -4,7 +4,7 @@ import { useColorScheme } from 'react-native';
 import { colors } from '../style/Colors';
 
 export const useThemeController = () => {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
 
 
 

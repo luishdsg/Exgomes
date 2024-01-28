@@ -55,7 +55,12 @@ export interface ZoomableImageProps {
 export interface CommentsPostProps {
   onClose: () => void;
 }
-export type ReactButtonsPostProps =  NavigationProp<RootStackParamList, 'CommentsPost'>;
+export type ReactButtonsPostProps =  {
+  // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>
+  post: PubRes;
+  user: UserRes;
+  onPress: () => void;
+};
 export type PostHomeProps =  {
   navigation: NavigationProp<RootStackParamList, 'CommentsPost'>;
   data: {

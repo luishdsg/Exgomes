@@ -18,8 +18,8 @@ import { colors } from '../../style/Colors';
 import { useAuth } from '../services/AuthService';
 
 const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('string');
+  const [password, setPassword] = useState('string');
   const [showPassword, setShowPassword] = useState(false);
   const [isSwitched, setIsEnabled] = useState(false);
   const inputRefPass = useRef(null);

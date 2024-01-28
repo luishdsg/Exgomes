@@ -185,7 +185,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                             </TouchableWithoutFeedback >
                         </View>
                     )}
-                    <ReactButtonsPost />
+                    {/* <ReactButtonsPost /> */}
                 </View>
                 <Modal visible={modalVisible} transparent statusBarTranslucent={true}>
                     {/* <StatusBar hidden={true} /> */}

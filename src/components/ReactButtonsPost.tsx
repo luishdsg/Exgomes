@@ -8,22 +8,26 @@ import { Icon } from 'react-native-ios-kit';
 import { HateIcon } from "../../assets/svg/IconsSVG";
 import { useThemeController } from "../constants/Themed";
 import { ReactButtonsPostProps } from '../interface/Props.interface';
-import { rootStyle, rowstyle } from "../style";
+import { rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
 import { ProdRegular } from "./StyledComponents";
 import { CommentsPostModal } from './modal/CommentsPostModal';
+import getSecureStoreData from '../constants/SecureStore';
+import axios from 'axios';
+import { API_URL } from '@env';
+import { UserRes } from '../interface/User.interface';
+import { formatNumber } from '../pipe/FormatNumber';
 
-const ReactButtonsPost: React.FC = () => {
+const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post }) => {
     const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t, i18n: { changeLanguage, language } } = useTranslation();
-    const navigation = useNavigation<ReactButtonsPostProps>();
+    // const navigation = useNavigation<ReactButtonsPostProps>();
+    const [userAuth, setUserAuth] = useState<UserRes>();
 
     const likedAnimation = useRef<LottieView | null>(null);
-    const [likedisPlayingForward, setLikedIsPlayingForward] = useState(true);
     const [likedVisible, setLikedVisible] = useState(true);
 
     const hateAnimation = useRef<LottieView | null>(null);
-    const [hateisPlayingForward, setHateIsPlayingForward] = useState(true);
     const [hateVisible, setHateVisible] = useState(true);
 
     const [commentsVisible, setCommentsVisible] = useState(themeGTD);
@@ -34,37 +38,93 @@ const ReactButtonsPost: React.FC = () => {
     const [isSaveVisible, setIsSaveVisible] = useState(false);
     const animatedSave = useRef(new Animated.Value(0)).current;
 
-    const _liked = () => {
-        if (likedisPlayingForward) {
-            setLikedVisible(false)
-            setLikedIsPlayingForward(false)
-            setTimeout(() => {
-                likedAnimation.current?.play(0, 45);
-            }, 1)
-        } else {
-            setLikedIsPlayingForward(true)
-            likedAnimation.current?.play(45, 0);
-            setTimeout(() => {
-                setLikedVisible(true)
-            }, 780)
-        }
-    };
 
-    const _hated = () => {
-        if (hateisPlayingForward) {
-            setHateVisible(false)
-            setHateIsPlayingForward(false)
-            setTimeout(() => {
-                hateAnimation.current?.play(0, 15);
-            }, 1)
-        } else {
-            setHateIsPlayingForward(true)
-            hateAnimation.current?.play(15, 0);
-            setTimeout(() => {
-                setHateVisible(true)
-            }, 380)
+
+
+    const _liked = async () => {
+        const data = await getSecureStoreData();
+        if (!data) console.error('Erro ao obter os dados');
+        try {
+            if (likedVisible) {
+                setLikedVisible(!likedVisible)
+                setTimeout(() => {
+                    likedAnimation.current?.play(0, 45);
+                }, 10)
+                await axios.post(`${API_URL}/posts/${post._id}/addLikeAndFavorite/${user._id}`, {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${data.token}`,
+                    },
+                });
+                console.warn('Deu like:  ' + likedVisible);
+
+            } else {
+                likedAnimation.current?.play(45, 0);
+                setTimeout(() => {
+                    setLikedVisible(!likedVisible)
+                }, 780)
+                await axios.delete(`${API_URL}/posts/${post._id}/removeLikeAndFavorite/${user._id}`, {
+                    headers: {
+                        Authorization: `Bearer ${data.token}`,
+                    },
+                });
+                console.warn('Deu dislike: ' + likedVisible);
+            }
+        } catch (error) {
+            console.error('Erro ao like/dislike no usuário = ' + data.token, error);
         }
     };
+    const _verifyLike = () => {
+        if (user?.favorites?.includes(post._id)) {
+            setLikedVisible(false),
+                setTimeout(() => {
+                    likedAnimation.current?.play(45, 45);
+                }, 10);
+        }
+    }
+
+
+    const _hated = async () => {
+        const data = await getSecureStoreData();
+        if (!data) console.error('Erro ao obter os dados');
+        try {
+            if (hateVisible) {
+                setHateVisible(!hateVisible)
+                setTimeout(() => {
+                    hateAnimation.current?.play(0, 15);
+                }, 10)
+                await axios.post(`${API_URL}/posts/${post._id}/addHated/${user._id}`, {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${data.token}`,
+                    },
+                });
+                console.warn('Deu hate:  ' + hateVisible);
+
+            } else {
+                hateAnimation.current?.play(15, 0);
+                setTimeout(() => {
+                    setHateVisible(!hateVisible)
+                }, 780)
+                await axios.delete(`${API_URL}/posts/${post._id}/removeHated/${user._id}`, {
+                    headers: {
+                        Authorization: `Bearer ${data.token}`,
+                    },
+                });
+                console.warn('Deu unhate: ' + hateVisible);
+            }
+        } catch (error) {
+            console.error('Erro ao hate/unhated no usuário = ' + data.token, error);
+        }
+    };
+    const _verifyHated = () => {
+        if (user?.hated?.includes(post._id)) {
+            setHateVisible(false),
+                setTimeout(() => {
+                    hateAnimation.current?.play(15, 15);
+                }, 10);
+        }
+    }
 
     const _comments = () => {
         setCommentsModal(!commentsModal)
@@ -89,6 +149,8 @@ const ReactButtonsPost: React.FC = () => {
             setSaveVisible('bookmark')
         }
     };
+
+
     const safeStyles = {
         opacity: animatedSave,
         transform: [
@@ -102,13 +164,22 @@ const ReactButtonsPost: React.FC = () => {
     };
 
     useEffect(() => {
-    });
+        // _getUserAuth();
+        _verifyLike();
+        _verifyHated();
+        // console.log('like verificado')
+
+    }, [
+        user?.hated,
+        user?.favorites,
+        post._id
+    ]);
 
 
     return (
 
-        <View style={[rowstyle.row, rootStyle.centralize, rootStyle.px1, { height: 60 }]}>
-            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,{}]}>
+        <View style={[rowstyle.row, rootStyle.centralize, rootStyle.px1, rootStyle.h60, {}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, { backgroundColor: 'transparent' }]}>
                 {likedVisible ? (
                     <TouchableOpacity style={[rootStyle.centralize, rootStyle.pt2, {}]} onPress={_liked}>
                         <Icon size={50 * 0.6} name={"heart-outline"} color={themeGTD} />
@@ -127,8 +198,11 @@ const ReactButtonsPost: React.FC = () => {
                         />
                     </TouchableWithoutFeedback>
                 )}
+                <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
+                    {formatNumber(post.likes?.length)}
+                </ProdRegular>
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,{}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,rootStyle.h60, {}]}>
                 {hateVisible ? (
                     <TouchableOpacity style={[rootStyle.pl3, {}]} onPress={_hated}>
                         <HateIcon color={themeGTD} />
@@ -148,11 +222,18 @@ const ReactButtonsPost: React.FC = () => {
                         />
                     </TouchableWithoutFeedback>
                 )}
+                  <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
+                    {formatNumber(post.hated?.length)}
+                </ProdRegular>
+
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize,  rootStyle.maxW50,{}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60,{}]}>
                 <TouchableOpacity style={[{}]} onPress={_comments}>
                     <Icon name={'chatbubble-outline'} size={50 * 0.5} color={commentsVisible} />
                 </TouchableOpacity>
+                <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
+                    {formatNumber(post.comments?.length)}
+                </ProdRegular>
             </View>
 
             <View style={[rowstyle["12col"], {}]}>
@@ -160,9 +241,9 @@ const ReactButtonsPost: React.FC = () => {
                     <Animatable.View
                         animation={isSaveVisible ? 'fadeIn' : 'fadeOut'}
                         style={[
-                            safeStyles, rootStyle.br100,  rootStyle.mr2,
+                            safeStyles, rootStyle.br100, rootStyle.mr2,
                             {
-                                paddingVertical:8,
+                                paddingVertical: 8,
                                 paddingHorizontal: 10,
                                 borderWidth: 1,
                                 borderColor: themeBW,

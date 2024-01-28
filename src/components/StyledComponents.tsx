@@ -87,6 +87,8 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
     </TouchableOpacity>
   );
 };
+
+
 const LineiOSComponent: React.FC = () => {
   return (
     <View style={[rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >

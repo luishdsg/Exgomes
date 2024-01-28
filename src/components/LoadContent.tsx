@@ -1,11 +1,9 @@
-import { ProdBold } from "./StyledComponents";
-import { AlternativeProps } from "../interface/AlternativeProps.interface";
-import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import { LinearGradient } from 'expo-linear-gradient';
 import { View } from "react-native";
-import { Images, rootStyle, rowstyle } from "../style";
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import { useThemeController } from "../constants/Themed";
-import { colors } from "../style/Colors";
+import { AlternativeProps } from "../interface/AlternativeProps.interface";
+import { Images, rootStyle, rowstyle } from "../style";
 
 const LoadProfilePost: React.FC<AlternativeProps> = ({ showLoad }) => {
     const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
@@ -54,4 +52,4 @@ const LoadProfilePost: React.FC<AlternativeProps> = ({ showLoad }) => {
 
 export {
     LoadProfilePost
-}
+};

@@ -10,8 +10,8 @@ export interface PubRes {
     photo: string;
     tag: string;
     views: number;
-    likes: number;
-    hates: number;
+    likes: Object[];
+    hated: Object[];
     comments: Comment[];
     reposts: number;
 }

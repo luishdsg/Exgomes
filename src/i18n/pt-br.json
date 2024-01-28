@@ -50,6 +50,8 @@
         "followers": "Seguidores",
         "follow": "seguir",
         "following": "Seguindo",
-        "cancel": "cancelar"
+        "cancel": "cancelar",
+        "thousands": "mil",
+        "millions": "mi"
     }
 }

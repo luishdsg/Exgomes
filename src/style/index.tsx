@@ -58,7 +58,10 @@ export const rootStyle = StyleSheet.create({
         }),
     },
     maxW50: {
-        maxWidth: 50
+        maxWidth: 65
+    },
+    maxW60: {
+        maxWidth: 60
     },
     maxW100: {
         maxWidth: 100
@@ -474,6 +477,9 @@ export const text = StyleSheet.create({
     },
     fz10: {
         fontSize: 10,
+    },
+    fz12: {
+        fontSize: 12,
     },
     fz13: {
         fontSize: 13,

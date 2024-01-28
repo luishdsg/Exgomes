@@ -92,54 +92,59 @@ const PostHome: React.FC = () => {
                 console.warn('loading falso')
                 setLoading(false);
             }
-        }, 100)
-
+        }, 1000)
     }, []);
 
     const _getUserAuth = async (): Promise<UserRes[]> => {
         try {
             const data = await getSecureStoreData();
-            if (!data) console.error('Erro ao obter os dados');
-            const followingIds = await axios.get<UserRes>(`${API_URL}/users/username${data?.username}`);
-            setUserAuth(followingIds.data);
-            console.warn('seguindo  =  ' + userAuth.following + data.username)
+            if (!data) {
+                console.error('Erro ao obter os dados do store');
+            } else {
+                const followingIds = await axios.get<UserRes>(`${API_URL}/users/username${data?.username}`);
+                setUserAuth(followingIds.data);
+                console.warn('dados auth obtidos');
+            }
         } catch (error) {
-            console.error('Erro ao obter os dados : ', error);
+            console.error('Erro ao obter os dados do usuario authHome : ', error);
             return [];
         }
-
     };
 
 
     const isUserFollowing = (userId: string) => {
-        const findInList = userAuth.following?.includes(userId || '');
+        const findInList = userAuth?.following?.includes(userId || '');
         return findInList
     }
 
     const _followUnfollow = async (follower: string) => {
         const data = await getSecureStoreData();
-        if (!data) console.error('Erro ao obter os dados');
-        try {
-            if (isUserFollowing(follower)) {
-                await axios.delete(`${API_URL}/users/${userAuth._id}/unfollow/${follower}`, {
-                    headers: {
-                        accept: '*/*',
-                        Authorization: `Bearer ${data.token}`,
-                    },
-                });
-                console.warn('Deu unfollow');
-            } else {
-                await axios.post(`${API_URL}/users/${userAuth._id}/follow/${follower}`, {
-                    headers: {
-                        Authorization: `Bearer ${data.token}`,
-                    },
-                });
-               console.warn('Deu follow');
+        if (!data) {
+            console.error('Erro ao obter os dados');
+        } else {
+            try {
+                if (isUserFollowing(follower)) {
+                    await axios.delete(`${API_URL}/users/${userAuth._id}/unfollow/${follower}`, {
+                        headers: {
+                            accept: '*/*',
+                            Authorization: `Bearer ${data.token}`,
+                        },
+                    });
+                    console.warn('Deu unfollow');
+                } else {
+                    await axios.post(`${API_URL}/users/${userAuth._id}/follow/${follower}`, {
+                        headers: {
+                            Authorization: `Bearer ${data.token}`,
+                        },
+                    });
+                    console.warn('Deu follow');
 
+                }
+            } catch (error) {
+                console.error('Erro ao seguir/desseguir o usuário', error);
             }
-        } catch (error) {
-            console.error('Erro ao seguir/desseguir o usuário', error);
         }
+
     }
 
     const _onDimensionsChange = () => {
@@ -148,6 +153,8 @@ const PostHome: React.FC = () => {
     };
 
     useEffect(() => {
+        console.log('é assim')
+
         if (loading) {
             _getPosts(page);
             _getUserAuth();
@@ -175,7 +182,7 @@ const PostHome: React.FC = () => {
             if (imageUri && imageUri !== "string") Image.getSize(imageUri, (width, height) => { setImageDimensions({ width, height }) });
         }, [imageUri]);
         return (
-            <View style={[rootStyle.w100, rootStyle.pt2, {backgroundColor: themeWIB, flex: 1, position: 'relative' }]}>
+            <View style={[rootStyle.w100, rootStyle.pt2, { backgroundColor: themeWIB, flex: 1, position: 'relative' }]}>
                 <View style={[rowstyle.row, rootStyle.px1, { backgroundColor: 'transparent', position: 'relative' }]}>
                     <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.maxW50, { backgroundColor: 'transparent' }]}>
                         <ImageProfileComponent source={{ uri: item.user?.photo }} />
@@ -222,7 +229,11 @@ const PostHome: React.FC = () => {
                             </TouchableWithoutFeedback >
                         </View>
                     )}
-                    <ReactButtonsPost />
+                    <ReactButtonsPost
+                        post={item.post}
+                        user={userAuth}
+                        onPress={() => { _getPosts(page) }}
+                    />
                 </View>
                 <View style={[rootStyle.w100, { height: 1, backgroundColor: themeTDWO }]} />
                 <Modal visible={modalImage} transparent statusBarTranslucent={true}>
@@ -235,11 +246,9 @@ const PostHome: React.FC = () => {
                         followUnfollow={() => {
                             _followUnfollow(item.user._id),
                                 showModalSettings(false),
-                                _getPosts(page),
-                                _getUserAuth(),
-                                setLoading(false)
-                        }
-                        }
+                                _getPosts(page)
+                            _getUserAuth()
+                        }}
                         onClose={() => showModalSettings(false)}
                     />
                 </Modal>
@@ -257,7 +266,7 @@ const PostHome: React.FC = () => {
                         {noMorePost ? (
                             <ActivityIndicator size="large" color={colors.patternColor} />
                         ) : (
-                            <View style={[rootStyle.w100, rootStyle.centralize, {backgroundColor: themeWIB}]}>
+                            <View style={[rootStyle.w100, rootStyle.centralize, { backgroundColor: themeWIB }]}>
                                 <ScrollToTopButtonComponent onPress={() => { _getPosts(page) }} sectionListRef={SectionListRef} />
                             </View>
                         )}

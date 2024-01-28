@@ -18,6 +18,7 @@ export interface UserRes {
     posts?: Object[];
     saved?: Object[];
     favorites?: Object[];
+    hated?: Object[];
     trash?: Object[];
     accessToken?: string | null;
 }

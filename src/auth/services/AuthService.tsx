@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: any) => {
     const loadToken = async () => {
       const authToken = await SecureStore.getItemAsync('userAuthorizeName');
       if (authToken) {
-        axios.defaults.headers.common['Authorization'] = `Barrer ${authToken}`
+        axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`
         setAuthState({
           token: authToken,
           authenticated: true
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: true
       });
 
-      axios.defaults.headers.common['Authorization'] = `Barrer ${user.accessToken}`
+      axios.defaults.headers.common['Authorization'] = `Bearer ${user.accessToken}`
 
       try {
         await SecureStore.setItemAsync('userAuthorizeName', user.username);
