@@ -7,15 +7,15 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar, Switch } from 'react-native-ios-kit';
 import Icon from 'react-native-vector-icons/Octicons';
-import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../../components/StyledComponents';
-import { useFadeAnimationLogin } from '../../components/animations/login';
-import ForgotPassModal from '../../components/modal/ForgotPassModal';
-import PopUpError from '../../components/modal/PopUpErrorModal';
-import { useThemeController } from '../../constants/Themed';
-import { LoginUserReq, UserReq, UserRes } from '../../interface/User.interface';
-import { loginStyle, rootStyle, text } from '../../style';
-import { colors } from '../../style/Colors';
-import { useAuth } from '../services/AuthService';
+import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../components/StyledComponents';
+import { useFadeAnimationLogin } from '../components/animations/login';
+import ForgotPassModal from '../components/modal/ForgotPassModal';
+import PopUpError from '../components/modal/PopUpErrorModal';
+import { useThemeController } from '../constants/Themed';
+import { LoginUserReq, UserReq, UserRes } from '../interface/User.interface';
+import { loginStyle, rootStyle, text } from '../style';
+import { colors } from '../style/Colors';
+import { useAuth } from '../auth/services/AuthService';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('string');
@@ -227,8 +227,8 @@ const LoginPage: React.FC = () => {
           showsHorizontalScrollIndicator={false}
           style={[rootStyle.view, { backgroundColor: themeWIB }]}>
           <View style={loginStyle.loginImage}>
-            <ImageMediumComponent source={require('../../../assets/img/ill-01.png')} />
-            <ImageMinComponent source={require('../../../assets/icon.png')} />
+            <ImageMediumComponent source={require('../../assets/img/ill-01.png')} />
+            <ImageMinComponent source={require('../../assets/icon.png')} />
           </View>
           <View style={[rootStyle.p1, rootStyle.centralize]}>
             <ProdBold style={[text.fz30, text.centralizeText, { color: themeBWI }]}>{t('login.title')}</ProdBold>

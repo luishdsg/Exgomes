@@ -178,7 +178,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
 
     return (
 
-        <View style={[rowstyle.row, rootStyle.centralize, rootStyle.px1, rootStyle.h60, {}]}>
+        <View style={[rowstyle.row, rootStyle.centralize, rootStyle.px1, rootStyle.h60, rootStyle.pb1, {}]}>
             <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, { backgroundColor: 'transparent' }]}>
                 {likedVisible ? (
                     <TouchableOpacity style={[rootStyle.centralize, rootStyle.pt2, {}]} onPress={_liked}>
@@ -254,7 +254,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                     <Icon name={saveVisible} size={27} color={themeGTD} />
                 </TouchableOpacity>
             </View>
-            {commentsModal && <CommentsPostModal onClose={() => setCommentsModal(false)} />}
+            {commentsModal && <CommentsPostModal post={post} onClose={() => setCommentsModal(false)} />}
         </View>
     );
 }

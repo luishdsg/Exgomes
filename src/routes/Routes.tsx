@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Image, Pressable, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import LoginPage from '../auth/_layouts/login';
+import LoginPage from '../pages/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
 import { ProdBold, TruncatedTextBold } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';

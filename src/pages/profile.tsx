@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Dimensions, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { ScrollView as GestureScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
-import ProfileViews from '../components/PostProfile';
+import ProfileViews from '../views/PostProfile';
 import getSecureStoreData from '../constants/SecureStore';
 import { useThemeController } from '../constants/Themed';
 import { UserRes } from '../interface/User.interface';

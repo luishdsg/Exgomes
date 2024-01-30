@@ -19,13 +19,13 @@ import { PubRes } from "../interface/Pub.interface";
 import { UserRes } from "../interface/User.interface";
 import { profileStyle, rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
-import { LoadProfilePost } from "./LoadContent";
-import { ReactButtonsPost } from "./ReactButtonsPost";
-import { ImageProfileComponent, ProdLight, ProdRegular, ScrollToTopButtonComponent, TruncatedTextBold } from "./StyledComponents";
-import ZoomableImage from "./modal/ViewImageModal";
+import { LoadProfilePost } from "../components/LoadContent";
+import { ReactButtonsPost } from "../components/ReactButtonsPost";
+import { ImageProfileComponent, ProdLight, ProdRegular, ScrollToTopButtonComponent, TruncatedTextBold } from "../components/StyledComponents";
+import ZoomableImage from "../components/modal/ViewImageModal";
 import { RefreshControl } from "react-native-gesture-handler";
 import SecureStore from "../constants/SecureStore";
-import { SettingsPostModal } from "./modal/SettingsPostModal";
+import { SettingsPostModal } from "../components/modal/SettingsPostModal";
 
 const PostHome: React.FC = () => {
     const SectionListRef = useRef(null);
@@ -303,7 +303,7 @@ const PostHome: React.FC = () => {
                             onRefresh={() => { _getPosts(page); _getUserAuth(); }}
                             tintColor="#007AFF"
                             titleColor="#007AFF"
-                            progressViewOffset={0}
+                            progressViewOffset={0} 
                             colors={['#007AFF']}
                             progressBackgroundColor={themeWB}
                         />

@@ -89,9 +89,9 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
 };
 
 
-const LineiOSComponent: React.FC = () => {
+const LineiOSComponent: React.FC<any> = (props: any) => {
   return (
-    <View style={[rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >
+    <View  {...props} style={[ {...props}, rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >
       <View style={[rootStyle.lineIOS, {}]}></View>
     </View>
   );
@@ -123,6 +123,12 @@ const ImageMaxComponent: React.FC<ImageComponentProps> = ({ source }) => {
 const ImageProfileComponent: React.FC<ImageComponentProps> = ({ source }) => {
   return (
     <Image source={source} style={Images.PostProfileIco} resizeMode="cover" />
+  );
+};
+
+const ImageUserCommentComponent: React.FC<ImageComponentProps> = ({ source }) => {
+  return (
+    <Image source={source} style={Images.profileIcon} resizeMode="cover" />
   );
 };
 const ImageMinComponent: React.FC<ImageComponentProps> = ({ source }) => {
@@ -182,6 +188,7 @@ export {
   MenuOptionProfile,
   ImageMinComponent,
   ImageMaxComponent,
+  ImageUserCommentComponent,
   ImageProfileComponent,
   ScrollToTopButtonComponent,
   LineiOSComponent,

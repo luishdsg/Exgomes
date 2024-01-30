@@ -47,6 +47,13 @@ export interface ScrollToTopButtonComponentProps {
   sectionListRef: React.RefObject<SectionList>
   onPress: (page: number) => void;
 }
+
+export interface UserComments {
+  _id: string;
+  username: string;
+  photo: string;
+}
+
 export interface ZoomableImageProps {
   uri: string;
   onClose: () => void;
@@ -54,6 +61,7 @@ export interface ZoomableImageProps {
 }
 export interface CommentsPostProps {
   onClose: () => void;
+  post: PubRes;
 }
 export type ReactButtonsPostProps =  {
   // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>

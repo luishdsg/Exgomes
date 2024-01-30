@@ -18,15 +18,15 @@ import { RootStackParamList } from "../interface/RootStackParamList";
 import { UserRes } from "../interface/User.interface";
 import { profileStyle, rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
-import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "./StyledComponents";
-import ZoomableImage from "./modal/ViewImageModal";
+import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "../components/StyledComponents";
+import ZoomableImage from "../components/modal/ViewImageModal";
 import { BlurView } from "expo-blur";
 import { Button } from "react-native-ios-kit";
 import { Icon } from 'react-native-ios-kit';
 import { SvgXml } from 'react-native-svg';
 import { verifiedAccount } from "../../assets/svg/IconsSVG";
-import { ReactButtonsPost } from "./ReactButtonsPost";
-import { LoadProfilePost } from "./LoadContent";
+import { ReactButtonsPost } from "../components/ReactButtonsPost";
+import { LoadProfilePost } from "../components/LoadContent";
 
 type ScreenPageProps = {
     navigation: StackNavigationProp<RootStackParamList, 'ProfileViews'>;

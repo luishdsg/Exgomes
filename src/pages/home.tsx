@@ -1,7 +1,7 @@
 // src/pages/home.tsx
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import PostHome from '../components/PostHome';
+import PostHome from '../views/PostHome';
 import { HomeScreenPageProps } from '../interface/Props.interface';
 
 
