@@ -1,11 +1,11 @@
-export interface Commentaries {
-  _id: string;
+export interface CommentariesRes {
   userId: string;
   content: string;
-  like: number;
+  likes: Object[];
+  _id: string;
   createdAt: Date;
 }
-export interface PubRes {
+export interface PostRes {
   _id: string;
   userId: string;
   createdAt: Date;
@@ -15,6 +15,6 @@ export interface PubRes {
   views: number;
   likes: Object[];
   hated: Object[];
-  comments: Commentaries[];
+  comments: CommentariesRes[];
   reposts: number;
 }

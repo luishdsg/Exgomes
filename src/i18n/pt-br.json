@@ -25,7 +25,7 @@
         "trash": "Lixeira",
         "media": "Mídia"
     },
-    "Tools": {
+    "tools": {
         "inputUser": "Nome de usuário",
         "userEmpty": "Usuário não pode ficar vazio",
         "passEmpty": "Senha não pode ficar vazia",
@@ -51,7 +51,12 @@
         "follow": "seguir",
         "following": "Seguindo",
         "cancel": "cancelar",
+        "emptyCommentary": "comentário está vazio!",
+        "andComment": "há",
+        "commentPlaceholder": "escreva um comentário...",
+        "close": "fechar",
         "thousands": "mil",
-        "millions": "mi"
+        "millions": "mi",
+        "emptyComment": "ㄟ( ▔, ▔ )ㄏ\nsem comentários\npor enquanto"
     }
 }

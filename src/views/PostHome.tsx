@@ -13,10 +13,10 @@ import * as Haptics from 'expo-haptics';
 import * as SecureStorage from 'expo-secure-store';
 
 import getSecureStoreData from "../constants/SecureStore";
-import { useThemeController } from "../constants/Themed";
+import { useThemeController } from "../style/Themed";
 import { PostHomeProps, SectionDataPostProps } from "../interface/Props.interface";
-import { PubRes } from "../interface/Pub.interface";
-import { UserRes } from "../interface/User.interface";
+import { PostRes } from "../base/Post.base";
+import { UserRes } from "../base/User.base";
 import { profileStyle, rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
 import { LoadProfilePost } from "../components/LoadContent";
@@ -26,6 +26,7 @@ import ZoomableImage from "../components/modal/ViewImageModal";
 import { RefreshControl } from "react-native-gesture-handler";
 import SecureStore from "../constants/SecureStore";
 import { SettingsPostModal } from "../components/modal/SettingsPostModal";
+import { countPostViews } from "../services/post.service";
 
 const PostHome: React.FC = () => {
     const SectionListRef = useRef(null);
@@ -33,9 +34,7 @@ const PostHome: React.FC = () => {
     const [sectionData, setSectionData] = useState<SectionDataPostProps[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [userAuth, setUserAuth] = useState<UserRes>();
-    const [unfollow, setUnFollow] = useState(null);
-    const [follow, setFollow] = useState(false);
+    const [userAuth, setUserAuth] = useState<{userAuth: UserRes;token: string;}>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
     const [noMorePost, setNoMorePost] = useState(false);
@@ -47,7 +46,7 @@ const PostHome: React.FC = () => {
             try {
                 const data = await getSecureStoreData();
                 if (!data) console.warn('sem dados storage = ' + data);
-                const getPostsData = await axios.get<PubRes[]>(`${API_URL}/posts?page=${pageNumber}`, {
+                const getPostsData = await axios.get<PostRes[]>(`${API_URL}/posts?page=${pageNumber}`, {
                     headers: {
                         Authorization: `Bearer ${data?.token}`,
                     },
@@ -95,46 +94,43 @@ const PostHome: React.FC = () => {
         }, 1000)
     }, []);
 
-    const _getUserAuth = async (): Promise<UserRes[]> => {
+    const _getUserAuthorizeData = async () => {
         try {
-            const data = await getSecureStoreData();
-            if (!data) {
-                console.error('Erro ao obter os dados do store');
-            } else {
-                const followingIds = await axios.get<UserRes>(`${API_URL}/users/username${data?.username}`);
-                setUserAuth(followingIds.data);
-                console.warn('dados auth obtidos');
-            }
-        } catch (error) {
-            console.error('Erro ao obter os dados do usuario authHome : ', error);
-            return [];
+          const data = await getSecureStoreData();
+          if (data) setUserAuth(data);
+        } catch (error: any) {
+          console.log('sem dados do usuario posthome')
+          return error.message;
         }
-    };
+      };
 
+    const onViewableItemsChanged = useRef(({ viewableItems }) => {
+        viewableItems.forEach(({ item }) => {
+          countPostViews(item.post._id)
+        });
+      }).current; 
+    
 
     const isUserFollowing = (userId: string) => {
-        const findInList = userAuth?.following?.includes(userId || '');
+        const findInList = userAuth?.userAuth?.following?.includes(userId || '');
         return findInList
     }
 
+
     const _followUnfollow = async (follower: string) => {
-        const data = await getSecureStoreData();
-        if (!data) {
-            console.error('Erro ao obter os dados');
-        } else {
             try {
                 if (isUserFollowing(follower)) {
-                    await axios.delete(`${API_URL}/users/${userAuth._id}/unfollow/${follower}`, {
+                    await axios.delete(`${API_URL}/users/${userAuth?.userAuth?._id}/unfollow/${follower}`, {
                         headers: {
                             accept: '*/*',
-                            Authorization: `Bearer ${data.token}`,
+                            Authorization: `Bearer ${userAuth.token}`,
                         },
                     });
                     console.warn('Deu unfollow');
                 } else {
-                    await axios.post(`${API_URL}/users/${userAuth._id}/follow/${follower}`, {
+                    await axios.post(`${API_URL}/users/${userAuth.userAuth?._id}/follow/${follower}`, {
                         headers: {
-                            Authorization: `Bearer ${data.token}`,
+                            Authorization: `Bearer ${userAuth.token}`,
                         },
                     });
                     console.warn('Deu follow');
@@ -143,7 +139,7 @@ const PostHome: React.FC = () => {
             } catch (error) {
                 console.error('Erro ao seguir/desseguir o usuário', error);
             }
-        }
+        
 
     }
 
@@ -153,11 +149,9 @@ const PostHome: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log('é assim')
-
         if (loading) {
+            _getUserAuthorizeData();
             _getPosts(page);
-            _getUserAuth();
         };
         _onDimensionsChange();
         return () => {
@@ -167,7 +161,7 @@ const PostHome: React.FC = () => {
 
 
 
-    const _timeLinePub = ({ item }: { item: { post: PubRes; user: UserRes } }) => {
+    const _timeLinePub = ({ item }: { item: { post: PostRes; user: UserRes } }) => {
         const [imageUri, setImageUri] = useState(item.post.photo);
         const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
         const [modalImage, setModalImage] = useState(false);
@@ -177,6 +171,11 @@ const PostHome: React.FC = () => {
         const showImagePost = (visible: boolean) => { setModalImage(visible); };
         const showModalSettings = (visible: boolean) => { setModalSettings(visible); };
 
+        const onViewableItemsChanged = useRef(({ viewableItems }) => {
+            viewableItems.forEach(({ item }) => {
+                console.log('Item visível:', item.comment._id);
+            });
+        }).current;
 
         useEffect(() => {
             if (imageUri && imageUri !== "string") Image.getSize(imageUri, (width, height) => { setImageDimensions({ width, height }) });
@@ -231,7 +230,7 @@ const PostHome: React.FC = () => {
                     )}
                     <ReactButtonsPost
                         post={item.post}
-                        user={userAuth}
+                        user={userAuth?.userAuth}
                         onPress={() => { _getPosts(page) }}
                     />
                 </View>
@@ -241,13 +240,13 @@ const PostHome: React.FC = () => {
                 </Modal>
                 <Modal visible={modalSettings} transparent statusBarTranslucent={true}>
                     <SettingsPostModal
-                        Ids={item.user._id}
+                        post={item.post}
                         isUserFollowing={isUserFollowing(item.user._id)}
                         followUnfollow={() => {
                             _followUnfollow(item.user._id),
                                 showModalSettings(false),
                                 _getPosts(page)
-                            _getUserAuth()
+                                _getUserAuthorizeData()
                         }}
                         onClose={() => showModalSettings(false)}
                     />
@@ -287,23 +286,29 @@ const PostHome: React.FC = () => {
                 <SectionList
                     ref={SectionListRef}
                     sections={sectionData as any}
+                    keyExtractor={(item, index) => item.post._id.toString()}
                     renderItem={_timeLinePub}
                     // ListHeaderComponent={_refreshMorePub}
-                    keyExtractor={(item, index) => item.post._id.toString()}
-                    // keyExtractor={(item: PubRes, index) => `${item._id.toString()}_${index}`}
+                    // keyExtractor={(item: PostRes, index) => `${item._id.toString()}_${index}`}
                     onEndReached={_handleCheckEndPage}
                     onEndReachedThreshold={0.1}
                     // onRefresh={_refreshMorePub}
+                    onViewableItemsChanged={onViewableItemsChanged}
+                    viewabilityConfig={{
+                        itemVisiblePercentThreshold: 50,
+                        minimumViewTime: 2000,
+
+                    }}
                     ListEmptyComponent={<ActivityIndicator size="large" color={colors.patternColor} />}
                     ListFooterComponent={_refreshMorePub}
                     // stickyHeaderIndices={[0]}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
-                            onRefresh={() => { _getPosts(page); _getUserAuth(); }}
+                            onRefresh={() => { _getPosts(page); _getUserAuthorizeData(); }}
                             tintColor="#007AFF"
                             titleColor="#007AFF"
-                            progressViewOffset={0} 
+                            progressViewOffset={0}
                             colors={['#007AFF']}
                             progressBackgroundColor={themeWB}
                         />
@@ -318,35 +323,6 @@ const PostHome: React.FC = () => {
 export default PostHome;
 
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'visible', // Adicione esta linha
-    },
-    button: {
-        backgroundColor: 'blue',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    draggable: {
-
-        position: 'absolute',
-        backgroundColor: 'red',
-        padding: 20,
-        zIndex: 10,
-        borderRadius: 10,
-    },
-    draggableText: {
-        color: 'white',
-    },
-});
 
 {/* <Icon size={30} name={"ellipsis-horizontal-circle-outline"} /> */ }
 

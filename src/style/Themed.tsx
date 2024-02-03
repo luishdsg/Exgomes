@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { useColorScheme } from 'react-native';
-import { colors } from '../style/Colors';
+import { colors } from './Colors';
 
 export const useThemeController = () => {
   const [theme, setTheme] = useState('light');
@@ -21,6 +21,7 @@ export const useThemeController = () => {
   const themeTDD = colorScheme === theme ? colors.textDark : colors.dark;
   const themeTDGT = colorScheme === theme ? colors.textDark : colors.grayText;
   const themeGLTD = colorScheme === theme ? colors.grayLight : colors.textDark;
+  const themeTDGL = colorScheme === theme ? colors.textDark : colors.grayLight;
   const themeBWI = colorScheme === theme ? colors.black : colors.whiteIce;
   const themeBW = colorScheme === theme ? colors.black : colors.white;
   const themeWIB = colorScheme === theme ? colors.whiteIce : colors.black;
@@ -44,5 +45,5 @@ export const useThemeController = () => {
     setTheme(newTheme);
   };
 
-  return { themeWB, themeGD, themeTDWO, themeWD, themeGLTD, themeFollow ,themeWID,themeOpacityWB, themeOpacityBW, themeTDWI, themeWTD,themeTDW,themeTDG,themeTDD,themeTDGT,themeDG, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeGLD , themePG,  themeStatus, Status, _toggleTheme };
+  return { themeWB, themeGD, themeTDWO, themeWD, themeTDGL, themeGLTD, themeFollow ,themeWID,themeOpacityWB, themeOpacityBW, themeTDWI, themeWTD,themeTDW,themeTDG,themeTDD,themeTDGT,themeDG, themeGTD,themeBWI ,themeBW,themeWIB , themeWITD,themeGLD , themePG,  themeStatus, Status, _toggleTheme };
 };

@@ -10,15 +10,15 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Image, Pressable, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import LoginPage from '../pages/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
 import { ProdBold, TruncatedTextBold } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
-import { useThemeController } from '../constants/Themed';
+import { useThemeController } from '../style/Themed';
 import '../i18n/i18n';
 import { RootStackParamList } from '../interface/RootStackParamList';
-import { UserRes } from '../interface/User.interface';
+import { UserRes } from '../base/User.base';
 import HomeScreen from '../pages/home';
+import LoginPage from '../auth/login';
 import ProfileScreen from '../pages/profile';
 import SettingsScreen from '../pages/settings';
 import { Images, rootStyle, rowstyle, text } from '../style';
@@ -31,28 +31,27 @@ type ScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 
 function HomeTabBarNavigator() {
-  const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
+  const [userSecureStoreData, setUserSecureStoreData] = useState<{userAuth: UserRes;token: string;}>(null);
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
   const navigation = useNavigation<ScreenNavigationProp>();
   const { onLogout } = useAuth();
 
-  useEffect(() => {
+
     const getUserAuthorizeData = async () => {
       try {
         const data = await getSecureStoreData();
-        if (data) {
-          const getUserData = await axios.get<UserRes>(`${API_URL}/users/username${data?.username}`);
-          setUserSecureStoreData(getUserData.data);
-          console.log('dados capturados')
-        }
+        if (data) setUserSecureStoreData(data);
       } catch (error: any) {
-        console.log('   <   deu rium ')
+        console.log('sem dados do usuario posthome')
         return error.message;
       }
     };
+
+  useEffect(() => {
     getUserAuthorizeData();
   }, []);
+  
   return (
     <Tab.Navigator
       screenOptions={{
@@ -71,24 +70,24 @@ function HomeTabBarNavigator() {
           tabBarLabel: '',
           tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt02, {}]} size={30} color={color} />,
           headerRight: () => (
-            <View style={[rootStyle.centralize,{flexDirection: 'row'}]}>
-              <TouchableOpacity style={[rootStyle.mx1,{}]}><Button  onPress={onLogout} title="SIgn Out" /></TouchableOpacity>
-             
-              <Pressable
-              onPress={() => navigation.navigate('Settings')}
-            >
-              {({ pressed }) => (
+            <View style={[rootStyle.centralize, { flexDirection: 'row' }]}>
+              <TouchableOpacity style={[rootStyle.mx1, {}]}><Button onPress={onLogout} title="SIgn Out" /></TouchableOpacity>
 
-                <Octicons
-                  name="gear"
-                  size={25}
-                  color={themeBWI}
-                  style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                />
-              )}
-            </Pressable>
+              <Pressable
+                onPress={() => navigation.navigate('Settings')}
+              >
+                {({ pressed }) => (
+
+                  <Octicons
+                    name="gear"
+                    size={25}
+                    color={themeBWI}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
             </View>
-           
+
           ),
           headerBackground: () => (
             <View style={[rootStyle.container, { backgroundColor: themeWIB }]} />
@@ -101,12 +100,12 @@ function HomeTabBarNavigator() {
           )
         }}
         component={HomeScreen}
-        // children={() => <HomeScreen navigation={null} data={dataAuth}/>}
-        />
+      // children={() => <HomeScreen navigation={null} data={dataAuth}/>}
+      />
       <Tab.Screen
         name="Profile"
         options={{
-          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
+          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.userAuth?.photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
           tabBarLabel: '',
           headerTitle: () => (
             <></>
@@ -129,7 +128,7 @@ function HomeTabBarNavigator() {
             <Pressable>
               {({ pressed }) => (
                 <View style={[rowstyle.row, rootStyle.pl2, rootStyle.alignCenter, { backgroundColor: themeWIB }]}>
-                  <TruncatedTextBold content={userSecureStoreData?.username || `(ツ)`} maxSize={15} style={[text.fz25, { color: themeBW, opacity: pressed ? 0.5 : 1 }]} />
+                  <TruncatedTextBold content={userSecureStoreData?.userAuth?.username || `(ツ)`} maxSize={15} style={[text.fz25, { color: themeBW, opacity: pressed ? 0.5 : 1 }]} />
                   <MaterialIcons
                     name="keyboard-arrow-down"
                     size={25}
@@ -169,11 +168,6 @@ function LayoutAuth() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    console.log('sem fonte' + error);
-    return null;
-  }
-
   return (
     <SafeAreaProvider>
       <NavigationContainer>
@@ -210,7 +204,7 @@ function LayoutAuth() {
                 },
               }}
             />
-         
+
           </Stack.Group>
 
         </Stack.Navigator>

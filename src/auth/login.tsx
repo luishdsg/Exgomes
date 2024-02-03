@@ -1,7 +1,6 @@
 import { API_URL } from '@env';
 import { EvilIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import * as Haptics from 'expo-haptics';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -11,11 +10,12 @@ import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegul
 import { useFadeAnimationLogin } from '../components/animations/login';
 import ForgotPassModal from '../components/modal/ForgotPassModal';
 import PopUpError from '../components/modal/PopUpErrorModal';
-import { useThemeController } from '../constants/Themed';
-import { LoginUserReq, UserReq, UserRes } from '../interface/User.interface';
+import { useThemeController } from '../style/Themed';
+import { AuthReq, UserReq, UserRes } from '../base/User.base';
 import { loginStyle, rootStyle, text } from '../style';
 import { colors } from '../style/Colors';
-import { useAuth } from '../auth/services/AuthService';
+import { _getUserLog, useAuth } from './services/AuthService';
+import { _handleNextInput, vibrate } from '../tools/Tools';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('string');
@@ -32,50 +32,23 @@ const LoginPage: React.FC = () => {
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
   const [isLoadingSignUp, setIsLoadingSignUp] = useState(false);
-  const [avatarUser, setAvatarUser] = useState<UserRes | null>(null);
-  const [usernameExists, setUsernameExists] = useState(false);
+  const [userLog, setUserLog] = useState<UserRes | null>(null);
   const { onLogin, onSignUp } = useAuth();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const [lang, setLang] = useState(language);
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, Status, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
+  const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimationLogin();
+  const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimationLogin();
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const result = await axios.get(`${API_URL}/users/username${username}`);
-        setAvatarUser(result.data);
-        setTimeout(() => {
-          setUsernameExists(result.data.username)
-        }, 1000);
-        console.log('peguei o usuario no login')
-
-      } catch (error) {
-        console.error('Não peguei o usuario no login')
-
-        setAvatarUser(null);
-        setUsernameExists(false);
-      }
-    };
-    if (username.length >= 3) {
-      getUser();
-    }
-    else setAvatarUser(null);
-  }, [username]);
+  const userLogData = async () => { setUserLog(await _getUserLog(username)) }
+  const findUser = async () => { return await _getUserLog(username) }
 
 
 
   const renderAvatarContent = () => {
-    if (avatarUser && avatarUser?.photo) {
-      return <Animated.View style={[loginStyle.profile]}><Avatar url={avatarUser?.photo} size={40} /></Animated.View>;
-    } else if (avatarUser && avatarUser.username) {
-      const initials = avatarUser.username.split(' ').map((word) => word[0]).join('');
-      return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
-    } else {
-      return null;
-    }
-
+      return <Animated.View style={[loginStyle.profile, {  }]}><Avatar url={userLog?.photo} size={35} /></Animated.View>;
   };
 
 
@@ -85,9 +58,6 @@ const LoginPage: React.FC = () => {
     setLang(newLang)
   }
 
-  const vibrate = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  };
 
   const clearInput = () => {
     setUsername('');
@@ -98,32 +68,24 @@ const LoginPage: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimationLogin();
-  const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimationLogin();
-
-  const _handleNextInput = (nextInputRef: any) => {
-    if (nextInputRef.current) {
-      nextInputRef.current.focus();
-    }
-  };
-
   const _handleLogin = async () => {
     try {
-      const login: LoginUserReq = {
+      const login: AuthReq = {
         username: username,
         password: password,
       }
       setIsLoadingLogin(true);
       if (username.trim() === '') {
         setIsUsernameEmpty(true);
-        setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
-        fadeInUsername(); vibrate();
+        fadeInUsername();
+        setTimeout(() => { setIsUsernameEmpty(false), fadeOutUsername() }, 2000);
+        vibrate();
       } else {
         setIsUsernameEmpty(false);
         fadeOutUsername();
       }
       if (password.trim() === '') {
-        setTimeout(() => { setIsPasswordEmpty(false); }, 2000);
+        setTimeout(() => { setIsPasswordEmpty(false), fadeOutPassword() }, 2000);
         setIsPasswordEmpty(true);
         fadeInPassword(); vibrate();
       } else {
@@ -160,7 +122,6 @@ const LoginPage: React.FC = () => {
         setTimeout(() => { setIsUsernameEmpty(false); }, 2000);
         fadeInUsername();
         vibrate();
-
       } else {
         setIsUsernameEmpty(false);
         fadeOutUsername();
@@ -177,7 +138,7 @@ const LoginPage: React.FC = () => {
         fadeOutPassword();
       }
 
-      if (usernameExists) {
+      if (userLog?.username) {
         setErrorMessage(t('login.userexist', { userexist: username }));
         setillustrationError('https://i.imgur.com/UAxKfJA.png')
         setErrorModalVisible(true);
@@ -213,6 +174,12 @@ const LoginPage: React.FC = () => {
     _toggleTheme();
   }
 
+  useEffect(() => {
+    userLogData();
+    console.log(userLog)
+    if (username.length >= 3) _getUserLog(username);
+  }, [username]);
+
 
   return (
     <KeyboardAvoidingView
@@ -237,12 +204,12 @@ const LoginPage: React.FC = () => {
           <View style={[rootStyle.halfview, rootStyle.centralize]}>
             <View style={[rootStyle.view, { maxWidth: 500 }]}>
               <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimUsername }]}>
-                {t('Tools.userEmpty')}
+                {t('tools.userEmpty')}
               </Animated.Text>
               <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
                 <TextInput
                   style={[loginStyle.input, rootStyle.h50, text.fz20, isUsernameEmpty && rootStyle.inputError, { color: themeBWI }]}
-                  placeholder={t('Tools.inputUser')}
+                  placeholder={t('tools.inputUser')}
                   placeholderTextColor={colors.gray}
                   value={username} editable={true}
                   contextMenuHidden={false}
@@ -260,7 +227,7 @@ const LoginPage: React.FC = () => {
               <View style={[loginStyle.inputContainer, rootStyle.h50, { backgroundColor: themeWB }]}>
                 <TextInput
                   style={[loginStyle.input, rootStyle.h50, text.fz20, isPasswordEmpty && rootStyle.inputError, { color: themeBWI }]}
-                  placeholder={t('Tools.inputPass')}
+                  placeholder={t('tools.inputPass')}
                   placeholderTextColor={colors.gray}
                   value={password} editable={true}
                   ref={inputRefPass}
@@ -276,7 +243,7 @@ const LoginPage: React.FC = () => {
                 )}
               </View>
               <Animated.Text style={[rootStyle.errorMessage, { opacity: fadeAnimPassword }]}>
-                {t('Tools.passEmpty')}
+                {t('tools.passEmpty')}
               </Animated.Text>
               <View style={[loginStyle.buttonArea, rootStyle.px1,]}>
                 <TouchableOpacity style={[rootStyle.btnPatter, rootStyle.centralize]} onPress={_handleLogin}>
@@ -329,3 +296,7 @@ const LoginPage: React.FC = () => {
 
 export default LoginPage;
 {/* <ProdBold style={text.fz30}>{t('login.hny', {newyear: new Date().getFullYear(),})}</ProdBold> */ }
+ // const initials = userLog.username.split(' ').map((word) => word[0]).join('');
+      // return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
+
+

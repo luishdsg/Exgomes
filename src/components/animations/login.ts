@@ -22,9 +22,5 @@ export const useFadeAnimationLogin = () => {
     });
   };
 
-  useEffect(() => {
-    fadeOut();
-  }, []);
-
   return { fadeAnim, fadeIn, fadeOut };
 };

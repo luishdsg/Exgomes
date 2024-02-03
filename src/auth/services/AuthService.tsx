@@ -1,20 +1,16 @@
 import axios, { AxiosError } from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { LoginUserReq, LoginUserRes, UserReq, UserRes } from '../../interface/User.interface';
+import { AuthReq, AuthRes, UserReq, UserRes } from '../../base/User.base';
 import * as SecureStore from 'expo-secure-store';
 import { API_URL } from '@env';
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
   onSignUp?: (userData: UserReq) => Promise<any>;
-  onLogin?: (loginUserReq: LoginUserReq) => Promise<any>;
+  onLogin?: (AuthReq: AuthReq) => Promise<any>;
   onLogout?: () => Promise<any>;
 }
 const AuthContext = createContext<AuthProps>({});
-
-export const useAuth = () => {
-  return useContext(AuthContext);
-}
-
+export const useAuth = () => {return useContext(AuthContext);}
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
@@ -50,10 +46,14 @@ export const AuthProvider = ({ children }: any) => {
       throw new Error('Erro ao cadastrar: ' + error);
     }
   };
-  const loginService = async (loginUserReq: LoginUserReq) => {
+
+
+
+
+  const loginService = async (AuthReq: AuthReq) => {
     try {
       const response: any = await axios.post(
-        `${API_URL}/login`, loginUserReq,
+        `${API_URL}/login`, AuthReq,
         {
           withCredentials: true,
           headers: {
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: any) => {
       const usernameDataMatch = /usernamedata=(\w+)/.exec(response.headers['usernamedata'] || '');
       const username = usernameDataMatch ? usernameDataMatch[1] : null;
 
-      const user: LoginUserRes = { ...response.data, password: undefined, username: username };
+      const user: AuthRes = { ...response.data, password: undefined, username: username };
       setAuthState({
         token: user.accessToken,
         authenticated: true
@@ -76,9 +76,11 @@ export const AuthProvider = ({ children }: any) => {
 
       axios.defaults.headers.common['Authorization'] = `Bearer ${user.accessToken}`
 
+       
       try {
-        await SecureStore.setItemAsync('userAuthorizeName', user.username);
         await SecureStore.setItemAsync('userAuthorizeToken', user.accessToken);
+        const userAuth = await axios.get<UserRes>(`${API_URL}/users/username${user?.username}`);
+        await SecureStore.setItemAsync('userAuthorizeData', JSON.stringify(userAuth.data));
         console.warn('salvou no store')
         return user;
       } catch (error) {
@@ -112,11 +114,12 @@ export const AuthProvider = ({ children }: any) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-
-
-// PASSAR O TOKEN NO CABEÇALIO
-// axios.get('http://sua-api/exemplo/rota1', {
-//   headers: {
-//     Authorization: `Bearer ${token}`,
-//   },
-// })
+export const _getUserLog = async (username: string) => {
+  try {
+    const result = await axios.get(`${API_URL}/users/username${username}`);
+    console.log('peguei o usuario no login')
+    return result.data
+  } catch (error) {
+    console.error('Não peguei o usuario no login')
+  }
+};

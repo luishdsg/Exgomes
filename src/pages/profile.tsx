@@ -10,8 +10,8 @@ import { ScrollView as GestureScrollView, TouchableOpacity } from 'react-native-
 import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
 import ProfileViews from '../views/PostProfile';
 import getSecureStoreData from '../constants/SecureStore';
-import { useThemeController } from '../constants/Themed';
-import { UserRes } from '../interface/User.interface';
+import { useThemeController } from '../style/Themed';
+import { UserRes } from '../base/User.base';
 import { rootStyle, rowstyle, text } from '../style';
 import { colors } from '../style/Colors';
 
@@ -20,7 +20,7 @@ const ProfileScreen: React.FC = () => {
   const viewRef = useRef<View>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPage, setSelectedPage] = useState(1);
-  const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes | null>(null);
+  const [userSecureStoreData, setUserSecureStoreData] = useState<{userAuth: UserRes;token: string;}>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
   const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const [infoSectionProfile, setInfoSectionProfile] = useState(false);
@@ -28,16 +28,9 @@ const ProfileScreen: React.FC = () => {
   const getUserAuthorizeData = async () => {
     try {
       const data = await getSecureStoreData();
-      if (data) {
-        console.log(data?.username + 'os nomes')
-        const getUserData = await axios.get<UserRes>(`${API_URL}/users/username${data?.username}`);
-        setUserSecureStoreData(getUserData.data);
-        setRefreshing(false);
-        console.log(getUserData.data.photo + 'os dados')
-      }
+      if (data) setUserSecureStoreData(data);
     } catch (error: any) {
-      console.log('   <   deu riom ')
-      setRefreshing(false);
+      console.log('sem dados do usuario posthome')
       return error.message;
     }
   };
@@ -46,7 +39,7 @@ const ProfileScreen: React.FC = () => {
       case 1:
         return (
           <ProfileViews
-            user={userSecureStoreData}
+            user={userSecureStoreData?.userAuth}
           />
         );
       case 2:
@@ -132,14 +125,14 @@ const ProfileScreen: React.FC = () => {
         style={[rowstyle.app]}>
         <View style={[rowstyle.row, rootStyle.px1, rootStyle.container]}>
           <View style={[rowstyle[`2col`], rootStyle.justifyCenter, rootStyle.maxW100,{}]}>
-            <ImageMinComponent source={{ uri: userSecureStoreData?.photo }} />
+            <ImageMinComponent source={{ uri: userSecureStoreData?.userAuth?.photo }} />
           </View>
           <View style={[rowstyle[`4col`], rootStyle.justifyCenter, rootStyle.px1,[]]}>
             <View style={[rowstyle.col, rootStyle.h50]}>
               <View style={[rowstyle[`1col`], rootStyle.justifyCenter]}>
-                <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.username}</ProdBold>
+                <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.userAuth?.username}</ProdBold>
                 <View style={[rowstyle.row, rootStyle.h20]}>
-                  <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.email || `${t('profile.youremail')}`}</ProdRegular>
+                  <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.userAuth?.email || `${t('profile.youremail')}`}</ProdRegular>
                   <ProdRegular style={[rootStyle.px1, { color: themeTDG }]}>•</ProdRegular>
                   <ProdThin style={[rootStyle.px1, { color: themeTDG }]}>{t('profile.editprofile')}</ProdThin>
                 </View>

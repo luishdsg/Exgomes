@@ -53,7 +53,7 @@ export const rootStyle = StyleSheet.create({
                 shadowRadius: 4,
             },
             android: {
-                elevation: 29,
+                elevation: 21,
             },
         }),
     },
@@ -65,6 +65,9 @@ export const rootStyle = StyleSheet.create({
     },
     maxW100: {
         maxWidth: 100
+    },
+    maxW400: {
+        maxWidth: 400
     },
     br100: {
         borderRadius: 100,
@@ -254,6 +257,15 @@ export const rootStyle = StyleSheet.create({
     mb6: {
         marginBottom: '20%'
     },
+    mb7: {
+        marginBottom: '25%'
+    },
+    mb8: {
+        marginBottom: '30%'
+    },
+    mb9: {
+        marginBottom: '35%'
+    },
     ml1: {
         marginLeft: '3%'
     },
@@ -261,7 +273,7 @@ export const rootStyle = StyleSheet.create({
         marginLeft: '5%'
     },
     ml3: {
-        marginLeft: '7%'
+        marginLeft: '6%'
     },
     h20: {
         height: 20
@@ -293,6 +305,9 @@ export const rootStyle = StyleSheet.create({
     Pabsolute: {
         position: 'absolute'
     },
+    Prelative: {
+        position: 'relative'
+    },
     iconVerified: {
         width: 15,
         height: 15,
@@ -314,8 +329,14 @@ export const rootStyle = StyleSheet.create({
     w85: {
         width: '85%'
     },
+    maxH100: {
+        maxHeight: 100
+    },
     maxH500: {
         maxHeight: 500
+    },
+    maxH60: {
+        maxHeight: 60
     },
     maxW500: {
         maxWidth: 500
@@ -363,7 +384,6 @@ export const rootStyle = StyleSheet.create({
 
 });
 export const rowstyle = StyleSheet.create({
-
     app: {
         flex: 1,
         marginHorizontal: "auto",
@@ -414,7 +434,6 @@ export const rowstyle = StyleSheet.create({
         flex: 12
     },
 });
-
 export const Images = StyleSheet.create({
     MaxImage: {
         width: "100%",
@@ -462,6 +481,9 @@ export const text = StyleSheet.create({
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 10,
+    },
+    captalize: {
+        textTransform: 'capitalize' 
     },
     leftText: {
         textAlign: 'left',

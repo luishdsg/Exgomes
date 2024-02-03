@@ -1,10 +1,9 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import { UserRes } from "./User.interface";
 import { RootStackParamList } from "./RootStackParamList";
 import { NavigationProp } from "@react-navigation/native";
-import { PubRes } from "./Pub.interface";
 import { ScrollView, SectionList } from "react-native";
-
+import { UserRes } from "../base/User.base";
+import { PostRes } from "../base/Post.base";
 export interface PopUpErrorProps {
   visible?: boolean;
   errorMessage?: string;
@@ -18,10 +17,10 @@ export interface ReactBtnPostProps {
 }
 
 export interface GroupedPosts {
-  id: string; 
-    user: UserRes;
-    posts: PubRes[];
-  };
+  id: string;
+  user: UserRes;
+  posts: PostRes[];
+};
 
 
 export interface HateIconProps {
@@ -33,14 +32,14 @@ export interface ProfileViewsProps {
 
 export type SectionDataPostProps = {
   title: string;
-  data: Array<{ post: PubRes; user: UserRes }>;
+  data: Array<{ post: PostRes; user: UserRes }>;
 };
 
 export interface SettingsPostModalProps {
   onClose: () => void;
   followUnfollow: () => void;
   isUserFollowing: boolean;
-  Ids: string
+  post: PostRes
 }
 
 export interface ScrollToTopButtonComponentProps {
@@ -61,21 +60,21 @@ export interface ZoomableImageProps {
 }
 export interface CommentsPostProps {
   onClose: () => void;
-  post: PubRes;
+  post: PostRes;
 }
-export type ReactButtonsPostProps =  {
+export type ReactButtonsPostProps = {
   // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>
-  post: PubRes;
+  post: PostRes;
   user: UserRes;
   onPress: () => void;
 };
-export type PostHomeProps =  {
+export type PostHomeProps = {
   navigation: NavigationProp<RootStackParamList, 'CommentsPost'>;
   data: {
     username: string;
     token: string
   }
 }
-export type HomeScreenPageProps = { 
+export type HomeScreenPageProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
 };

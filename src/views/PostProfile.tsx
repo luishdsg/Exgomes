@@ -11,11 +11,11 @@ import { ActivityIndicator, Animated, Modal, Image, Text, PanResponder, SectionL
 import { PinchGestureHandler, State } from 'react-native-gesture-handler';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import getSecureStoreData from "../constants/SecureStore";
-import { useThemeController } from "../constants/Themed";
+import { useThemeController } from "../style/Themed";
 import { ProfileViewsProps } from "../interface/Props.interface";
-import { PubRes } from "../interface/Pub.interface";
+import { PostRes } from "../base/Post.base";
 import { RootStackParamList } from "../interface/RootStackParamList";
-import { UserRes } from "../interface/User.interface";
+import { UserRes } from "../base/User.base";
 import { profileStyle, rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
 import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "../components/StyledComponents";
@@ -33,7 +33,7 @@ type ScreenPageProps = {
 };
 const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
     const { t, i18n: { changeLanguage, language } } = useTranslation();
-    const [pubUserData, setPubUserData] = useState<PubRes[]>([]);
+    const [pubUserData, setPubUserData] = useState<PostRes[]>([]);
     const [page, setPage] = useState(1);
     const [userSecureStoreData, setUserSecureStoreData] = useState<UserRes>();
     const [loading, setLoading] = useState(true);
@@ -52,7 +52,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                 return;
             }
 
-            const getPostsData = await axios.get<PubRes[]>(`${API_URL}/posts/findByIdUser/${user?._id}?page=${pageNumber}`, {
+            const getPostsData = await axios.get<PostRes[]>(`${API_URL}/posts/findByIdUser/${user?._id}?page=${pageNumber}`, {
                 headers: {
                     Authorization: `Bearer ${data?.token}`,
                 },
@@ -94,7 +94,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
     }, [_getPostsById, page]);
 
 
-    const _timeLinePub = ({ item }: { item: PubRes }) => {
+    const _timeLinePub = ({ item }: { item: PostRes }) => {
         const [isViewVisible, setIsViewVisible] = useState(false);
         const [imageUri, setImageUri] = useState(item?.photo);
         const [imageLoaded, setImageLoaded] = useState(false);
@@ -115,24 +115,24 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
 
         useEffect(() => {
             if (imageLoaded) {
-            Image.getSize(
-                imageUri,
-                (width, height) => {
-                  setImageDimensions({ width, height});
-                },
-                (error) => {
-                  console.warn(`Failed to get size for image: ${imageDimensions}`);
-                }
+                Image.getSize(
+                    imageUri,
+                    (width, height) => {
+                        setImageDimensions({ width, height });
+                    },
+                    (error) => {
+                        console.warn(`Failed to get size for image: ${imageDimensions}`);
+                    }
                 );
-              }
-            }, [imageUri, imageLoaded]);
+            }
+        }, [imageUri, imageLoaded]);
         return (
             <View style={[rootStyle.w100, rootStyle.pt2, { flex: 1, position: 'relative' }]}>
                 <View style={[rowstyle.row, rootStyle.px1, { backgroundColor: 'transparent', position: 'relative' }]}>
                     <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.maxW50, { backgroundColor: 'transparent' }]}>
                         <ImageProfileComponent source={{ uri: userSecureStoreData?.photo }} />
                     </View>
-                    <View style={[rowstyle["6col"], rootStyle.pl1,rootStyle.justifyCenter, {}]}>
+                    <View style={[rowstyle["6col"], rootStyle.pl1, rootStyle.justifyCenter, {}]}>
                         <View style={[rowstyle.row, { position: 'relative' }]}>
                             <View style={[rowstyle["1col"], rowstyle.row, rootStyle.alignCenter, {}]}>
                                 <TruncatedTextBold content={String(userSecureStoreData?.username)} maxSize={20} style={[text.fz17, text.leftText, { color: themeBWI, }]} />
@@ -218,7 +218,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                     sections={[{ data: pubUserData, title: 'Posts' }]}
                     renderItem={_timeLinePub}
                     // ListHeaderComponent={_timeLinePub}
-                    keyExtractor={(item: PubRes, index) => `${item._id.toString()}_${index}`}
+                    keyExtractor={(item: PostRes, index) => `${item._id.toString()}_${index}`}
                     onEndReached={_handleCheckEndPage}
                     // ItemSeparatorComponent={() => { return <View style={[rootStyle.w100, { height: 1, backgroundColor: colors.textDark }]} /> }}
                     onEndReachedThreshold={0.5}

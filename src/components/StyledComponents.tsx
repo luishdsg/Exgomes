@@ -1,11 +1,13 @@
-import React, { ReactNode, useRef } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle, Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView, ScrollView, TouchableOpacity, View, } from 'react-native';
 import { Images, rowstyle, profileStyle, rootStyle, text } from '../style';
-import { useThemeController } from '../constants/Themed';
+import { useThemeController } from '../style/Themed';
 import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
 import { ScrollToTopButtonComponentProps } from '../interface/Props.interface';
+import Svg, { Circle } from 'react-native-svg';
+import { colors } from '../style/Colors';
 
 
 interface ImageComponentProps {
@@ -16,6 +18,11 @@ interface TruncatedTextProps {
   maxSize: number;
   style?: object;
 }
+
+interface CircleCountCharactereProps {
+  calculateBorderStyle: () => void;
+}
+
 type ThemeProps = {
   lightColor?: string;
   darkColor?: string;
@@ -45,6 +52,40 @@ const TruncatedTextBold: React.FC<TruncatedTextProps> = ({ content, maxSize, sty
 };
 
 
+const CircleCountCharactere = ({ commentary }) => {
+  const calculateBorderStyle = () => {
+    const characterCount = commentary.length;
+    const maxCharacters = 1000;
+
+    const progress = Math.min(characterCount / maxCharacters, 1);
+    const circumference = Math.PI * 180;
+
+    return {
+      strokeDasharray: circumference,
+      strokeDashoffset: circumference * (1 - progress),
+    };
+  };
+  const circleColor = commentary.length <= 199 ? colors.patternColor : colors.red;
+  return (
+    <View style={[rootStyle.alignCenter, rootStyle.Pabsolute,{}]}>
+      <View style={[rootStyle.Prelative,{backgroundColor: 'transparent'}]}>
+        <Svg height="50" width="50">
+          <Circle
+            cx="25"
+            cy="25"
+            r="18"
+            stroke={circleColor}
+            strokeWidth="5"
+            fill="transparent"
+            {...calculateBorderStyle()}
+          />
+        </Svg>
+      </View>
+    </View>
+  )
+}
+
+
 const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({ sectionListRef, onPress }) => {
   const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const { t } = useTranslation();
@@ -52,7 +93,7 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
     onPress(null);
     if (sectionListRef.current) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-       sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, animated: false });
+      sectionListRef.current?.scrollToLocation({ sectionIndex: 0, itemIndex: 0, animated: false });
     }
   };
 
@@ -89,9 +130,10 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
 };
 
 
+
 const LineiOSComponent: React.FC<any> = (props: any) => {
   return (
-    <View  {...props} style={[ {...props}, rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >
+    <View  {...props} style={[{ ...props }, rootStyle.w100, rootStyle.centralize, { zIndex: 10 }]} >
       <View style={[rootStyle.lineIOS, {}]}></View>
     </View>
   );
@@ -152,8 +194,8 @@ function ProdLight(props: TextProps) {
 const MenuOptionProfile: React.FC<MenuOptionProfileProps> = ({
   children,
 }) => {
+  const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWD, themeBW, themeGTD, themeGLD, themeWID, themeWTD, Status, _toggleTheme } = useThemeController();
   // const scaleValue = useRef(new Animated.Value(1)).current;
-  const { themeWTD } = useThemeController();
   return (
     <Pressable>
       {({ pressed }) => (
@@ -192,6 +234,7 @@ export {
   ImageProfileComponent,
   ScrollToTopButtonComponent,
   LineiOSComponent,
+  CircleCountCharactere,
   ProdRegular,
   ProdThin,
   ProdBold,

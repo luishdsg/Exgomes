@@ -1,6 +1,6 @@
 export interface UserReq {
     username: string;
-    password: string | undefined;
+    password: string;
 }
 export interface UserRes {
     _id: string;
@@ -22,11 +22,11 @@ export interface UserRes {
     trash?: Object[];
     accessToken?: string | null;
 }
-export interface LoginUserReq {
+export interface AuthReq {
     username: string;
     password: string;
 }
-export interface LoginUserRes {
+export interface AuthRes {
     username: string;
     accessToken: string;
 }

@@ -6,7 +6,7 @@ import { Animated, Easing, TouchableOpacity, TouchableWithoutFeedback, View } fr
 import * as Animatable from 'react-native-animatable';
 import { Icon } from 'react-native-ios-kit';
 import { HateIcon } from "../../assets/svg/IconsSVG";
-import { useThemeController } from "../constants/Themed";
+import { useThemeController } from "../style/Themed";
 import { ReactButtonsPostProps } from '../interface/Props.interface';
 import { rootStyle, rowstyle, text } from "../style";
 import { colors } from "../style/Colors";
@@ -15,14 +15,14 @@ import { CommentsPostModal } from './modal/CommentsPostModal';
 import getSecureStoreData from '../constants/SecureStore';
 import axios from 'axios';
 import { API_URL } from '@env';
-import { UserRes } from '../interface/User.interface';
+import { UserRes } from '../base/User.base';
 import { formatNumber } from '../pipe/FormatNumber';
+import { savePostForUser } from '../services/user.service';
 
 const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post }) => {
     const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t, i18n: { changeLanguage, language } } = useTranslation();
     // const navigation = useNavigation<ReactButtonsPostProps>();
-    const [userAuth, setUserAuth] = useState<UserRes>();
 
     const likedAnimation = useRef<LottieView | null>(null);
     const [likedVisible, setLikedVisible] = useState(true);
@@ -33,11 +33,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
     const [commentsVisible, setCommentsVisible] = useState(themeGTD);
     const [commentsModal, setCommentsModal] = useState(false);
 
-
-    const [saveVisible, setSaveVisible] = useState('bookmark-outline');
-    const [isSaveVisible, setIsSaveVisible] = useState(false);
-    const animatedSave = useRef(new Animated.Value(0)).current;
-
+    const [saveVisible, setSaveVisible] = useState(true);
 
 
 
@@ -135,43 +131,36 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
         }
     };
 
-    const _save = () => {
-        setIsSaveVisible(!isSaveVisible);
-        Animated.timing(animatedSave, {
-            toValue: isSaveVisible ? 0 : 1,
-            duration: 400,
-            easing: Easing.linear,
-            useNativeDriver: false,
-        }).start();
-        if (saveVisible !== 'bookmark-outline') {
-            setSaveVisible('bookmark-outline')
-        } else {
-            setSaveVisible('bookmark')
+
+    const _save = async () => {
+        const data = await getSecureStoreData();
+        if (!data) console.error('Erro ao obter os dados');
+        try {
+            if (saveVisible) {
+                setSaveVisible(!saveVisible)
+                savePostForUser(post._id, user._id, saveVisible)
+            } else {
+                setSaveVisible(!saveVisible)
+                savePostForUser(post._id, user._id, saveVisible)
+            }
+        } catch (error) {
+            console.error('Erro ao hate/unhated no usuário = ' + data.token, error);
         }
     };
+    const _verifySaved = () => { if (user?.saved?.includes(post._id)) setSaveVisible(false) }
 
-
-    const safeStyles = {
-        opacity: animatedSave,
-        transform: [
-            {
-                translateX: animatedSave.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 0],
-                }),
-            },
-        ],
-    };
 
     useEffect(() => {
         // _getUserAuth();
         _verifyLike();
         _verifyHated();
+        _verifySaved();
         // console.log('like verificado')
 
     }, [
         user?.hated,
         user?.favorites,
+        user?.saved,
         post._id
     ]);
 
@@ -199,10 +188,10 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                     </TouchableWithoutFeedback>
                 )}
                 <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
-                    {formatNumber(post.likes?.length)}
+                    {formatNumber(post.likes?.length, t)}
                 </ProdRegular>
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50,rootStyle.h60, {}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, {}]}>
                 {hateVisible ? (
                     <TouchableOpacity style={[rootStyle.pl3, {}]} onPress={_hated}>
                         <HateIcon color={themeGTD} />
@@ -222,36 +211,23 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                         />
                     </TouchableWithoutFeedback>
                 )}
-                  <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
-                    {formatNumber(post.hated?.length)}
+                <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
+                    {formatNumber(post.hated?.length, t)}
                 </ProdRegular>
 
             </View>
-            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60,{}]}>
+            <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, {}]}>
                 <TouchableOpacity style={[{}]} onPress={_comments}>
                     <Icon name={'chatbubble-outline'} size={50 * 0.5} color={commentsVisible} />
                 </TouchableOpacity>
                 <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
-                    {formatNumber(post.comments?.length)}
+                    {formatNumber(post.comments?.length, t)}
                 </ProdRegular>
             </View>
 
             <View style={[rowstyle["12col"], {}]}>
                 <TouchableOpacity style={[rootStyle.justifyEnd, rowstyle.row, rootStyle.alignCenter, {}]} onPress={_save}>
-                    <Animatable.View
-                        animation={isSaveVisible ? 'fadeIn' : 'fadeOut'}
-                        style={[
-                            safeStyles, rootStyle.br100, rootStyle.mr2,
-                            {
-                                paddingVertical: 8,
-                                paddingHorizontal: 10,
-                                borderWidth: 1,
-                                borderColor: themeBW,
-                            }]}
-                    >
-                        <ProdRegular style={[{ color: themeBW }]}>{t(`post.${isSaveVisible ? 'safe' : 'removed'}`)}!</ProdRegular>
-                    </Animatable.View>
-                    <Icon name={saveVisible} size={27} color={themeGTD} />
+                    <Icon name={saveVisible ? 'bookmark-outline' : 'bookmark'} size={27} color={themeGTD} />
                 </TouchableOpacity>
             </View>
             {commentsModal && <CommentsPostModal post={post} onClose={() => setCommentsModal(false)} />}

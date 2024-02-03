@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { View } from "react-native";
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
-import { useThemeController } from "../constants/Themed";
+import { useThemeController } from "../style/Themed";
 import { AlternativeProps } from "../interface/AlternativeProps.interface";
 import { Images, rootStyle, rowstyle } from "../style";
 

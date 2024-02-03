@@ -3,7 +3,7 @@ import { rootStyle, rowstyle, text } from "../../style";
 import { BlurView } from "expo-blur";
 import { colors } from "../../style/Colors";
 import { LineiOSComponent, ProdBold, ProdLight, ProdRegular } from "../StyledComponents";
-import { useThemeController } from "../../constants/Themed";
+import { useThemeController } from "../../style/Themed";
 import { ScrollView, TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { Animated, Dimensions, Easing, FlatList, PanResponder, Platform, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -11,24 +11,20 @@ import { useEffect, useRef, useState } from "react";
 import { AntDesign, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { Button, Icon } from "react-native-ios-kit";
 import { HateIcon, Uninteresting } from "../../../assets/svg/IconsSVG";
+import { formatNumber } from "../../pipe/FormatNumber";
 
-const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFollowing, followUnfollow, Ids }) => {
+const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFollowing, followUnfollow, post }) => {
     const { themeWB, themeWID, themeGLD, themeTDG, themeBWI, themeFollow, themeWIB, themeBW, themeGTD, themeTDWI, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t } = useTranslation();
     const screenHeight = Dimensions.get('window').height;
 
     const [notify, setNotify] = useState(false);
-    const [views, setViews] = useState(false);
 
     const animateOptions = useRef(new Animated.Value(screenHeight)).current;
     const [modalOpacity] = useState(new Animated.Value(0));
 
     const _notify = () => {
         setNotify(!notify)
-
-    }
-    const _views = () => {
-        setViews(!views)
     }
 
     const _close = () => {
@@ -56,6 +52,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
         }).start();
     }, []);
 
+    console.log('number of views: ' + typeof post.views)
     return (
         <BlurView intensity={50} tint="dark" style={[rootStyle.view]}>
             <Animated.View
@@ -76,7 +73,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         showsHorizontalScrollIndicator={false}
-                        style={[rootStyle.w100, rootStyle.br30, rootStyle.mb3, rootStyle.mt02, {
+                        style={[rootStyle.w100, rootStyle.br30, rootStyle.overflowH, rootStyle.mb3, rootStyle.mt02, {
                             backgroundColor: themeGLD
                         }]}>
                         {/* report */}
@@ -154,29 +151,19 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                         </TouchableOpacity>
                         {/* views */}
 
-                        <TouchableOpacity onPress={_views}
+                        <TouchableOpacity
                             style={[rootStyle.justifyStart, rootStyle.borderTop, rootStyle.py2, rootStyle.px3, {
                                 borderColor: themeGTD,
                             }]}>
                             <View style={[rowstyle.row, rootStyle.justifyStart, {}]}>
                                 <MaterialCommunityIcons name="google-analytics" size={24} color={themeTDG} />
-                                <ProdRegular style={[text.fz20, rootStyle.px1, { color: themeTDG, }]}>
+                                <ProdBold style={[text.fz20, rootStyle.px1, { color: themeBW, }]}>
+                                    {formatNumber(post?.views, t)}
+                                </ProdBold>
+                                <ProdLight style={[text.fz20, { color: themeBW, }]}>
                                     {t(`settings.views`)}
-                                </ProdRegular>
+                                </ProdLight>
                             </View>
-
-
-                            {/* views animation*/}
-                            {views &&
-                                <View style={[rootStyle.w100, rootStyle.mt02, {}]}>
-                                    <TouchableOpacity onPress={followUnfollow}
-                                        style={[rootStyle.w100, rootStyle.justifyStart, rootStyle.py2, rootStyle.borderTop, { borderColor: themeGTD }]}>
-                                        <ProdLight style={[text.fz20, { color: themeBW, }]}>
-                                            2342 {t(`settings.views`)}
-                                        </ProdLight>
-                                    </TouchableOpacity>
-                                </View>
-                            }
                         </TouchableOpacity>
                         {/* block */}
                         <TouchableOpacity onPress={followUnfollow}
@@ -192,11 +179,11 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
 
 
                     </ScrollView>
-                        {/* unfollow/follow */}
+                    {/* unfollow/follow */}
 
                     <TouchableOpacity onPress={followUnfollow}
                         style={[rowstyle.row, rootStyle.mb1, rootStyle.centralize, rootStyle.br30, rootStyle.py2, rootStyle.px4, {
-                            backgroundColor: isUserFollowing ? themeFollow : themeWID,
+                            backgroundColor: isUserFollowing ? themeFollow : themeWIB,
                             borderColor: isUserFollowing ? colors.purple : colors.patternColor, borderWidth: 2
                         }]}>
                         <ProdRegular
@@ -206,7 +193,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                             {t(`${isUserFollowing ? 'post.unfollow' : 'post.follow'}`)}
                         </ProdRegular>
                     </TouchableOpacity>
-                        {/* cancel */}
+                    {/* cancel */}
 
                     <TouchableOpacity onPress={_close}
                         style={[
