@@ -297,7 +297,7 @@ export const rootStyle = StyleSheet.create({
         height: 70
     },
     h100: {
-        height: 100
+        height: '100%'
     },
     h200: {
         height: 200

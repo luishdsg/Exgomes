@@ -3,7 +3,7 @@ import { EvilIcons, Feather } from "@expo/vector-icons";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState, } from "react";
 import { useTranslation } from "react-i18next";
-import { Animated, Dimensions, Easing, Keyboard, KeyboardAvoidingView, Modal, PanResponder, Platform, RefreshControl, SectionList, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Easing, Keyboard, KeyboardAvoidingView, Modal, PanResponder, Platform, RefreshControl, SectionList, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { Icon } from "react-native-ios-kit";
 import { SvgXml } from "react-native-svg";
@@ -19,7 +19,7 @@ import { Images, rootStyle, rowstyle, text } from "../../style";
 import { colors } from "../../style/Colors";
 import { useThemeController } from "../../style/Themed";
 import { vibrate } from "../../tools/Tools";
-import { CircleCountCharactere, ImageUserCommentComponent, LineiOSComponent, ProdBold, ProdLight, ProdRegular, TruncatedTextRegular } from "../StyledComponents";
+import { CircleCountCharactere, ImageUserCommentComponent, InputSendCommentary, LineVerticalComponent, LineiOSComponent, ProdBold, ProdLight, ProdRegular, TruncatedTextRegular } from "../StyledComponents";
 
 const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
     const { themeWB, themeTDG, themeWIB, themeBWI, themeTDWI, themeWD, themeBW, themeGTD, themeGLD, themeWID, themeGLTD, Status, _toggleTheme } = useThemeController();
@@ -34,7 +34,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
     const [commentaryEmpty, setCommentaryEmpty] = useState(false);
 
     const [modalOpacity] = useState(new Animated.Value(0));
-    const [refreshKey, setRefreshKey] = useState(0);
+    const [loadCommentary, setLoadCommentary] = useState(false);
     const modalCommentaryHeight = useRef(new Animated.Value(screenHeight * 0.6)).current;
     const animatedModalBottom = useRef(new Animated.Value(-(screenHeight * 0.6))).current;
 
@@ -115,14 +115,18 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
     }, []);
 
     const _createCommentary = async () => {
+        console.log('teclado se foi')
+        Keyboard.dismiss
+        setLoadCommentary(true)
         if (commentary.trim() === '') {
             setCommentaryEmpty(true);
             vibrate();
-            setTimeout(() => { setCommentaryEmpty(false) }, 1000)
+            setTimeout(() => { setLoadCommentary(false), setCommentaryEmpty(false) }, 1000)
         } else {
-            await postCommentsService(postData?._id, commentary, userAuth?.userAuth?._id);
-            _getUserDetails();
-            setRefreshKey((prevKey) => prevKey + 1);
+            const savePost = await postCommentsService(postData?._id, commentary, userAuth?.userAuth?._id);
+            if (savePost) _getUserDetails();
+            setCommentary('')
+            setLoadCommentary(false)
         }
 
     }
@@ -137,6 +141,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
             onClose();
         }, 140)
     }
+
 
     const _timeLine = ({ item }: { item: { post: PostRes; user: UserRes, comment: CommentariesRes } }) => {
         const [likeDislikeComments, setLikeDislikeComments] = useState(false);
@@ -157,7 +162,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
             <TouchableOpacity
                 onPress={likeDislakeCommentary}
             >
-                <View style={[rootStyle.w100, rootStyle.mt2, rootStyle.maxW400, { backgroundColor: themeWD, flex: 1, position: 'relative' }]}>
+                <View style={[rootStyle.w100, rootStyle.mb2, rootStyle.maxW400, { backgroundColor: themeWD, flex: 1, position: 'relative' }]}>
                     <View style={[rowstyle.row, rootStyle.px1, { backgroundColor: 'transparent', position: 'relative' }]}>
                         <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.maxW50, { backgroundColor: 'transparent' }]}>
                             <View style={[rootStyle.br100, rootStyle.Pabsolute, rootStyle.z10, { top: -2, left: -1, backgroundColor: themeWB, }]}>
@@ -167,7 +172,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
                         </View>
                         <View style={[rowstyle["10col"], rootStyle.justifyCenter, { backgroundColor: 'transparent' }]}>
                             <View style={[rowstyle.row, { position: 'relative' }]}>
-                                <View style={[rowstyle["1col"], rowstyle.row, rootStyle.alignCenter, {}]}>
+                                <View style={[rowstyle["1col"], rowstyle.row, rootStyle.alignCenter, rootStyle.px1, {}]}>
                                     <TruncatedTextRegular content={String(`@${item.user?.username}`)} maxSize={25} style={[text.fz12, text.leftText, { color: themeGTD, }]} />
                                     <ProdLight style={[text.fz13, rootStyle.ml1, { color: themeGTD }]}>•&nbsp;&nbsp;{t('post.andComment')}&nbsp;{convertCreatedAt(item.comment?.createdAt)}</ProdLight>
                                 </View>
@@ -183,8 +188,15 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
                     </View>
                     <View style={[rootStyle.w100, { flex: 1, }]}>
                         {item.post.content && (
-                            <View style={[rootStyle.w100, rootStyle.py1, rootStyle.ml3, rootStyle.px2, rootStyle.z_1, { flexDirection: 'row', flexWrap: 'wrap', }]}>
-                                <ProdRegular style={[text.fz12, { color: themeBW }]}>{item.comment?.content}</ProdRegular>
+                            <View style={[rowstyle.row, rootStyle.px1, rootStyle.pt1, {}]}>
+                                <View style={[rowstyle["1col"], {}]}>
+                                    <LineVerticalComponent />
+                                </View>
+                                <View style={[rowstyle["11col"], {}]}>
+                                    <View style={[rootStyle.w100, rowstyle.row, rootStyle.px1, rootStyle.pb1, rootStyle.z_1, { flexWrap: 'wrap', backgroundColor: 'transparent' }]}>
+                                        <ProdRegular style={[text.fz12, { color: themeBW, backgroundColor: 'transparent cv' }]}>{item.comment?.content}</ProdRegular>
+                                    </View>
+                                </View>
                             </View>
                         )}
                     </View>
@@ -220,85 +232,49 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
                 enabled
                 keyboardVerticalOffset={keyboardVerticalOffset}
             >
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <View style={[rootStyle.view, { backgroundColor: colors.blackOp }]}>
-                        <Animated.View   {...panResponder.panHandlers} style={[rootStyle.brTop, rootStyle.Pabsolute, rootStyle.w100, {
-                            height: modalCommentaryHeight,
-                            backgroundColor: themeWD,
-                            bottom: animatedModalBottom,
-                            left: 0,
-                            right: 0,
-                            opacity: modalOpacity
-                        }]}>
-                            <View style={[rootStyle.z10, rootStyle.brTop, rootStyle.h70, rootStyle.w100, { backgroundColor: themeWD }]}>
-                                <View style={[rootStyle.pt1, {}]}><LineiOSComponent /></View>
-                                <View style={[rootStyle.w100, rowstyle.row, rootStyle.px2, rootStyle.alignCenter, rootStyle.brTop, rootStyle.justifyBetween, rootStyle.maxH60, { backgroundColor: 'transparent', height: '100%' }]}>
-                                    <View style={[rowstyle.row, rootStyle.alignCenter, { height: '100%', backgroundColor: 'transparent' }]}>
-                                        <ProdBold style={[text.fz20, text.captalize, rootStyle.pr2, { color: themeBW }]}>{t('tools.comments')}</ProdBold>
-                                        <ProdRegular style={[text.fz15, { color: themeBW }]}>{formatNumber(postData?.comments.length, t)}</ProdRegular>
-                                    </View>
-                                    <View style={[rowstyle.row, rootStyle.alignCenter, rootStyle.justifyEnd, { height: '100%', backgroundColor: 'transparent' }]}>
-                                        <TouchableOpacity onPress={_closeBtn} style={[Images.PostProfileIco, rootStyle.br100, rootStyle.centralize, { borderWidth: 1, borderColor: themeGLTD }]}>
-                                            <EvilIcons name="close" size={24} color={themeBW} />
-                                        </TouchableOpacity>
-                                    </View>
+                <View style={[rootStyle.view, { backgroundColor: colors.blackOp }]}>
+                    <Animated.View   {...panResponder.panHandlers} style={[rootStyle.brTop, rootStyle.Pabsolute, rootStyle.w100, {
+                        height: modalCommentaryHeight,
+                        backgroundColor: themeWD,
+                        bottom: animatedModalBottom,
+                        left: 0,
+                        right: 0,
+                        opacity: modalOpacity
+                    }]}>
+                        <View style={[rootStyle.z10, rootStyle.brTop, rootStyle.h70, rootStyle.w100, { backgroundColor: themeWD }]}>
+                            <View style={[rootStyle.pt1, {}]}><LineiOSComponent /></View>
+                            <View style={[rootStyle.w100, rowstyle.row, rootStyle.px2, rootStyle.alignCenter, rootStyle.brTop, rootStyle.justifyBetween, rootStyle.maxH60, { backgroundColor: 'transparent', height: '100%' }]}>
+                                <View style={[rowstyle.row, rootStyle.alignCenter, { height: '100%', backgroundColor: 'transparent' }]}>
+                                    <ProdBold style={[text.fz20, text.captalize, rootStyle.pr2, { color: themeBW }]}>{t('tools.comments')}</ProdBold>
+                                    <ProdRegular style={[text.fz15, { color: themeBW }]}>{formatNumber(postData?.comments.length, t)}</ProdRegular>
                                 </View>
-                            </View>
-                            <SectionList
-                                showsVerticalScrollIndicator={false}
-                                showsHorizontalScrollIndicator={false}
-                                ref={SectionListRef}
-                                sections={section as any}
-                                renderItem={_timeLine}
-                                // ListHeaderComponent={_refreshMorePub}
-                                keyExtractor={(item, index) => item.comment._id.toString()}
-                                // onEndReached={_Empty}
-                                // onEndReachedThreshold={10}
-                                // onRefresh={_getUserDetails}
-                                ListEmptyComponent={<ProdRegular style={[rootStyle.w100, text.centralizeText, rootStyle.py4, text.fz17, { color: themeBW }]}>{t('post.emptyComment')}</ProdRegular>}
-                            // ListFooterComponent={<View style={[rootStyle.mb9, {}]}></View>}
-                            // stickyHeaderIndices={[0]}
-                            />
-                        </Animated.View>
-                        <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.pb2, Platform.OS === 'ios' && rootStyle.pb3, rootStyle.Pabsolute, { backgroundColor: themeWB, bottom: 0 }]}>
-                            <View style={[rowstyle.row, rootStyle.boxShadow, rootStyle.mx2, rootStyle.pt1, { backgroundColor: 'transparent' }]}>
-                                <View style={[rowstyle["1col"], rootStyle.centralize, {}]}>
-                                    <ImageUserCommentComponent source={{ uri: userAuth?.userAuth?.photo }} />
-                                    <CircleCountCharactere commentary={commentary} />
-                                </View>
-                                <View style={[rowstyle["10col"], rootStyle.ml1, {}]}>
-                                    <TextInput
-                                        editable={true}
-                                        maxLength={200}
-                                        contextMenuHidden={false}
-                                        multiline
-                                        value={commentary}
-                                        placeholderTextColor={commentaryEmpty ? colors.red : colors.gray}
-                                        placeholder={commentaryEmpty ? t('post.emptyCommentary') : t('post.commentPlaceholder')}
-                                        style={[rootStyle.br30,
-                                        rootStyle.maxH100,
-                                        rootStyle.alignCenter,
-                                        rootStyle.w100, text.fz15,
-                                        rootStyle.px2, rootStyle.py2,
-                                        rootStyle.boxShadow,
-                                        {
-                                            backgroundColor: themeWID,
-                                            color: themeBWI,
-                                            borderWidth: 2,
-                                            borderColor: commentaryEmpty ? colors.red : themeWID
-                                        }]}
-                                        onChangeText={(text) => { setCommentary(text); }}
-                                    />
-                                </View>
-                                <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.ml1, {}]}>
-                                    <TouchableOpacity onPress={_createCommentary}>
-                                        <Feather name="send" size={24} color={themeTDWI} />
+                                <View style={[rowstyle.row, rootStyle.alignCenter, rootStyle.justifyEnd, { height: '100%', backgroundColor: 'transparent' }]}>
+                                    <TouchableOpacity onPress={_closeBtn} style={[Images.PostProfileIco, rootStyle.br100, rootStyle.centralize, { borderWidth: 1, borderColor: themeGLTD }]}>
+                                        <EvilIcons name="close" size={24} color={themeBW} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
-                    </View>
-                </TouchableWithoutFeedback>
+                        <SectionList
+                            showsVerticalScrollIndicator={false}
+                            showsHorizontalScrollIndicator={false}
+                            ref={SectionListRef}
+                            sections={section as any}
+                            renderItem={_timeLine}
+                            keyExtractor={(item, index) => item.comment._id.toString()}
+                            ListEmptyComponent={<ProdRegular style={[rootStyle.w100, text.centralizeText, rootStyle.py4, text.fz17, { color: themeBW }]}>{t('post.emptyComment')}</ProdRegular>}
+                        />
+                    </Animated.View>
+                    <InputSendCommentary
+                        _createCommentary={_createCommentary}
+                        setCommentary={setCommentary}
+                        userAuth={userAuth}
+                        commentary={commentary}
+                        commentaryEmpty={commentaryEmpty}
+                        loadCommentary={loadCommentary}
+                        t={t}
+                    />
+                </View>
             </KeyboardAvoidingView>
             <Status />
         </Modal>

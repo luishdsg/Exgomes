@@ -26,9 +26,12 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
 
     const likedAnimation = useRef<LottieView | null>(null);
     const [likedVisible, setLikedVisible] = useState(true);
+    const [likeCount, setLikeCount] = useState(0);
+
 
     const hateAnimation = useRef<LottieView | null>(null);
     const [hateVisible, setHateVisible] = useState(true);
+    const [hateCount, setHateCount] = useState(0);
 
     const [commentsVisible, setCommentsVisible] = useState(themeGTD);
     const [commentsModal, setCommentsModal] = useState(false);
@@ -42,6 +45,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
         if (!data) console.error('Erro ao obter os dados');
         try {
             if (likedVisible) {
+                setLikeCount(1)
                 setLikedVisible(!likedVisible)
                 setTimeout(() => {
                     likedAnimation.current?.play(0, 45);
@@ -55,6 +59,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                 console.warn('Deu like:  ' + likedVisible);
 
             } else {
+                setLikeCount(0)
                 likedAnimation.current?.play(45, 0);
                 setTimeout(() => {
                     setLikedVisible(!likedVisible)
@@ -85,6 +90,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
         if (!data) console.error('Erro ao obter os dados');
         try {
             if (hateVisible) {
+                setHateCount(1)
                 setHateVisible(!hateVisible)
                 setTimeout(() => {
                     hateAnimation.current?.play(0, 15);
@@ -98,6 +104,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                 console.warn('Deu hate:  ' + hateVisible);
 
             } else {
+                setHateCount(0)
                 hateAnimation.current?.play(15, 0);
                 setTimeout(() => {
                     setHateVisible(!hateVisible)
@@ -188,7 +195,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                     </TouchableWithoutFeedback>
                 )}
                 <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
-                    {formatNumber(post.likes?.length, t)}
+                    {formatNumber(post.likes?.length + likeCount, t)}
                 </ProdRegular>
             </View>
             <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, {}]}>
@@ -212,7 +219,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, user, post
                     </TouchableWithoutFeedback>
                 )}
                 <ProdRegular style={[text.fz12, rootStyle.Pabsolute, { bottom: 0, color: themeTDG }]}>
-                    {formatNumber(post.hated?.length, t)}
+                    {formatNumber(post.hated?.length + hateCount, t)}
                 </ProdRegular>
 
             </View>

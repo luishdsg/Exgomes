@@ -1,11 +1,11 @@
 import React, { ReactNode, useEffect, useRef } from 'react';
-import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle, Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView, ScrollView, TouchableOpacity, View, } from 'react-native';
+import { Animated, Image, ImageSourcePropType, Pressable, StyleProp, ViewStyle, Text as DefaultText, TextInput as DefaultTextInput, ScrollView as DefaultScrollView, useColorScheme, View as DefaultView, ScrollView, TouchableOpacity, View, Platform, TextInput, ActivityIndicator, } from 'react-native';
 import { Images, rowstyle, profileStyle, rootStyle, text } from '../style';
 import { useThemeController } from '../style/Themed';
 import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
-import { ScrollToTopButtonComponentProps } from '../interface/Props.interface';
+import { InputSendCommentaryProps, ScrollToTopButtonComponentProps } from '../interface/Props.interface';
 import Svg, { Circle } from 'react-native-svg';
 import { colors } from '../style/Colors';
 
@@ -67,8 +67,8 @@ const CircleCountCharactere = ({ commentary }) => {
   };
   const circleColor = commentary.length <= 199 ? colors.patternColor : colors.red;
   return (
-    <View style={[rootStyle.alignCenter, rootStyle.Pabsolute,{}]}>
-      <View style={[rootStyle.Prelative,{backgroundColor: 'transparent'}]}>
+    <View style={[rootStyle.alignCenter, rootStyle.Pabsolute, {}]}>
+      <View style={[rootStyle.Prelative, { backgroundColor: 'transparent' }]}>
         <Svg height="50" width="50">
           <Circle
             cx="25"
@@ -126,6 +126,63 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
         <ProdRegular style={[{ color: themeBW }]}>{t('home.moredata')}</ProdRegular>
       </View>
     </TouchableOpacity>
+  );
+};
+
+
+const InputSendCommentary: React.FC<InputSendCommentaryProps> = ({ _createCommentary, setCommentary, t, userAuth, commentary, commentaryEmpty, loadCommentary }) => {
+  const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWID, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+
+  return (
+    <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.pb2, Platform.OS === 'ios' && rootStyle.pb3, rootStyle.Pabsolute, { backgroundColor: themeWB, bottom: 0 }]}>
+      <View style={[rowstyle.row, rootStyle.boxShadow, rootStyle.mx2, rootStyle.pt1, { backgroundColor: 'transparent' }]}>
+        <View style={[rowstyle[" 1col"], rootStyle.centralize, {}]}>
+          <ImageUserCommentComponent source={{ uri: userAuth?.userAuth?.photo }} />
+          <CircleCountCharactere commentary={commentary} />
+        </View>
+        <View style={[rowstyle["10col"], rootStyle.ml1, {}]}>
+          <TextInput
+            editable={true}
+            maxLength={200}
+            contextMenuHidden={true}
+            value={commentary}
+            placeholderTextColor={commentaryEmpty ? colors.red : colors.gray}
+            placeholder={commentaryEmpty ? t('post.emptyCommentary') : t('post.commentPlaceholder')}
+            style={[rootStyle.br30,
+            rootStyle.maxH100,
+            rootStyle.alignCenter,
+            rootStyle.maxH60,
+            rootStyle.w100, text.fz15,
+            rootStyle.px2, rootStyle.py2,
+            rootStyle.boxShadow,
+            {
+              backgroundColor: themeWID,
+              color: themeBWI,
+              borderWidth: 2,
+              borderColor: commentaryEmpty ? colors.red : themeWID
+            }]}
+            onSubmitEditing={() => { _createCommentary() }}
+            onChangeText={(text) => { setCommentary(text); }}
+          />
+        </View>
+        {loadCommentary &&
+          <View style={[rowstyle["1col"], rootStyle.centralize, rootStyle.Pabsolute, rootStyle.ml1, rootStyle.h100, { top: 14, right: 5, backgroundColor: 'transparent' }]}>
+            <ActivityIndicator size="large" color={themeTDWI} />
+          </View>
+        }
+
+      </View>
+    </View>
+  )
+}
+
+
+const LineVerticalComponent: React.FC<any> = (props: any) => {
+  const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  return (
+    <View  {...props} style={[{ ...props }, rootStyle.centralize, rootStyle.w100, { zIndex: 10, }]} >
+      <View style={[{ width: 1, height: '100%', backgroundColor: themeGTD }]}></View>
+    </View>
   );
 };
 
@@ -234,6 +291,8 @@ export {
   ImageProfileComponent,
   ScrollToTopButtonComponent,
   LineiOSComponent,
+  LineVerticalComponent,
+  InputSendCommentary,
   CircleCountCharactere,
   ProdRegular,
   ProdThin,

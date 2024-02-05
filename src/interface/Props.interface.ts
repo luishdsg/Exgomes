@@ -16,6 +16,7 @@ export interface ReactBtnPostProps {
   onPress: () => void;
 }
 
+
 export interface GroupedPosts {
   id: string;
   user: UserRes;
@@ -35,8 +36,15 @@ export type SectionDataPostProps = {
   data: Array<{ post: PostRes; user: UserRes }>;
 };
 
+export interface UserAuth {
+    userAuth: UserRes;
+    token: string;
+}
+
 export interface SettingsPostModalProps {
   onClose: () => void;
+  author: UserRes;
+  userAuth: UserRes;
   followUnfollow: () => void;
   isUserFollowing: boolean;
   post: PostRes
@@ -45,6 +53,19 @@ export interface SettingsPostModalProps {
 export interface ScrollToTopButtonComponentProps {
   sectionListRef: React.RefObject<SectionList>
   onPress: (page: number) => void;
+}
+
+export interface InputSendCommentaryProps {
+  _createCommentary: () => void;
+  setCommentary: (value: React.SetStateAction<string>) => void;
+  userAuth: {
+    userAuth: UserRes;
+    token: string;
+  };
+  commentary: string;
+  commentaryEmpty: boolean;
+  t: (key: string) => string;
+  loadCommentary: boolean;
 }
 
 export interface UserComments {

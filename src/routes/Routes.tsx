@@ -1,57 +1,65 @@
-import { API_URL, USER_ICON } from '@env';
+import { USER_ICON } from '@env';
 import { Feather, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native';
 import { TransitionPresets, createStackNavigator } from '@react-navigation/stack';
-import axios from 'axios';
-import { useFonts } from 'expo-font';
+import * as Font from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Image, Pressable, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import LoginPage from '../auth/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
+import { UserRes } from '../base/User.base';
 import { ProdBold, TruncatedTextBold } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
-import { useThemeController } from '../style/Themed';
 import '../i18n/i18n';
 import { RootStackParamList } from '../interface/RootStackParamList';
-import { UserRes } from '../base/User.base';
 import HomeScreen from '../pages/home';
-import LoginPage from '../auth/login';
 import ProfileScreen from '../pages/profile';
 import SettingsScreen from '../pages/settings';
 import { Images, rootStyle, rowstyle, text } from '../style';
 import { colors } from '../style/Colors';
+import { useThemeController } from '../style/Themed';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 type ScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
+const fonts = () => {
+  return Font.loadAsync({
+      'ProdBold': require('../../assets/fonts/ProductSans-Bold.ttf'),
+      'ProdLight': require('../../assets/fonts/ProductSans-Light.ttf'),
+      'ProdRegular': require('../../assets/fonts/ProductSans-Regular.ttf'),
+      'ProdThin': require('../../assets/fonts/ProductSans-Thin.ttf'),
+      'ArialRoundedMTBold': require('../../assets/fonts/ProductSans-Regular.ttf'),
+    });
+  };
 
 function HomeTabBarNavigator() {
-  const [userSecureStoreData, setUserSecureStoreData] = useState<{userAuth: UserRes;token: string;}>(null);
+  const [userSecureStoreData, setUserSecureStoreData] = useState<{ userAuth: UserRes; token: string; }>(null);
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
   const navigation = useNavigation<ScreenNavigationProp>();
   const { onLogout } = useAuth();
 
 
-    const getUserAuthorizeData = async () => {
-      try {
-        const data = await getSecureStoreData();
-        if (data) setUserSecureStoreData(data);
-      } catch (error: any) {
-        console.log('sem dados do usuario posthome')
-        return error.message;
-      }
-    };
+  const getUserAuthorizeData = async () => {
+    try {
+      const data = await getSecureStoreData();
+      if (data) setUserSecureStoreData(data);
+    } catch (error: any) {
+      console.log('sem dados do usuario posthome')
+      return error.message;
+    }
+  };
 
   useEffect(() => {
     getUserAuthorizeData();
   }, []);
-  
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -153,20 +161,26 @@ function LayoutAuth() {
   const { authState } = useAuth();
   const { themeWB, themeWTD, themeTDW, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const { t, i18n: { changeLanguage, language } } = useTranslation();
-
-  SplashScreen.preventAutoHideAsync();
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../../assets/fonts/SpaceMono-Regular.ttf'),
-    ProdBold: require('../../assets/fonts/ProductSans-Bold.ttf'),
-    ProdLight: require('../../assets/fonts/ProductSans-Light.ttf'),
-    ProdRegular: require('../../assets/fonts/ProductSans-Regular.ttf'),
-    ProdThin: require('../../assets/fonts/ProductSans-Thin.ttf'),
-  });
+  const [fontesLoaded, setFontesLoaded] = useState(false);
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function loadFonts() {
+      try {
+        SplashScreen.preventAutoHideAsync();
+        await fonts();
+        SplashScreen.hideAsync();
+        setFontesLoaded(true);
+      } catch (error) {
+        console.error('Erro ao carregar fontes ou esconder o SplashScreen:', error);
+      }
     }
-  }, [loaded]);
+
+    loadFonts();
+  }, []);
+
+  if (!fontesLoaded) {
+    console.log('Carregando fontes...');
+    return null;
+  }
 
   return (
     <SafeAreaProvider>

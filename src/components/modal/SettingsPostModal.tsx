@@ -1,4 +1,4 @@
-import { SettingsPostModalProps } from "../../interface/Props.interface";
+import { SettingsPostModalProps, UserAuth } from "../../interface/Props.interface";
 import { rootStyle, rowstyle, text } from "../../style";
 import { BlurView } from "expo-blur";
 import { colors } from "../../style/Colors";
@@ -12,19 +12,36 @@ import { AntDesign, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } fro
 import { Button, Icon } from "react-native-ios-kit";
 import { HateIcon, Uninteresting } from "../../../assets/svg/IconsSVG";
 import { formatNumber } from "../../pipe/FormatNumber";
+import { blockUser, userByUsername } from "../../services/user.service";
+import { UserRes } from "../../base/User.base";
+import getSecureStoreData from "../../constants/SecureStore";
 
-const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFollowing, followUnfollow, post }) => {
+const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, author, userAuth, isUserFollowing, followUnfollow, post }) => {
     const { themeWB, themeWID, themeGLD, themeTDG, themeBWI, themeFollow, themeWIB, themeBW, themeGTD, themeTDWI, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t } = useTranslation();
     const screenHeight = Dimensions.get('window').height;
 
     const [notify, setNotify] = useState(false);
+    const [unBlockBlock, setUnBlockBlock] = useState(false);
+    const [unfollowFollow, setUnfollowFollow] = useState(isUserFollowing);
 
     const animateOptions = useRef(new Animated.Value(screenHeight)).current;
     const [modalOpacity] = useState(new Animated.Value(0));
 
     const _notify = () => {
         setNotify(!notify)
+    }
+ 
+    const _block = async () => {
+        if (unBlockBlock) blockUser(userAuth?._id, author?._id, false), setUnBlockBlock(!unBlockBlock)
+        else blockUser(userAuth?._id, author?._id, true), setUnBlockBlock(!unBlockBlock)
+    }
+    const _verifyBlock = () => { if (userAuth?.block?.includes(author?._id)) setUnBlockBlock(true) }
+
+
+    const _UnFollow = () => {
+        setUnfollowFollow(!unfollowFollow)
+        followUnfollow();
     }
 
     const _close = () => {
@@ -50,6 +67,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
             duration: 200,
             useNativeDriver: false,
         }).start();
+        _verifyBlock();
     }, []);
 
     console.log('number of views: ' + typeof post.views)
@@ -77,7 +95,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                             backgroundColor: themeGLD
                         }]}>
                         {/* report */}
-                        <TouchableOpacity onPress={followUnfollow}
+                        <TouchableOpacity onPress={_close}
                             style={[rowstyle.row, rootStyle.my1, rootStyle.alignCenter, rootStyle.justifyStart, rootStyle.brTop, rootStyle.pt2, rootStyle.px3, {
                             }]}>
                             <Icon
@@ -91,7 +109,7 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                         </TouchableOpacity>
                         {/* uninteresting */}
 
-                        <TouchableOpacity onPress={followUnfollow}
+                        <TouchableOpacity onPress={_close}
                             style={[rowstyle.row, rootStyle.my1, rootStyle.alignCenter, rootStyle.justifyStart, rootStyle.borderTop, rootStyle.pt2, rootStyle.px3, {
                                 borderColor: themeGTD,
                             }]}>
@@ -166,31 +184,29 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
                             </View>
                         </TouchableOpacity>
                         {/* block */}
-                        <TouchableOpacity onPress={followUnfollow}
+                        <TouchableOpacity onPress={_block}
                             style={[rowstyle.row, , rootStyle.alignCenter, rootStyle.justifyStart, rootStyle.borderTop, rootStyle.py2, rootStyle.px3, {
                                 borderColor: themeGTD,
                             }]}>
-                            <MaterialIcons name="block" size={24} color={themeTDG} />
-                            <ProdRegular style={[text.fz20, rootStyle.px1, { color: themeTDG, }]}>
-
-                                {t(`settings.block`)}
+                            <MaterialIcons name="block" size={24} color={unBlockBlock ? colors.red : themeTDG} />
+                            <ProdRegular style={[text.fz20, rootStyle.px1, { color: unBlockBlock ? colors.red : themeTDG }]}>
+                                {unBlockBlock ? t(`settings.unblock`) : t(`settings.block`)}
                             </ProdRegular>
                         </TouchableOpacity>
-
-
                     </ScrollView>
+
                     {/* unfollow/follow */}
 
-                    <TouchableOpacity onPress={followUnfollow}
+                    <TouchableOpacity onPress={_UnFollow}
                         style={[rowstyle.row, rootStyle.mb1, rootStyle.centralize, rootStyle.br30, rootStyle.py2, rootStyle.px4, {
-                            backgroundColor: isUserFollowing ? themeFollow : themeWIB,
-                            borderColor: isUserFollowing ? colors.purple : colors.patternColor, borderWidth: 2
+                            backgroundColor: unfollowFollow ? themeFollow : themeWIB,
+                            borderColor: unfollowFollow ? colors.purple : colors.patternColor, borderWidth: 2
                         }]}>
                         <ProdRegular
                             style={[text.fz20, {
-                                color: isUserFollowing ? themeBW : colors.patternColor,
+                                color: unfollowFollow ? themeBW : colors.patternColor,
                             }]} >
-                            {t(`${isUserFollowing ? 'post.unfollow' : 'post.follow'}`)}
+                            {t(`${unfollowFollow ? 'post.unfollow' : 'post.follow'}`)}
                         </ProdRegular>
                     </TouchableOpacity>
                     {/* cancel */}
@@ -219,5 +235,6 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, isUserFo
 export {
     SettingsPostModal
 }
+
 
 

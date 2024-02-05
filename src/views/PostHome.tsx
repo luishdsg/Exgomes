@@ -241,10 +241,12 @@ const PostHome: React.FC = () => {
                 <Modal visible={modalSettings} transparent statusBarTranslucent={true}>
                     <SettingsPostModal
                         post={item.post}
+                        author={item.user}
+                        userAuth={userAuth?.userAuth}
                         isUserFollowing={isUserFollowing(item.user._id)}
                         followUnfollow={() => {
                             _followUnfollow(item.user._id),
-                                showModalSettings(false),
+                                // showModalSettings(false),
                                 _getPosts(page)
                                 _getUserAuthorizeData()
                         }}
