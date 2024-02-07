@@ -44,8 +44,8 @@
       },
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.kerollyna.exgomes"
+      ]
+      // "package": "com.kerollyna.exgomes"
     },
     "web": {
       "bundler": "metro",
@@ -56,12 +56,13 @@
       "typedRoutes": true
     },
     "packagerOpts": {
-      "config": "metro.config.js"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "3582783d-1207-4725-aeb3-8ae48e10a683"
-      }
+      "config": "metro.config.js",
+      "ignoreWarnings": ["Found screens with the same name nested inside one another. Check"]
     }
+    // "extra": {
+    //   "eas": {
+    //     "projectId": "3582783d-1207-4725-aeb3-8ae48e10a683"
+    //   }
+    // }
   }
 }
