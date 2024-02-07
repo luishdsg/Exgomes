@@ -5,14 +5,28 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "userInterfaceStyle": "automatic",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends.",
+          "cameraPermission": "Allow ${APP} to access your camera"
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#31b3ff"
     },
     "assetBundlePatterns": [
-      "**/*"
+      "**/*,"
     ],
     "developer": {
       "tool": "exponent"
@@ -27,7 +41,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.kerollyna.exgomes"
     },
     "web": {
       "bundler": "metro",
@@ -38,8 +56,12 @@
       "typedRoutes": true
     },
     "packagerOpts": {
-      "config": "metro.config.js",
-      "ignoreWarnings": ["Found screens with the same name nested inside one another. Check"]
+      "config": "metro.config.js"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3582783d-1207-4725-aeb3-8ae48e10a683"
+      }
     }
   }
 }

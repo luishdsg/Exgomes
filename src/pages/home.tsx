@@ -1,21 +1,18 @@
 // src/pages/home.tsx
-import { StackNavigationProp } from '@react-navigation/stack';
-import * as SecureStore from 'expo-secure-store';
-import React from 'react';
-import { Button,Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { View } from 'react-native';
+import PostHome from '../views/PostHome';
+import { HomeScreenPageProps } from '../interface/Props.interface';
 
-type HomeScreenPageProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
-};
+
 
 const HomeScreen: React.FC<HomeScreenPageProps> = ({ navigation }) => {
-  const handleLogout = async () => {
-  };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>HELLO WORLD!</Text>
+    <View>
+        <PostHome/>
     </View>
+
   );
 };
 

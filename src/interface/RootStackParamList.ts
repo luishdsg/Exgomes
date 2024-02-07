@@ -1,6 +1,10 @@
-type RootStackParamList = {
-    Login: undefined;
-    SignUp: undefined;
-    Home: undefined;
-    Profile: undefined;
-  };
+export type RootStackParamList = {
+  Home: any;
+  Blocked: any;
+  Login: any;
+  Settings: any;
+  CommentsPost: any;
+  Error: any;
+  Profile: any;
+  ProfileViews: any;
+};

@@ -1,15 +1,63 @@
 {
     "greeting": "Olá!",
     "welcome": "Bem-vindo ao nosso aplicativo!",
-    "login":{
-        "hny":"Feliz ano novo {{newyear}}",
+    "home": {
+        "moredata": "+ postagens"
+    },
+    "login": {
+        "signup": "Criar conta",
+        "login": "Entrar",
+        "forgotPass": "Esqueci a senha",
+        "hny": "Feliz ano novo {{newyear}}",
         "title": "Fale com mais Gente\ncomo você!",
+        "userexist": "já está\nem uso",
+        "errorserver": "Servidor em análise\nPor favor aguarde alguns minutos",
+        "incorrectLogin": "Usuario ou Senha\nIncorreto",
         "subtitle": "compartilhe ideias e opiniões com\namigos e familiares"
     },
-    "Tools":{
-        "inputUser":"Nome de usuário",
-        "inputPass":"Senha",
-        "refresh": "Atualizando..."
+    "profile": {
+        "youremail": "seu email",
+        "editprofile": "editar perfil",
+        "favorites": "Favoritos",
+        "save": "Salvos",
+        "start": "Inicio",
+        "block": "Bloqueados",
+        "trash": "Lixeira",
+        "media": "Mídia"
+    },
+    "tools": {
+        "inputUser": "Nome de usuário",
+        "userEmpty": "Usuário não pode ficar vazio",
+        "passEmpty": "Senha não pode ficar vazia",
+        "inputPass": "Senha",
+        "refresh": "Atualizando...",
+        "comments": "comentários"
+    },
+    "settings": {
+        "settings": "configurações",
+        "uninteresting": "não tenho interesse",
+        "views": "visualizações",
+        "block": "bloquear",
+        "unblock": "desbloquear",
+        "notification":"notificações",
+        "notnotfy": "não ser notificado(a)",
+        "notify": "todas as notificações",
+        "report" : "denunciar"
+    },
+    "post": {
+        "safe": "salvo",
+        "removed": "removido",
+        "unfollow": "Desseguir",
+        "followers": "Seguidores",
+        "follow": "seguir",
+        "following": "Seguindo",
+        "cancel": "cancelar",
+        "emptyCommentary": "comentário está vazio!",
+        "andComment": "há",
+        "commentPlaceholder": "escreva um comentário...",
+        "close": "fechar",
+        "thousands": "mil",
+        "millions": "mi",
+        "emptyComment": "ㄟ( ▔, ▔ )ㄏ\nsem comentários\npor enquanto"
     }
-  }
-  
+}
