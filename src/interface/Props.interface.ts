@@ -44,7 +44,6 @@ export interface UserAuth {
 export interface SettingsPostModalProps {
   onClose: () => void;
   author: UserRes;
-  userAuth: UserRes;
   followUnfollow: () => void;
   isUserFollowing: boolean;
   post: PostRes
@@ -98,4 +97,7 @@ export type PostHomeProps = {
 }
 export type HomeScreenPageProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+};
+export type BlockedScreenPageProps = {
+  navigation: StackNavigationProp<RootStackParamList, 'Blocked'>;
 };

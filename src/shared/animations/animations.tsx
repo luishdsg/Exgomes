@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import {Animated }from 'react-native';
+import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
-export const useFadeAnimationLogin = () => {
+export const useFadeAnimation = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = () => {
@@ -24,3 +25,8 @@ export const useFadeAnimationLogin = () => {
 
   return { fadeAnim, fadeIn, fadeOut };
 };
+
+
+
+
+export const animate1500ms = {duration: 1500,easing: Easing.bezier(0.5, 0.01, 0, 1),};

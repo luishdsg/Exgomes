@@ -1,32 +1,29 @@
 /* eslint-disable react-native/no-inline-styles */
 import { API_URL } from "@env";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { format } from 'date-fns';
-import { BlurView } from "expo-blur";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Modal, PanResponder, ScrollView, SectionList, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { Button, Icon } from "react-native-ios-kit";
+import { ActivityIndicator, Dimensions, Image, ImageBackground, Modal, SectionList, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Icon } from "react-native-ios-kit";
 import { SvgXml } from 'react-native-svg';
 import { verifiedAccount } from "../../assets/svg/IconsSVG";
-import * as Haptics from 'expo-haptics';
-import * as SecureStorage from 'expo-secure-store';
-
-import getSecureStoreData from "../constants/SecureStore";
-import { useThemeController } from "../style/Themed";
-import { PostHomeProps, SectionDataPostProps } from "../interface/Props.interface";
+import * as SecureStore from 'expo-secure-store';
+import { RefreshControl } from "react-native-gesture-handler";
 import { PostRes } from "../base/Post.base";
 import { UserRes } from "../base/User.base";
-import { profileStyle, rootStyle, rowstyle, text } from "../style";
-import { colors } from "../style/Colors";
 import { LoadProfilePost } from "../components/LoadContent";
 import { ReactButtonsPost } from "../components/ReactButtonsPost";
 import { ImageProfileComponent, ProdLight, ProdRegular, ScrollToTopButtonComponent, TruncatedTextBold } from "../components/StyledComponents";
-import ZoomableImage from "../components/modal/ViewImageModal";
-import { RefreshControl } from "react-native-gesture-handler";
-import SecureStore from "../constants/SecureStore";
 import { SettingsPostModal } from "../components/modal/SettingsPostModal";
+import ZoomableImage from "../components/modal/ViewImageModal";
+import { default as getSecureStoreData } from "../constants/SecureStore";
+import { SectionDataPostProps } from "../interface/Props.interface";
 import { countPostViews } from "../services/post.service";
+import { blockedUsers } from "../services/user.service";
+import { rootStyle, rowstyle, text } from "../style";
+import { colors } from "../style/Colors";
+import { useThemeController } from "../style/Themed";
 
 const PostHome: React.FC = () => {
     const SectionListRef = useRef(null);
@@ -34,7 +31,7 @@ const PostHome: React.FC = () => {
     const [sectionData, setSectionData] = useState<SectionDataPostProps[]>([]);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
-    const [userAuth, setUserAuth] = useState<{userAuth: UserRes;token: string;}>(null);
+    const [userAuth, setUserAuth] = useState<{ userAuth: UserRes; token: string; }>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
     const [noMorePost, setNoMorePost] = useState(false);
@@ -55,9 +52,12 @@ const PostHome: React.FC = () => {
                     setNoMorePost(true);
                     return;
                 }
-                const userIds = getPostsData.data.map((post) => post.userId)
+                // remove blocked users
+                const userIds = getPostsData.data.map((post) => post.userId);
+                const blockedList = await blockedUsers(data?.userAuth._id)
+                const removeBlockedsUsers = userIds.filter(_id => !blockedList.includes(_id));
                 const usersData = await Promise.all(
-                    userIds.map(async (userId) => {
+                    removeBlockedsUsers.map(async (userId) => {
                         const userData = await axios.get<UserRes>(`${API_URL}/users/byId/${userId}`);
                         return userData.data;
                     })
@@ -67,79 +67,74 @@ const PostHome: React.FC = () => {
                     return acc;
                 }, {} as Record<string, UserRes>);
 
-                const sections = Object.values(usersMap).map((user) => {
-                    const userPosts = getPostsData.data
-                        .filter((post) => post.userId === user._id)
-                        .map((post) => ({ post, user }));
-                    return {
-                        title: user.username,
-                        data: userPosts,
-                    };
-                });
-                const invertedSections = sections.slice().reverse().map((section) => ({
+                const section = Object.values(usersMap)
+                    .filter((user) => !data?.userAuth.block.includes(user._id))
+                    .map((user) => {
+                        const userPosts = getPostsData.data
+                            .filter((post) => post.userId === user._id)
+                            .map((post) => ({ post, user }));
+                        return {
+                            title: user.username,
+                            data: userPosts,
+                        };
+                    });
+                const invertedSections = section.slice().reverse().map((section) => ({
                     ...section,
                     title: section.title,
                     data: section.data.slice().reverse(),
                 }));
                 setSectionData(invertedSections);
                 setPage(pageNumber + 1);
+                const userAuth = await axios.get<UserRes>(`${API_URL}/users/username${data?.userAuth?.username}`);
+                await SecureStore.setItemAsync('userAuthorizeData', JSON.stringify(userAuth.data));
+                console.warn('salvou no store home')
             } catch (error: any) {
                 console.error('Busca pelso post na home deu ruim', error);
-                // return error.message;
             }
             finally {
                 console.warn('loading falso')
                 setLoading(false);
             }
-        }, 1000)
+        }, 500)
     }, []);
 
-    const _getUserAuthorizeData = async () => {
-        try {
-          const data = await getSecureStoreData();
-          if (data) setUserAuth(data);
-        } catch (error: any) {
-          console.log('sem dados do usuario posthome')
-          return error.message;
-        }
-      };
+
 
     const onViewableItemsChanged = useRef(({ viewableItems }) => {
         viewableItems.forEach(({ item }) => {
-          countPostViews(item.post._id)
+            countPostViews(item.post._id)
         });
-      }).current; 
-    
+    }).current;
+
 
     const isUserFollowing = (userId: string) => {
         const findInList = userAuth?.userAuth?.following?.includes(userId || '');
         return findInList
     }
 
-
     const _followUnfollow = async (follower: string) => {
-            try {
-                if (isUserFollowing(follower)) {
-                    await axios.delete(`${API_URL}/users/${userAuth?.userAuth?._id}/unfollow/${follower}`, {
-                        headers: {
-                            accept: '*/*',
-                            Authorization: `Bearer ${userAuth.token}`,
-                        },
-                    });
-                    console.warn('Deu unfollow');
-                } else {
-                    await axios.post(`${API_URL}/users/${userAuth.userAuth?._id}/follow/${follower}`, {
-                        headers: {
-                            Authorization: `Bearer ${userAuth.token}`,
-                        },
-                    });
-                    console.warn('Deu follow');
+        try {
+            if (isUserFollowing(follower)) {
+                await axios.delete(`${API_URL}/users/${userAuth?.userAuth?._id}/unfollow/${follower}`, {
+                    headers: {
+                        accept: '*/*',
+                        Authorization: `Bearer ${userAuth.token}`,
+                    },
+                });
+                console.warn('Deu unfollow');
+            } else {
+                await axios.post(`${API_URL}/users/${userAuth.userAuth?._id}/follow/${follower}`, {
+                    headers: {
+                        Authorization: `Bearer ${userAuth.token}`,
+                    },
+                });
+                console.warn('Deu follow');
 
-                }
-            } catch (error) {
-                console.error('Erro ao seguir/desseguir o usuário', error);
             }
-        
+        } catch (error) {
+            console.error('Erro ao seguir/desseguir o usuário', error);
+        }
+
 
     }
 
@@ -147,19 +142,6 @@ const PostHome: React.FC = () => {
         setScreenHeight(Dimensions.get('window').height);
         Dimensions.addEventListener('change', _onDimensionsChange);
     };
-
-    useEffect(() => {
-        if (loading) {
-            _getUserAuthorizeData();
-            _getPosts(page);
-        };
-        _onDimensionsChange();
-        return () => {
-            source.cancel();
-        };
-    }, [_getPosts, page]);
-
-
 
     const _timeLinePub = ({ item }: { item: { post: PostRes; user: UserRes } }) => {
         const [imageUri, setImageUri] = useState(item.post.photo);
@@ -171,11 +153,6 @@ const PostHome: React.FC = () => {
         const showImagePost = (visible: boolean) => { setModalImage(visible); };
         const showModalSettings = (visible: boolean) => { setModalSettings(visible); };
 
-        const onViewableItemsChanged = useRef(({ viewableItems }) => {
-            viewableItems.forEach(({ item }) => {
-                console.log('Item visível:', item.comment._id);
-            });
-        }).current;
 
         useEffect(() => {
             if (imageUri && imageUri !== "string") Image.getSize(imageUri, (width, height) => { setImageDimensions({ width, height }) });
@@ -242,15 +219,13 @@ const PostHome: React.FC = () => {
                     <SettingsPostModal
                         post={item.post}
                         author={item.user}
-                        userAuth={userAuth?.userAuth}
                         isUserFollowing={isUserFollowing(item.user._id)}
                         followUnfollow={() => {
                             _followUnfollow(item.user._id),
                                 // showModalSettings(false),
                                 _getPosts(page)
-                                _getUserAuthorizeData()
                         }}
-                        onClose={() => showModalSettings(false)}
+                        onClose={() => { _getPosts(page), showModalSettings(false) }}
                     />
                 </Modal>
             </View>
@@ -280,6 +255,19 @@ const PostHome: React.FC = () => {
     const _handleCheckEndPage = () => { if (loading) _getPosts(page); };
 
 
+    useEffect(() => {
+        const data = async () => {
+            if (loading) {
+                await _getPosts(page);
+            };
+        }
+        data()
+        _onDimensionsChange();
+        return () => {
+            source.cancel();
+        };
+    }, [_getPosts, page]);
+
     return (
         <>
             {loading ? (
@@ -299,7 +287,6 @@ const PostHome: React.FC = () => {
                     viewabilityConfig={{
                         itemVisiblePercentThreshold: 50,
                         minimumViewTime: 2000,
-
                     }}
                     ListEmptyComponent={<ActivityIndicator size="large" color={colors.patternColor} />}
                     ListFooterComponent={_refreshMorePub}
@@ -307,7 +294,7 @@ const PostHome: React.FC = () => {
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
-                            onRefresh={() => { _getPosts(page); _getUserAuthorizeData(); }}
+                            onRefresh={() => _getPosts(page)}
                             tintColor="#007AFF"
                             titleColor="#007AFF"
                             progressViewOffset={0}

@@ -39,7 +39,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
     const [loading, setLoading] = useState(true);
     const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
 
-    const [selectedDropDownPost, setSelectedDropDownPost] = useState('1');
+    const [selectedDropDownPost, setSelectedDropDownPost] = useState(1);
     const source = axios.CancelToken.source();
     const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
 

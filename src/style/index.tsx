@@ -31,6 +31,9 @@ export const rootStyle = StyleSheet.create({
     z10: {
         zIndex: 10000,
     },
+    op5: {
+        opacity: .5
+    },
     z_1: {
         zIndex: -1,
     },

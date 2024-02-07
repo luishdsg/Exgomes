@@ -7,7 +7,7 @@ import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, Platform, 
 import { Avatar, Switch } from 'react-native-ios-kit';
 import Icon from 'react-native-vector-icons/Octicons';
 import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../components/StyledComponents';
-import { useFadeAnimationLogin } from '../components/animations/login';
+import { useFadeAnimation } from '../shared/animations/animations';
 import ForgotPassModal from '../components/modal/ForgotPassModal';
 import PopUpError from '../components/modal/PopUpErrorModal';
 import { useThemeController } from '../style/Themed';
@@ -39,8 +39,8 @@ const LoginPage: React.FC = () => {
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, Status, _toggleTheme } = useThemeController();
   const keyboardVerticalOffset = Platform.OS === 'android' ? -350 : 0;
 
-  const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimationLogin();
-  const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimationLogin();
+  const { fadeAnim: fadeAnimUsername, fadeIn: fadeInUsername, fadeOut: fadeOutUsername } = useFadeAnimation();
+  const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimation();
 
   const userLogData = async () => { setUserLog(await _getUserLog(username)) }
   const findUser = async () => { return await _getUserLog(username) }

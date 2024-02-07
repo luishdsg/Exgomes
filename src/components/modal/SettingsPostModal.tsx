@@ -1,4 +1,4 @@
-import { SettingsPostModalProps, UserAuth } from "../../interface/Props.interface";
+import { SettingsPostModalProps} from "../../interface/Props.interface";
 import { rootStyle, rowstyle, text } from "../../style";
 import { BlurView } from "expo-blur";
 import { colors } from "../../style/Colors";
@@ -12,11 +12,11 @@ import { AntDesign, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } fro
 import { Button, Icon } from "react-native-ios-kit";
 import { HateIcon, Uninteresting } from "../../../assets/svg/IconsSVG";
 import { formatNumber } from "../../pipe/FormatNumber";
-import { blockUser, userByUsername } from "../../services/user.service";
+import { blockUser, userById, userByUsername } from "../../services/user.service";
 import { UserRes } from "../../base/User.base";
 import getSecureStoreData from "../../constants/SecureStore";
 
-const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, author, userAuth, isUserFollowing, followUnfollow, post }) => {
+const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, author, isUserFollowing, followUnfollow, post }) => {
     const { themeWB, themeWID, themeGLD, themeTDG, themeBWI, themeFollow, themeWIB, themeBW, themeGTD, themeTDWI, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t } = useTranslation();
     const screenHeight = Dimensions.get('window').height;
@@ -33,10 +33,12 @@ const SettingsPostModal: React.FC<SettingsPostModalProps> = ({ onClose, author, 
     }
  
     const _block = async () => {
+    const data = await getSecureStoreData();
+    const userAuth = await userById(data?.userAuth?._id)
         if (unBlockBlock) blockUser(userAuth?._id, author?._id, false), setUnBlockBlock(!unBlockBlock)
         else blockUser(userAuth?._id, author?._id, true), setUnBlockBlock(!unBlockBlock)
     }
-    const _verifyBlock = () => { if (userAuth?.block?.includes(author?._id)) setUnBlockBlock(true) }
+    const _verifyBlock = async() => {  const data = await getSecureStoreData(); if (data?.userAuth?.block?.includes(author?._id)) setUnBlockBlock(true) }
 
 
     const _UnFollow = () => {
