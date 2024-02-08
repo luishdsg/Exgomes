@@ -15,7 +15,7 @@ const userByUsername = async (username: string) => {
                 Authorization: `Bearer ${data?.token}`,
             },
         });
-        return user
+        return user.data
     } catch (error) {
         console.error('Erro ao registrar userByUsername:', error);
     }

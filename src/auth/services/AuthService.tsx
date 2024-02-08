@@ -114,10 +114,10 @@ export const AuthProvider = ({ children }: any) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export const _getUserLog = async (username: string) => {
+export const _getUserLog = async (username: string):Promise<UserRes> => {
   try {
-    const result = await axios.get(`${API_URL}/users/username${username}`);
-    console.log('peguei o usuario no login')
+    const result = await axios.get<UserRes>(`${API_URL}/users/username${username}`);
+    console.log(result.data.photo)
     return result.data
   } catch (error) {
     console.error('Não peguei o usuario no login')

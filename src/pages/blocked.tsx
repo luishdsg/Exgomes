@@ -82,16 +82,16 @@ const BlockedScreen: React.FC = () => {
     
     const _unBlock = async () => {
       const data = await getSecureStoreData();
-      translateX.value = withTiming(-500, { duration: 700, easing: Easing.ease });
-      setTimeout(() => {deleteItemList(item._id);}, 700);
+      translateX.value = withTiming(-500, { duration: 500, easing: Easing.ease });
+      setTimeout(() => {deleteItemList(item._id);}, 500);
       await blockUser(data?.userAuth?._id, item?._id, false)
     };
     const animeLeft = useAnimatedStyle(() => { return { transform: [{ translateX: translateX.value }], }; });
 
     return (
       <Animated.View style={[rootStyle.w100, rootStyle.br30, AnimeBottomOp, animeLeft, { bottom: -300, }]}>
-        <View style={[rowstyle.row, rootStyle.py2, rootStyle.mx1, rootStyle.px1, rootStyle.borderTop, { borderColor: themeBTD, backgroundColor: 'transparent' }]}>
-          <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.op5, { backgroundColor: 'transparent' }]}>
+        <View style={[rowstyle.row, rootStyle.py2, rootStyle.mx1, rootStyle.px1, rootStyle.borderTop, { borderColor: themeGTD, backgroundColor: 'transparent' }]}>
+          <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, { backgroundColor: 'transparent' }]}>
             <ImageProfileComponent source={{ uri: item?.photo }} />
           </View>
           <View style={[rowstyle["6col"], rootStyle.justifyCenter, {}]}>
@@ -102,8 +102,8 @@ const BlockedScreen: React.FC = () => {
             </View>
           </View>
           <View style={[rowstyle["4col"], rootStyle.justifyCenter, { backgroundColor: 'transparent' }]}>
-            <TouchableOpacity onPress={_unBlock} style={[rootStyle.px3, rootStyle.py4, rootStyle.br30, { borderWidth: 1, borderColor: colors.red }]}>
-              <ProdRegular style={[text.centralizeText, { color: themeBWI }]}>{t('settings.unblock')}</ProdRegular>
+            <TouchableOpacity onPress={_unBlock} style={[rootStyle.px3, rootStyle.py4, rootStyle.br30, { borderWidth: 2, borderColor: colors.red }]}>
+              <ProdBold style={[text.centralizeText, { color: themeBWI }]}>{t('settings.unblock')}</ProdBold>
             </TouchableOpacity>
           </View>
         </View>

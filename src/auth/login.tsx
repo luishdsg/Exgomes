@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Avatar, Switch } from 'react-native-ios-kit';
+import * as SecureStore from 'expo-secure-store';
 import Icon from 'react-native-vector-icons/Octicons';
 import { ImageMediumComponent, ImageMinComponent, ProdBold, ProdLight, ProdRegular } from '../components/StyledComponents';
 import { useFadeAnimation } from '../shared/animations/animations';
@@ -43,13 +44,6 @@ const LoginPage: React.FC = () => {
   const { fadeAnim: fadeAnimPassword, fadeIn: fadeInPassword, fadeOut: fadeOutPassword } = useFadeAnimation();
 
   const userLogData = async () => { setUserLog(await _getUserLog(username)) }
-  const findUser = async () => { return await _getUserLog(username) }
-
-
-
-  const renderAvatarContent = () => {
-      return <Animated.View style={[loginStyle.profile, {  }]}><Avatar url={userLog?.photo} size={35} /></Animated.View>;
-  };
 
 
   const _handlerChangeLanguage = () => {
@@ -170,12 +164,21 @@ const LoginPage: React.FC = () => {
   }
 
   const _changeThemeSwitch = async () => {
-    setIsEnabled(previousState => !previousState);
+    setIsEnabled((previousState) => !previousState);
+    console.log(isSwitched)
     _toggleTheme();
   }
 
+
+  const _getTheme = async () => {
+    const storedTheme = await SecureStore.getItemAsync('theme');
+    if (storedTheme === 'dark') setIsEnabled(true);
+  }
+
+  
   useEffect(() => {
     userLogData();
+    _getTheme();
     console.log(userLog)
     if (username.length >= 3) _getUserLog(username);
   }, [username]);
@@ -217,7 +220,9 @@ const LoginPage: React.FC = () => {
                   onSubmitEditing={() => { _handleNextInput(inputRefPass) }}
                   onChangeText={(text) => { setUsername(text); setIsUsernameEmpty(false) }}
                 />
-                {renderAvatarContent()}
+                {username.length > 3 && (
+                  <Animated.View style={[loginStyle.profile, {}]}><Avatar url={userLog?.photo} size={35} /></Animated.View>
+                )}
                 {username.length > 0 && (
                   <TouchableOpacity style={[rootStyle.mx1, rootStyle.h50, rootStyle.centralize, { position: 'absolute', top: -2, right: 0, }]} onPress={clearInput}>
                     <EvilIcons name="close" color={themeBW} size={24} themeText />
@@ -296,7 +301,7 @@ const LoginPage: React.FC = () => {
 
 export default LoginPage;
 {/* <ProdBold style={text.fz30}>{t('login.hny', {newyear: new Date().getFullYear(),})}</ProdBold> */ }
- // const initials = userLog.username.split(' ').map((word) => word[0]).join('');
-      // return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
+// const initials = userLog.username.split(' ').map((word) => word[0]).join('');
+// return <View style={loginStyle.profile}><Avatar initials={initials} size={40} /></View>;
 
 

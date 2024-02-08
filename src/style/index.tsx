@@ -34,6 +34,9 @@ export const rootStyle = StyleSheet.create({
     op5: {
         opacity: .5
     },
+    b0:{
+        bottom: 0,
+    },
     z_1: {
         zIndex: -1,
     },
@@ -298,6 +301,9 @@ export const rootStyle = StyleSheet.create({
     },
     h70: {
         height: 70
+    },
+    h90: {
+        height: 90
     },
     h100: {
         height: '100%'
@@ -565,7 +571,6 @@ export const loginStyle = StyleSheet.create({
     },
     profile: {
         width: 'auto',
-        height: 'auto',
         // backgroundColor: 'blue',
         position: 'absolute',
         right: 55,

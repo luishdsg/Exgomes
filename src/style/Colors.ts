@@ -11,7 +11,7 @@ export const colors = {
   black: '#000',
   orange: '#FF7700',
   blackOp: '#000000c4',
-  blackOps: '#000000ad',
+  blackOps: '#00000075',
   red: '#FF3C3C',
   redOp: '#9300008c',
   pink: '#FF479D',

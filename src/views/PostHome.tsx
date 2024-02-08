@@ -34,6 +34,7 @@ const PostHome: React.FC = () => {
     const [userAuth, setUserAuth] = useState<{ userAuth: UserRes; token: string; }>(null);
     const [refreshing, setRefreshing] = useState(false);
     const [screenHeight, setScreenHeight] = useState(Dimensions.get('window').height);
+    const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
     const [noMorePost, setNoMorePost] = useState(false);
     const source = axios.CancelToken.source();
     const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeTDWO, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
@@ -198,8 +199,8 @@ const PostHome: React.FC = () => {
                                         {
                                             width: '100%',
                                             overflow: 'hidden',
-                                            height: imageDimensions.height * 0.3,
-                                            maxHeight: screenHeight * 0.5
+                                            maxHeight: screenHeight * 0.5,
+                                            aspectRatio: imageDimensions.height > screenHeight * 0.5 ? imageDimensions.width > imageDimensions.height ?   16 / 9 :9 / 10 : 4 / 3,
                                         }]}
                                     source={{ uri: item.post?.photo }} />
                             </TouchableWithoutFeedback >
@@ -207,7 +208,6 @@ const PostHome: React.FC = () => {
                     )}
                     <ReactButtonsPost
                         post={item.post}
-                        user={userAuth?.userAuth}
                         onPress={() => { _getPosts(page) }}
                     />
                 </View>

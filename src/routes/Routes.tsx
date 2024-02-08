@@ -1,13 +1,13 @@
 import { USER_ICON } from '@env';
 import { Feather, MaterialIcons, Octicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BottomTabBar, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native';
 import { TransitionPresets, createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Image, Pressable, TouchableOpacity, View } from 'react-native';
+import { Button, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import LoginPage from '../auth/login';
 import { AuthProvider, useAuth } from '../auth/services/AuthService';
@@ -22,6 +22,7 @@ import SettingsScreen from '../pages/settings';
 import { Images, rootStyle, rowstyle, text } from '../style';
 import { colors } from '../style/Colors';
 import { useThemeController } from '../style/Themed';
+import { BlurView } from 'expo-blur';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -30,17 +31,17 @@ type ScreenNavigationProp = NavigationProp<RootStackParamList, 'Home'>;
 
 const fonts = () => {
   return Font.loadAsync({
-      'ProdBold': require('../../assets/fonts/ProductSans-Bold.ttf'),
-      'ProdLight': require('../../assets/fonts/ProductSans-Light.ttf'),
-      'ProdRegular': require('../../assets/fonts/ProductSans-Regular.ttf'),
-      'ProdThin': require('../../assets/fonts/ProductSans-Thin.ttf'),
-      'ArialRoundedMTBold': require('../../assets/fonts/ProductSans-Regular.ttf'),
-    });
-  };
+    'ProdBold': require('../../assets/fonts/ProductSans-Bold.ttf'),
+    'ProdLight': require('../../assets/fonts/ProductSans-Light.ttf'),
+    'ProdRegular': require('../../assets/fonts/ProductSans-Regular.ttf'),
+    'ProdThin': require('../../assets/fonts/ProductSans-Thin.ttf'),
+    'ArialRoundedMTBold': require('../../assets/fonts/ProductSans-Regular.ttf'),
+  });
+};
 
 function HomeTabBarNavigator() {
   const [userSecureStoreData, setUserSecureStoreData] = useState<{ userAuth: UserRes; token: string; }>(null);
-  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themeGLTD, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
   const navigation = useNavigation<ScreenNavigationProp>();
   const { onLogout } = useAuth();
@@ -63,20 +64,32 @@ function HomeTabBarNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarStyle: {
-          backgroundColor: themeWIB,
-          height: 90,
-          borderTopWidth: 1,
-          borderTopColor: themeGLD,
-        },
+        tabBarActiveBackgroundColor: 'transparent',
+        tabBarShowLabel: false,
+        tabBarHideOnKeyboard: true,
         tabBarLabelStyle: { color: themeBW },
         tabBarActiveTintColor: colors.patternColor,
-      }} initialRouteName="Feed">
+      }}
+      tabBar={(props) => (
+        <BlurView style={[rootStyle.w100, rootStyle.Pabsolute, rootStyle.b0, Platform.OS === 'ios' ? rootStyle.h50 : rootStyle.h90,]} intensity={20} tint={Platform.OS === 'ios' ? 'dark' : 'dark'}  >
+          <BottomTabBar {...props} />
+        </BlurView>
+      )}
+      initialRouteName="Feed">
       <Tab.Screen
         name="Feed"
         options={{
+          tabBarStyle: {
+            backgroundColor: 'transparent',
+            height: Platform.OS === 'ios' ? 50 : 90,
+            width: '100%',
+            elevation: 0,
+            position: 'absolute',
+            borderTopWidth: 1,
+            borderTopColor: 'transparent',
+          },
           tabBarLabel: '',
-          tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt02, {}]} size={30} color={color} />,
+          tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt2, {}]} size={30} color={color} />,
           headerRight: () => (
             <View style={[rootStyle.centralize, { flexDirection: 'row' }]}>
               <TouchableOpacity style={[rootStyle.mx1, {}]}><Button onPress={onLogout} title="SIgn Out" /></TouchableOpacity>
@@ -113,6 +126,9 @@ function HomeTabBarNavigator() {
       <Tab.Screen
         name="Profile"
         options={{
+          // tabBarStyle: {
+          //   backgroundColor: 'transparent',
+          //   },
           tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.userAuth?.photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
           tabBarLabel: '',
           headerTitle: () => (
@@ -187,6 +203,7 @@ function LayoutAuth() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
+            headerTransparent: true,
             ...TransitionPresets.ModalSlideFromBottomIOS.cardStyleInterpolator,
             cardStyle: { backgroundColor: 'transparent' },
             cardOverlayEnabled: true,

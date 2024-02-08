@@ -85,7 +85,6 @@ export interface CommentsPostProps {
 export type ReactButtonsPostProps = {
   // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>
   post: PostRes;
-  user: UserRes;
   onPress: () => void;
 };
 export type PostHomeProps = {

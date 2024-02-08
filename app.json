@@ -41,11 +41,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
-      "package": "com.kerollyna.exgomes"
+      }
+      // "permissions": [
+      //   "android.permission.RECORD_AUDIO"
+      // ],
+      // "package": "com.kerollyna.exgomes"
     },
     "web": {
       "bundler": "metro",
@@ -57,11 +57,11 @@
     },
     "packagerOpts": {
       "config": "metro.config.js"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "3582783d-1207-4725-aeb3-8ae48e10a683"
-      }
     }
+    // "extra": {
+    //   "eas": {
+    //     "projectId": "3582783d-1207-4725-aeb3-8ae48e10a683"
+    //   }
+    // }
   }
 }
