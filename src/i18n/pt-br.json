@@ -22,6 +22,8 @@
         "save": "Salvos",
         "start": "Inicio",
         "block": "Bloqueados",
+        "favoritesEmpty": "Explore e adicione à sua\ncoleção favorita",
+        "favoritesEmpty2": "colecione lembranças e reviva momentos especiais\nsempre que quiser",
         "trash": "Lixeira",
         "media": "Mídia"
     },

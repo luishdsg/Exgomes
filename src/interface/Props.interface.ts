@@ -1,9 +1,31 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "./RootStackParamList";
-import { NavigationProp } from "@react-navigation/native";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { ScrollView, SectionList } from "react-native";
 import { UserRes } from "../base/User.base";
 import { PostRes } from "../base/Post.base";
+
+export interface storeProps {
+  Id: string;
+  Blocked: Array<string>;
+  Favorites: Array<string>;
+  Followers: Array<string>;
+  Following: Array<string>;
+  Hated: Array<string>;
+  Username: string;
+  Posts: Array<string>;
+  Photo: string;
+  Saved: Array<string>;
+  Trash: Array<string>;
+  Email: string;
+  Verified: boolean;
+  Birth: Date;
+  Local: string;
+  Lang: string;
+  token: string;
+  theme: string;
+  // onLoadTimeLineHome: boolean
+}
 export interface PopUpErrorProps {
   visible?: boolean;
   errorMessage?: string;
@@ -12,7 +34,14 @@ export interface PopUpErrorProps {
   onClose: () => void;
 }
 
-export interface ReactBtnPostProps {
+export interface TimeLineProps {
+  item: { post: PostRes; user: UserRes; };
+  _refreshPage: () => void;
+  unfollowList: (updateFunction: (prevList: SectionDataTimeLineProps[]) => SectionDataTimeLineProps[]) => void;
+  unSaveList: () => void;
+}
+
+export interface ReactBtnTimeLineProps {
   onPress: () => void;
 }
 
@@ -22,30 +51,45 @@ export interface GroupedPosts {
   user: UserRes;
   posts: PostRes[];
 };
+export interface CommentsPostProps {
+  onClose: () => void;
+  post: PostRes;
+}
 
-
+export type ReactButtonsPostProps = {
+  // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>
+  post: PostRes;
+  onPress: () => void;
+  unfollowList: () => void;
+  unSaveList: () => void;
+};
 export interface HateIconProps {
   color: string;
 }
 export interface ProfileViewsProps {
-  user: UserRes | null;
+  user: storeProps;
 }
 
-export type SectionDataPostProps = {
+export type SectionDataTimeLineProps = {
   title: string;
   data: Array<{ post: PostRes; user: UserRes }>;
 };
 
+export interface FavoritesScreenProps {
+  navigation: StackNavigationProp<RootStackParamList, 'Favorite'>;
+  onLoad: boolean;
+}
+
 export interface UserAuth {
-    userAuth: UserRes;
-    token: string;
+  userAuth: UserRes;
+  token: string;
 }
 
 export interface SettingsPostModalProps {
   onClose: () => void;
   author: UserRes;
   followUnfollow: () => void;
-  isUserFollowing: boolean;
+  isUserFollowing: Promise<boolean>;
   post: PostRes
 }
 
@@ -57,10 +101,7 @@ export interface ScrollToTopButtonComponentProps {
 export interface InputSendCommentaryProps {
   _createCommentary: () => void;
   setCommentary: (value: React.SetStateAction<string>) => void;
-  userAuth: {
-    userAuth: UserRes;
-    token: string;
-  };
+  storeAuth: storeProps;
   commentary: string;
   commentaryEmpty: boolean;
   t: (key: string) => string;
@@ -78,25 +119,36 @@ export interface ZoomableImageProps {
   onClose: () => void;
   fadeInOut: (arg0: boolean) => void;
 }
-export interface CommentsPostProps {
+
+export interface CommentsTimeLineProps {
   onClose: () => void;
   post: PostRes;
 }
-export type ReactButtonsPostProps = {
+
+export type ReactButtonsTimeLineProps = {
   // navigation: NavigationProp<RootStackParamList, 'CommentsPost'>
   post: PostRes;
   onPress: () => void;
+  unfollowList: () => void;
+  unSaveList: () => void;
 };
-export type PostHomeProps = {
-  navigation: NavigationProp<RootStackParamList, 'CommentsPost'>;
-  data: {
-    username: string;
-    token: string
-  }
-}
-export type HomeScreenPageProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+
+export type TimeLineHomeProps = {
+  // navigation: RouteProp<RootStackParamList, 'Feed'>;
+  // data: {
+  //   username: string;
+  //   token: string
+  // },
+  route: RouteProp<RootStackParamList, 'Feed'>;
+  onLoading: React.ReactNode;
 };
+
+// export type HomeScreenPageProps = {
+//   navigation: StackNavigationProp<RootStackParamList, 'Feed'>;
+//   route: RouteProp<RootStackParamList, 'Feed'>;
+//   children: React.ReactNode;
+// };
+
 export type BlockedScreenPageProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Blocked'>;
 };

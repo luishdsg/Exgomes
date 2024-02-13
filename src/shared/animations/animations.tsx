@@ -4,6 +4,7 @@ import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-nati
 
 export const useFadeAnimation = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeHide = useRef(new Animated.Value(1)).current;
 
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
@@ -23,7 +24,33 @@ export const useFadeAnimation = () => {
     });
   };
 
-  return { fadeAnim, fadeIn, fadeOut };
+
+  const fadeInHide = () => {
+    Animated.timing(fadeHide, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+
+  };
+  const fadeOutHide = () => {
+    Animated.timing(fadeHide, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+
+  };
+
+  return { 
+    fadeAnim, 
+    fadeHide, 
+    fadeIn, 
+    fadeOut,
+    fadeInHide, 
+    fadeOutHide,
+  
+  };
 };
 
 

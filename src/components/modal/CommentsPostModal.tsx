@@ -11,7 +11,7 @@ import { verifiedAccount } from "../../../assets/svg/IconsSVG";
 import { CommentariesRes, PostRes } from "../../base/Post.base";
 import { UserRes } from "../../base/User.base";
 import getSecureStoreData from "../../constants/SecureStore";
-import { CommentsPostProps, UserComments } from "../../interface/Props.interface";
+import { CommentsPostProps, UserComments, storeProps } from "../../interface/Props.interface";
 import { convertCreatedAt } from "../../pipe/FormatDate";
 import { formatNumber } from "../../pipe/FormatNumber";
 import { _getAllComments, likeDislikeCommentsService, postCommentsService } from "../../services/comments.service";
@@ -41,7 +41,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
     const [page, setPage] = useState(1);
     const [section, setSection] = useState<any[]>([]);
     const [postData, setPostData] = useState<PostRes>();
-    const [userAuth, setUserAuth] = useState<{ userAuth: UserRes; token: string; }>(null);
+    const [storeAuth, setStoreAuth] = useState<storeProps>(null);
 
 
     const panResponder = useRef(
@@ -70,10 +70,10 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
         })
     ).current;
 
-    const _getUserAuthorizeData = async () => {
+    const _getstoreAuthorizeData = async () => {
         try {
             const data = await getSecureStoreData();
-            if (data) setUserAuth(data);
+            if (data) setStoreAuth(data);
         } catch (error: any) {
             console.log('sem dados do usuario posthome')
             return error.message;
@@ -123,7 +123,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
             vibrate();
             setTimeout(() => { setLoadCommentary(false), setCommentaryEmpty(false) }, 1000)
         } else {
-            const savePost = await postCommentsService(postData?._id, commentary, userAuth?.userAuth?._id);
+            const savePost = await postCommentsService(postData?._id, commentary, storeAuth?.Id);
             if (savePost) _getUserDetails();
             setCommentary('')
             setLoadCommentary(false)
@@ -150,11 +150,11 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
         const likeDislakeCommentary = () => {
             if (!likeDislikeComments) setLikeDislikeCommentsCount(1)
             else setLikeDislikeCommentsCount(likeDislikeCommentsCount - 1)
-            likeDislikeCommentsService(item.post._id, item.comment._id, userAuth?.userAuth?._id, likeDislikeComments ? 'removeLikeFromComment' : 'addLikeToComment')
+            likeDislikeCommentsService(item.post._id, item.comment._id, storeAuth?.Id, likeDislikeComments ? 'removeLikeFromComment' : 'addLikeToComment')
             setLikeDislikeComments(!likeDislikeComments);
         }
         useEffect(() => {
-            if (item.comment?.likes?.includes(userAuth?.userAuth?._id)) setLikeDislikeComments(true)
+            if (item.comment?.likes?.includes(storeAuth?.Id)) setLikeDislikeComments(true)
         }, [item?.comment])
 
 
@@ -218,7 +218,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
             duration: 500,
             useNativeDriver: false,
         }).start();
-        _getUserAuthorizeData();
+        _getstoreAuthorizeData();
         _getUserDetails();
     }, [
         post
@@ -268,7 +268,7 @@ const CommentsPostModal: React.FC<CommentsPostProps> = ({ post, onClose }) => {
                     <InputSendCommentary
                         _createCommentary={_createCommentary}
                         setCommentary={setCommentary}
-                        userAuth={userAuth}
+                        storeAuth={storeAuth}
                         commentary={commentary}
                         commentaryEmpty={commentaryEmpty}
                         loadCommentary={loadCommentary}

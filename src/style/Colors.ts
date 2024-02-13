@@ -23,6 +23,12 @@ export const colors = {
   bege: '#f5f5dc',
   yellow: '#E2D300',
 }
+
+export const params = {
+  dark: 'dark',
+  light: 'light',
+}
+
 export const themeAvatar = {
   primaryColor: 'tomato',
   primaryLightColor: 'red',

@@ -5,7 +5,7 @@ import { NavigationContainer, NavigationProp, useNavigation } from '@react-navig
 import { TransitionPresets, createStackNavigator } from '@react-navigation/stack';
 import * as Font from 'expo-font';
 import { SplashScreen } from 'expo-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Image, Platform, Pressable, TouchableOpacity, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -16,13 +16,14 @@ import { ProdBold, TruncatedTextBold } from '../components/StyledComponents';
 import getSecureStoreData from '../constants/SecureStore';
 import '../i18n/i18n';
 import { RootStackParamList } from '../interface/RootStackParamList';
-import HomeScreen from '../pages/home';
-import ProfileScreen from '../pages/profile';
-import SettingsScreen from '../pages/settings';
+import ProfileScreen from '../components/client/profile';
+import SettingsScreen from '../components/app/settings';
 import { Images, rootStyle, rowstyle, text } from '../style';
-import { colors } from '../style/Colors';
+import { colors, params } from '../style/Colors';
 import { useThemeController } from '../style/Themed';
 import { BlurView } from 'expo-blur';
+import { storeProps } from '../interface/Props.interface';
+import TimeLineHome from '../components/app/TimeLineHome';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -40,7 +41,7 @@ const fonts = () => {
 };
 
 function HomeTabBarNavigator() {
-  const [userSecureStoreData, setUserSecureStoreData] = useState<{ userAuth: UserRes; token: string; }>(null);
+  const [userSecureStoreData, setUserSecureStoreData] = useState<storeProps>(null);
   const { themeWB, themeWTD, themeGTD, themeBWI, themeBW, themeWIB, themeWITD, themeGLD, themeGLTD, themeStatus, Status, _toggleTheme } = useThemeController();
   const isDarkLogo = themeStatus === 'dark' ? require('../../assets/logo-black.png') : require('../../assets/logo-white.png');
   const navigation = useNavigation<ScreenNavigationProp>();
@@ -64,6 +65,15 @@ function HomeTabBarNavigator() {
   return (
     <Tab.Navigator
       screenOptions={{
+        tabBarStyle: {
+          backgroundColor: 'transparent',
+          height: Platform.OS === 'ios' ? 50 : 90,
+          width: '100%',
+          elevation: 0,
+          position: 'absolute',
+          borderTopWidth: 1,
+          borderTopColor: 'transparent',
+        },
         tabBarActiveBackgroundColor: 'transparent',
         tabBarShowLabel: false,
         tabBarHideOnKeyboard: true,
@@ -71,7 +81,7 @@ function HomeTabBarNavigator() {
         tabBarActiveTintColor: colors.patternColor,
       }}
       tabBar={(props) => (
-        <BlurView style={[rootStyle.w100, rootStyle.Pabsolute, rootStyle.b0, Platform.OS === 'ios' ? rootStyle.h50 : rootStyle.h90,]} intensity={20} tint={Platform.OS === 'ios' ? 'dark' : 'dark'}  >
+        <BlurView style={[rootStyle.w100, rootStyle.Pabsolute, rootStyle.b0, Platform.OS === 'ios' ? rootStyle.h50 : rootStyle.h90,]} intensity={themeStatus ? 90 : 20} tint="dark"  >
           <BottomTabBar {...props} />
         </BlurView>
       )}
@@ -79,15 +89,6 @@ function HomeTabBarNavigator() {
       <Tab.Screen
         name="Feed"
         options={{
-          tabBarStyle: {
-            backgroundColor: 'transparent',
-            height: Platform.OS === 'ios' ? 50 : 90,
-            width: '100%',
-            elevation: 0,
-            position: 'absolute',
-            borderTopWidth: 1,
-            borderTopColor: 'transparent',
-          },
           tabBarLabel: '',
           tabBarIcon: ({ color }) => <Feather name="home" style={[rootStyle.mt2, {}]} size={30} color={color} />,
           headerRight: () => (
@@ -110,26 +111,25 @@ function HomeTabBarNavigator() {
             </View>
 
           ),
-          headerBackground: () => (
-            <View style={[rootStyle.container, { backgroundColor: themeWIB }]} />
+          headerBackground: () => (<View style={[rootStyle.container, { backgroundColor: themeWIB }]} />
           ),
-          headerTitle: () => (
-            <Image
-              source={isDarkLogo}
-              style={Images.iconImage}
-            />
+          headerTitle: () => (<Image source={isDarkLogo}style={Images.iconImage}/>
           )
         }}
-        component={HomeScreen}
+        initialParams={{ onLoading: false }}  
+        listeners={{
+          tabPress: (e) => { 
+            e.preventDefault();
+            navigation.navigate('Feed', { onLoading: true });
+          },
+        }}
+        component={TimeLineHome}
       // children={() => <HomeScreen navigation={null} data={dataAuth}/>}
       />
       <Tab.Screen
         name="Profile"
         options={{
-          // tabBarStyle: {
-          //   backgroundColor: 'transparent',
-          //   },
-          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.userAuth?.photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color }]} />,
+          tabBarIcon: ({ color }) => <Image source={{ uri: userSecureStoreData?.Photo || `${USER_ICON}` }} style={[Images.profileIcon, rootStyle.mt02, { borderColor: color, borderWidth: 2, }]} />,
           tabBarLabel: '',
           headerTitle: () => (
             <></>
@@ -151,8 +151,8 @@ function HomeTabBarNavigator() {
           headerLeft: () => (
             <Pressable>
               {({ pressed }) => (
-                <View style={[rowstyle.row, rootStyle.pl2, rootStyle.alignCenter, { backgroundColor: themeWIB }]}>
-                  <TruncatedTextBold content={userSecureStoreData?.userAuth?.username || `(ツ)`} maxSize={15} style={[text.fz25, { color: themeBW, opacity: pressed ? 0.5 : 1 }]} />
+                <View style={[rowstyle.row, rootStyle.pl3, rootStyle.alignCenter, { backgroundColor: themeWIB }]}>
+                  <TruncatedTextBold content={userSecureStoreData?.Username || `(ツ)`} maxSize={15} style={[text.fz25, { color: themeBW, opacity: pressed ? 0.5 : 1 }]} />
                   <MaterialIcons
                     name="keyboard-arrow-down"
                     size={25}

@@ -17,9 +17,9 @@ import axios from 'axios';
 import { API_URL } from '@env';
 import { UserRes } from '../base/User.base';
 import { formatNumber } from '../pipe/FormatNumber';
-import { savePostForUser } from '../services/user.service';
+import { favoritePost, savePostForUser, unFavoritePost } from '../services/post.service';
 
-const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) => {
+const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post, unSaveList, unfollowList }) => {
     const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWIB, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
     const { t, i18n: { changeLanguage, language } } = useTranslation();
     // const navigation = useNavigation<ReactButtonsPostProps>();
@@ -47,38 +47,25 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
             if (likedVisible) {
                 setLikeCount(1)
                 setLikedVisible(!likedVisible)
-                setTimeout(() => {
-                    likedAnimation.current?.play(0, 45);
-                }, 10)
-                await axios.post(`${API_URL}/posts/${post._id}/addLikeAndFavorite/${data.userAuth?._id}`, {
-                    withCredentials: true,
-                    headers: {
-                        Authorization: `Bearer ${data.token}`,
-                    },
-                });
+                setTimeout(() => {likedAnimation.current?.play(0, 45);}, 10)
+                await favoritePost(post._id, data.Id)
                 console.warn('Deu like:  ' + likedVisible);
-
             } else {
-                setLikeCount(0)
+                setLikeCount(likeCount - 1)
                 likedAnimation.current?.play(45, 0);
-                setTimeout(() => {
-                    setLikedVisible(!likedVisible)
-                }, 780)
-                await axios.delete(`${API_URL}/posts/${post._id}/removeLikeAndFavorite/${data.userAuth?._id}`, {
-                    headers: {
-                        Authorization: `Bearer ${data.token}`,
-                    },
-                });
+                setTimeout(() => {setLikedVisible(!likedVisible)}, 780)
+                await unFavoritePost(post._id, data.Id)
                 console.warn('Deu dislike: ' + likedVisible);
             }
         } catch (error) {
             console.error('Erro ao like/dislike no usuário = ' + data.token, error);
         }
+        unfollowList();
     };
     const _verifyLike = async() => {
         const data = await getSecureStoreData();
 
-        if (data.userAuth?.favorites?.includes(post._id)) {
+        if (data.Favorites.includes(post._id)) {
             setLikedVisible(false),
                 setTimeout(() => {
                     likedAnimation.current?.play(45, 45);
@@ -97,7 +84,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
                 setTimeout(() => {
                     hateAnimation.current?.play(0, 15);
                 }, 10)
-                await axios.post(`${API_URL}/posts/${post._id}/addHated/${data.userAuth?._id}`, {
+                await axios.post(`${API_URL}/posts/${post._id}/addHated/${data.Id}`, {
                     withCredentials: true,
                     headers: {
                         Authorization: `Bearer ${data.token}`,
@@ -106,12 +93,12 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
                 console.warn('Deu hate:  ' + hateVisible);
 
             } else {
-                setHateCount(0)
+                setHateCount(hateCount - 1)
                 hateAnimation.current?.play(15, 0);
                 setTimeout(() => {
                     setHateVisible(!hateVisible)
                 }, 780)
-                await axios.delete(`${API_URL}/posts/${post._id}/removeHated/${data.userAuth?._id}`, {
+                await axios.delete(`${API_URL}/posts/${post._id}/removeHated/${data.Id}`, {
                     headers: {
                         Authorization: `Bearer ${data.token}`,
                     },
@@ -125,7 +112,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
     const _verifyHated = async() => {
         const data = await getSecureStoreData();
 
-        if (data.userAuth?.hated?.includes(post._id)) {
+        if (data.Hated?.includes(post._id)) {
             setHateVisible(false),
                 setTimeout(() => {
                     hateAnimation.current?.play(15, 15);
@@ -149,10 +136,10 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
         try {
             if (saveVisible) {
                 setSaveVisible(!saveVisible)
-                savePostForUser(post._id, data.userAuth?._id, saveVisible)
+                savePostForUser(post._id, data.Id, saveVisible)
             } else {
                 setSaveVisible(!saveVisible)
-                savePostForUser(post._id, data.userAuth?._id, saveVisible)
+                savePostForUser(post._id, data.Id, saveVisible)
             }
             console.warn('Deu _save: ' + saveVisible);
 
@@ -160,7 +147,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
             console.error('Erro ao hate/unhated no usuário = ' + data.token, error);
         }
     };
-    const _verifySaved = async() => {const data = await getSecureStoreData();if (data.userAuth?.saved?.includes(post._id)) setSaveVisible(false) }
+    const _verifySaved = async() => {const data = await getSecureStoreData();if (data.Saved?.includes(post._id)) setSaveVisible(false) }
 
 
     useEffect(() => {
@@ -201,7 +188,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
                     </TouchableWithoutFeedback>
                 )}
                 <ProdRegular style={[text.fz10, rootStyle.Pabsolute, { bottom: 5, color: themeTDG }]}>
-                    {post.likes?.length === 0 && formatNumber(4824 + hateCount, t)}
+                    {post.likes?.length !== 0 && formatNumber(post.likes?.length + likeCount, t)}
                 </ProdRegular>
             </View>
             <View style={[rowstyle["2col"], rootStyle.centralize, rootStyle.maxW50, rootStyle.h60, {}]}>
@@ -225,7 +212,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
                     </TouchableWithoutFeedback>
                 )}
                 <ProdRegular style={[text.fz10, rootStyle.Pabsolute, { bottom: 5, color: themeTDG }]}>
-                    {post.hated?.length === 0 && formatNumber(4824 + hateCount, t)}
+                    {post.hated?.length !== 0 && formatNumber(post.hated?.length + hateCount, t)}
                 </ProdRegular>
 
             </View>
@@ -234,7 +221,7 @@ const ReactButtonsPost: React.FC<ReactButtonsPostProps> = ({ onPress, post }) =>
                     <Icon name={'chatbubble-outline'} size={50 * 0.5} color={commentsVisible} />
                 </TouchableOpacity>
                 <ProdRegular style={[text.fz10, rootStyle.Pabsolute, { bottom: 5, color: themeTDG }]}>
-                    {post.comments?.length !== 0 && formatNumber(1234 + hateCount, t)}
+                    {post.comments?.length !== 0 && formatNumber(post.comments?.length, t)}
                 </ProdRegular>
             </View>
 

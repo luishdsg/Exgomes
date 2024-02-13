@@ -1,12 +1,12 @@
 // PopUpError.tsx
+import { BlurView } from 'expo-blur';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Image, TouchableOpacity, View } from 'react-native';
 import { PopUpErrorProps } from '../../interface/Props.interface';
 import { popUpStyle, rootStyle, rowstyle, text } from '../../style';
 import { colors } from '../../style/Colors';
-import { LineiOSComponent, ProdBold, ProdRegular, ProdThin, TruncatedTextBold } from '../StyledComponents';
-import { BlurView } from 'expo-blur';
+import { ProdBold, TruncatedTextBold } from '../StyledComponents';
 
 
 const PopUpError: React.FC<PopUpErrorProps> = ({ visible, username, errorMessage, onClose, image }) => {

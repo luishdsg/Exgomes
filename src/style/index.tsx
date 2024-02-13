@@ -34,7 +34,10 @@ export const rootStyle = StyleSheet.create({
     op5: {
         opacity: .5
     },
-    b0:{
+    op7: {
+        opacity: .7
+    },
+    b0: {
         bottom: 0,
     },
     z_1: {
@@ -314,6 +317,9 @@ export const rootStyle = StyleSheet.create({
     Pabsolute: {
         position: 'absolute'
     },
+    Pfixed: {
+        position: 'fixed'
+    },
     Prelative: {
         position: 'relative'
     },
@@ -331,6 +337,12 @@ export const rootStyle = StyleSheet.create({
     },
     w100: {
         width: '100%',
+    },
+    w25: {
+        width: '25%'
+    },
+    w50: {
+        width: '50%'
     },
     w75: {
         width: '75%'
@@ -492,7 +504,7 @@ export const text = StyleSheet.create({
         textShadowRadius: 10,
     },
     captalize: {
-        textTransform: 'capitalize' 
+        textTransform: 'capitalize'
     },
     leftText: {
         textAlign: 'left',

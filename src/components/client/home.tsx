@@ -4,29 +4,24 @@ import { API_URL } from "@env";
 import { StackNavigationProp } from "@react-navigation/stack";
 import axios from "axios";
 import { format } from 'date-fns';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { ActivityIndicator, Animated, Modal, Image, Text, PanResponder, SectionList, StatusBar, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View, ImageBackground, Dimensions } from 'react-native';
-import { PinchGestureHandler, State } from 'react-native-gesture-handler';
-import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
-import getSecureStoreData from "../constants/SecureStore";
-import { useThemeController } from "../style/Themed";
-import { ProfileViewsProps } from "../interface/Props.interface";
-import { PostRes } from "../base/Post.base";
-import { RootStackParamList } from "../interface/RootStackParamList";
-import { UserRes } from "../base/User.base";
-import { profileStyle, rootStyle, rowstyle, text } from "../style";
-import { colors } from "../style/Colors";
-import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, ProdThin, TruncatedTextBold } from "../components/StyledComponents";
-import ZoomableImage from "../components/modal/ViewImageModal";
 import { BlurView } from "expo-blur";
-import { Button } from "react-native-ios-kit";
-import { Icon } from 'react-native-ios-kit';
+import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Modal, PanResponder, SectionList, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Button, Icon } from "react-native-ios-kit";
 import { SvgXml } from 'react-native-svg';
-import { verifiedAccount } from "../../assets/svg/IconsSVG";
-import { ReactButtonsPost } from "../components/ReactButtonsPost";
-import { LoadProfilePost } from "../components/LoadContent";
+import { verifiedAccount } from "../../../assets/svg/IconsSVG";
+import { PostRes } from "../../base/Post.base";
+import { UserRes } from "../../base/User.base";
+import { LoadProfilePost } from "../LoadContent";
+import { ImageProfileComponent, ProdLight, ProdRegular, TruncatedTextBold } from "../StyledComponents";
+import ZoomableImage from "../modal/ViewImageModal";
+import getSecureStoreData from "../../constants/SecureStore";
+import { ProfileViewsProps } from "../../interface/Props.interface";
+import { RootStackParamList } from "../../interface/RootStackParamList";
+import { profileStyle, rootStyle, rowstyle, text } from "../../style";
+import { colors } from "../../style/Colors";
+import { useThemeController } from "../../style/Themed";
 
 type ScreenPageProps = {
     navigation: StackNavigationProp<RootStackParamList, 'ProfileViews'>;
@@ -52,7 +47,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
                 return;
             }
 
-            const getPostsData = await axios.get<PostRes[]>(`${API_URL}/posts/findByIdUser/${user?._id}?page=${pageNumber}`, {
+            const getPostsData = await axios.get<PostRes[]>(`${API_URL}/posts/findByIdUser/${user?.Id}?page=${pageNumber}`, {
                 headers: {
                     Authorization: `Bearer ${data?.token}`,
                 },
@@ -63,7 +58,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
             setPubUserData((prevData) => [...prevData, ...getPostsData.data]);
             setPage(pageNumber + 1);
 
-            const getUserData = await axios.get<UserRes>(`${API_URL}/users/byId/${user?._id}`);
+            const getUserData = await axios.get<UserRes>(`${API_URL}/users/byId/${user?.Id}`);
 
             setUserSecureStoreData(getUserData.data);
             if (!userSecureStoreData) {
@@ -77,7 +72,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
         } finally {
             setLoading(false);
         }
-    }, [user?._id]);
+    }, [user?.Id]);
 
     const _onDimensionsChange = () => {
         setScreenHeight(Dimensions.get('window').height);
@@ -204,7 +199,7 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
         );
     }
 
-    const _refreshMorePub = () => { return loading ? <ActivityIndicator size="large" color={colors.patternColor} /> : null; };
+    const _refreshMorePub = () => { return loading ? <ActivityIndicator size="large" color={colors.patternColor} /> : <View  style={[rootStyle.mb9, {}]}></View>; };
     const _handleCheckEndPage = () => { if (!loading) _getPostsById(page); };
 
 
@@ -236,36 +231,6 @@ const ProfileViews: React.FC<ProfileViewsProps> = ({ user }) => {
 
 export default ProfileViews;
 
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'visible', // Adicione esta linha
-    },
-    button: {
-        backgroundColor: 'blue',
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    draggable: {
-
-        position: 'absolute',
-        backgroundColor: 'red',
-        padding: 20,
-        zIndex: 10,
-        borderRadius: 10,
-    },
-    draggableText: {
-        color: 'white',
-    },
-});
 
 {/* <Icon size={30} name={"ellipsis-horizontal-circle-outline"} /> */ }
 

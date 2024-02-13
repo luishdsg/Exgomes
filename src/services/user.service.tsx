@@ -1,16 +1,13 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import getSecureStoreData from "../constants/SecureStore";
-import { PostRes } from "../base/Post.base";
 import { API_URL } from "@env";
+import axios from "axios";
 import { UserRes } from "../base/User.base";
+import getSecureStoreData from "../constants/SecureStore";
 
 const userByUsername = async (username: string) => {
     const data = await getSecureStoreData();
     if (!data) console.warn('sem token userByUsername = ' + data.token);
     try {
         const user = await axios.get<UserRes>(`${API_URL}/users/username${username}` ,{
-            withCredentials: true,
             headers: {
                 Authorization: `Bearer ${data?.token}`,
             },
@@ -43,77 +40,62 @@ const blockedUsers = async (userId: string):Promise<string[]> => {
     const data = await getSecureStoreData();
     if (!data) console.warn('sem token blockedUsers = ' + data.token + userId);
     try {
-        const user = await axios.get<string[]>(`${API_URL}/users/${userId}/blockedUserIds` ,{
-            withCredentials: true,
+        const blockedUsers = await axios.get<string[]>(`${API_URL}/users/${userId}/BlockedUsers` ,{
             headers: {
                 Authorization: `Bearer ${data?.token}`,
             },
         });
-        return user.data
+        return blockedUsers.data
     } catch (error) {
         console.error('Erro ao registrar blockedUsers:', error);
     }
 }
 
-
-const savePostForUser = async (postId: string, userId: string, saveVisible: boolean) => {
+const favoritesList = async (userId: string, page: number):Promise<string[]> => {
     const data = await getSecureStoreData();
-    if (!data) console.warn('sem token savePostForUser = ' + data.token);
+    if (!data) console.warn('sem token favoritesList = ' + userId);
     try {
-        const savePost = await axios.put(`${API_URL}/users/${userId}/${saveVisible ? 'savePost' : 'removePost'}/${postId}`, {
-            withCredentials: true,
+        const favoritesList = await axios.get<string[]>(`${API_URL}/users/${userId}/favorites?page=${page}` ,{
             headers: {
                 Authorization: `Bearer ${data?.token}`,
             },
         });
-        return savePost
+        return favoritesList.data
     } catch (error) {
-        console.error('Erro ao registrar savePostForUser:', error);
+        console.error('Erro ao registrar favoritesList:', error);
     }
 }
 
-const blockUser = async (userId: string, blockUserId: string, blockRule: boolean) => {
+const isUserFollowing = async(userId: string) => {const data = await getSecureStoreData(); return data?.Following.includes(userId || '');}
+
+
+const followUnfollow = async (follower: string) => {
     const data = await getSecureStoreData();
-    if (!data) console.warn('sem token blockUser = ' + data.token);
     try {
-        const blockUser = await axios.put(`${API_URL}/users/${userId}/${blockRule ? 'addUserToBlockList' : 'removeUserFromBlockList'}/${blockUserId}`, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${data?.token}`,
-            },
-        });
-        if(blockRule) console.warn('block');
-        else console.warn('unblock');
-        return blockUser
+        if (isUserFollowing(follower)) { //rule here is true
+            await axios.delete(`${API_URL}/users/${data?.Id}/unfollow/${follower}`, {
+                headers: {
+                    accept: '*/*',
+                    Authorization: `Bearer ${data.token}`,
+                },
+            });
+            console.warn('Deu unfollow');
+        } else {
+            await axios.post(`${API_URL}/users/${data.Id}/follow/${follower}`, {
+                headers: {
+                    Authorization: `Bearer ${data.token}`,
+                },
+            });
+            console.warn('Deu follow');
+
+        }
     } catch (error) {
-        console.error('Erro ao registrar blockUser:', error);
+        console.error('Erro ao seguir/desseguir o usuário', error);
     }
 }
-
-const getBlockUser = async (username: string) => {
-    const data = await getSecureStoreData();
-    if (!data) console.warn('sem token blockUser = ' + data.token);
-    try {
-        const getBlockUser = await axios.get<string[]>(`${API_URL}/users/${username}/blockedUsers`, {
-            withCredentials: true,
-            headers: {
-                Authorization: `Bearer ${data?.token}`,
-            },
-        });
-        return getBlockUser
-    } catch (error) {
-        console.error('Erro ao registrar blockUser:', error);
-    }
-}
-
-
 
 export {
-    savePostForUser,
-    blockUser,
-    getBlockUser,
-    userByUsername,
-    userById,
-    blockedUsers
+    blockedUsers, favoritesList, followUnfollow,
+    isUserFollowing, userById, userByUsername
+};
 
-}

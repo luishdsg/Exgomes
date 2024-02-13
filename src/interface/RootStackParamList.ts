@@ -1,6 +1,8 @@
 export type RootStackParamList = {
-  Home: any;
+  Feed: { onLoading: boolean };
   Blocked: any;
+  Favorite: any;
+  Home: any;
   Login: any;
   Settings: any;
   CommentsPost: any;

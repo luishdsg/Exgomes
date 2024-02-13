@@ -1,30 +1,32 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import { API_URL } from '@env';
 import { Feather, Ionicons, MaterialCommunityIcons, } from '@expo/vector-icons';
-import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dimensions, RefreshControl, ScrollView, Text, View } from 'react-native';
-import { ScrollView as GestureScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../components/StyledComponents';
-import ProfileViews from '../views/PostProfile';
-import getSecureStoreData from '../constants/SecureStore';
-import { useThemeController } from '../style/Themed';
-import { UserRes } from '../base/User.base';
-import { rootStyle, rowstyle, text } from '../style';
-import { colors } from '../style/Colors';
-import BlockedScreen from './blocked';
+import { Animated, Dimensions, RefreshControl, Text, View } from 'react-native';
+import { ScrollView as GestureScrollView, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ImageMinComponent, MenuOptionProfile, ProdBold, ProdRegular, ProdThin } from '../StyledComponents';
+import getSecureStoreData from '../../constants/SecureStore';
+import { storeProps } from '../../interface/Props.interface';
+import { Images, rootStyle, rowstyle, text } from '../../style';
+import { colors } from '../../style/Colors';
+import { useThemeController } from '../../style/Themed';
+import ProfileViews from './home';
+import BlockedScreen from './blockeds';
+import FavoritesScreen from './favorites';
+import { useFadeAnimation } from '../../shared/animations/animations';
 
 
 const ProfileScreen: React.FC = () => {
   const viewRef = useRef<View>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPage, setSelectedPage] = useState(8);
-  const [userSecureStoreData, setUserSecureStoreData] = useState<{ userAuth: UserRes; token: string; }>(null);
+  const [userSecureStoreData, setUserSecureStoreData] = useState<storeProps>(null);
   const { t, i18n: { changeLanguage, language } } = useTranslation();
-  const { themeWB, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
+  const { themeGLTD, themeWTD, themeTDG, themeBWI, themeTDW, themeWIB, themeBW, themeTDGT, themeGTD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
   const [infoSectionProfile, setInfoSectionProfile] = useState(false);
+  const [onLoad, setOnLoad] = useState(false);
+  const { fadeHide: fadeHide, fadeInHide: fadeInAnime, fadeOutHide: fadeOutAnime } = useFadeAnimation();
 
   const getUserAuthorizeData = async () => {
     try {
@@ -40,7 +42,7 @@ const ProfileScreen: React.FC = () => {
       case 1:
         return (
           <ProfileViews
-            user={userSecureStoreData?.userAuth}
+            user={userSecureStoreData}
           />
         );
       case 2:
@@ -55,8 +57,8 @@ const ProfileScreen: React.FC = () => {
         );
       case 4:
         return (
-          <Text>4</Text>
 
+          <FavoritesScreen onLoad={onLoad} />
         );
       case 5:
         return (
@@ -101,6 +103,11 @@ const ProfileScreen: React.FC = () => {
       console.log('amor');
     }
   };
+  const _handleGestureScrollView = (event: any) => {
+    const scrollX = event.nativeEvent.contentOffset.x;
+    if (scrollX > 30) fadeOutAnime()
+    else if (scrollX <= 30)  fadeInAnime()
+  };
   useEffect(() => {
     getUserAuthorizeData();
     setSelectedPage(1)
@@ -130,14 +137,14 @@ const ProfileScreen: React.FC = () => {
         style={[rowstyle.app]}>
         <View style={[rowstyle.row, rootStyle.px1, rootStyle.container]}>
           <View style={[rowstyle[`2col`], rootStyle.justifyCenter, rootStyle.maxW100, {}]}>
-            <ImageMinComponent source={{ uri: userSecureStoreData?.userAuth?.photo }} />
+            <ImageMinComponent source={{ uri: userSecureStoreData?.Photo }} />
           </View>
           <View style={[rowstyle[`4col`], rootStyle.justifyCenter, rootStyle.px1, []]}>
             <View style={[rowstyle.col, rootStyle.h50]}>
               <View style={[rowstyle[`1col`], rootStyle.justifyCenter]}>
-                <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.userAuth?.username}</ProdBold>
+                <ProdBold style={[text.fz25, text.leftText, { color: themeBWI }]}>{userSecureStoreData?.Username}</ProdBold>
                 <View style={[rowstyle.row, rootStyle.h20]}>
-                  <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.userAuth?.email || `${t('profile.youremail')}`}</ProdRegular>
+                  <ProdRegular style={[text.fz15, text.leftText, { color: themeTDG }]}>@{userSecureStoreData?.Email || `${t('profile.youremail')}`}</ProdRegular>
                   <ProdRegular style={[rootStyle.px1, { color: themeTDG }]}>•</ProdRegular>
                   <ProdThin style={[rootStyle.px1, { color: themeTDG }]}>{t('profile.editprofile')}</ProdThin>
                 </View>
@@ -147,7 +154,13 @@ const ProfileScreen: React.FC = () => {
         </View>
 
         <View style={[rootStyle.h60, rootStyle.px1, { backgroundColor: 'transparent' }]}>
-          <GestureScrollView style={[{ backgroundColor: 'transparent' }]} showsVerticalScrollIndicator={false}
+          {/* Arrow indication */}
+          <Animated.View style={[Images.PostProfileIco, rootStyle.centralize, rootStyle.Pabsolute, rootStyle.z10, { opacity: fadeHide, top: -40, right: '10%', backgroundColor: themeGTD }]} >
+            <Ionicons name="arrow-forward" size={25} style={[{ top: 1, }]} color={themeBWI} />
+          </Animated.View>
+          <GestureScrollView style={[{ backgroundColor: 'transparent' }]}
+            onScroll={(event) => _handleGestureScrollView(event)}
+            showsVerticalScrollIndicator={false}
             showsHorizontalScrollIndicator={false} horizontal>
             <View style={[rowstyle.row, rootStyle.h60, { backgroundColor: 'transparent' }]}>
               {/* Start */}
@@ -175,7 +188,7 @@ const ProfileScreen: React.FC = () => {
               </MenuOptionProfile>
               {/* Favorite */}
               <MenuOptionProfile>
-                <TouchableOpacity onPress={() => { setSelectedPage(4) }} style={[rowstyle.row, rootStyle.centralize, rootStyle.p10, rootStyle.br100, { height: 45, borderColor: selectedPage == 4 ? colors.gray : themeWTD, borderWidth: 2 }]}>
+                <TouchableOpacity onPress={() => { setSelectedPage(4), setOnLoad(true) }} style={[rowstyle.row, rootStyle.centralize, rootStyle.p10, rootStyle.br100, { height: 45, borderColor: selectedPage == 4 ? colors.gray : themeWTD, borderWidth: 2 }]}>
                   <Ionicons name={selectedPage == 4 ? 'heart' : 'heart-outline'} size={21}
                     color={themeTDW}
                   />

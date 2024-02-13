@@ -130,14 +130,14 @@ const ScrollToTopButtonComponent: React.FC<ScrollToTopButtonComponentProps> = ({
 };
 
 
-const InputSendCommentary: React.FC<InputSendCommentaryProps> = ({ _createCommentary, setCommentary, t, userAuth, commentary, commentaryEmpty, loadCommentary }) => {
+const InputSendCommentary: React.FC<InputSendCommentaryProps> = ({ _createCommentary, setCommentary, t, storeAuth, commentary, commentaryEmpty, loadCommentary }) => {
   const { themeWB, themeTDG, themeTDWI, themeBWI, themeDG, themeWID, themeBW, themeGTD, themeGLD, themePG, themeStatus, Status, _toggleTheme } = useThemeController();
 
   return (
     <View style={[rootStyle.w100, rootStyle.centralize, rootStyle.pb2, Platform.OS === 'ios' && rootStyle.pb3, rootStyle.Pabsolute, { backgroundColor: themeWB, bottom: 0 }]}>
       <View style={[rowstyle.row, rootStyle.boxShadow, rootStyle.mx2, rootStyle.pt1, { backgroundColor: 'transparent' }]}>
         <View style={[rowstyle[" 1col"], rootStyle.centralize, {}]}>
-          <ImageUserCommentComponent source={{ uri: userAuth?.userAuth?.photo }} />
+          <ImageUserCommentComponent source={{ uri: storeAuth?.Photo }} />
           <CircleCountCharactere commentary={commentary} />
         </View>
         <View style={[rowstyle["10col"], rootStyle.ml1, {}]}>

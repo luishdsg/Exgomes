@@ -8,15 +8,17 @@ import Animated, {
   useSharedValue,
   withTiming
 } from 'react-native-reanimated';
-import { UserRes } from "../base/User.base";
-import { LoadBlocked } from '../components/LoadContent';
-import { ImageProfileComponent, ProdBold, ProdRegular, TruncatedTextBold } from '../components/StyledComponents';
-import getSecureStoreData from '../constants/SecureStore';
-import { blockUser, getBlockUser, userById } from '../services/user.service';
-import { animate1500ms } from '../shared/animations/animations';
-import { rootStyle, rowstyle, text } from '../style';
-import { colors } from '../style/Colors';
-import { useThemeController } from '../style/Themed';
+import { UserRes } from "../../base/User.base";
+import LottieView from 'lottie-react-native';
+import { LoadBlocked } from '../LoadContent';
+import { ImageProfileComponent, ProdBold, ProdLight, ProdRegular, TruncatedTextBold } from '../StyledComponents';
+import getSecureStoreData from '../../constants/SecureStore';
+import { blockedUsers, userById } from '../../services/user.service';
+import { animate1500ms } from '../../shared/animations/animations';
+import { rootStyle, rowstyle, text } from '../../style';
+import { colors } from '../../style/Colors';
+import { useThemeController } from '../../style/Themed';
+import { blockUser } from '../../services/post.service';
 
 
 
@@ -26,6 +28,7 @@ const BlockedScreen: React.FC = () => {
   const screenHeight = Dimensions.get('window').height;
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
   const [refreshing, setRefreshing] = useState(false);
   const [sectionData, setSectionData] = useState<UserRes[]>([]);
 
@@ -34,36 +37,32 @@ const BlockedScreen: React.FC = () => {
 
 
 
-  const _getUserAuth = useCallback(async () => {
-    try {
-      const data = await getSecureStoreData();
-      if (data) console.warn('sem token BlockedScreen = ' + data.token);
-      const listBlocked = await getBlockUser(data?.userAuth?._id);
-      if (listBlocked) console.warn('sem BlockedList = ' + listBlocked.data);
-      const userDetailPromises = listBlocked.data.map(async (id) => {
-        try {
-          const blockData = await userById(id);
-          console.warn('id? = ' + id);
-          return blockData;
-        } catch (error) {
-          console.error(`Erro ao obter detalhes do usuário ${id}:`, error);
-        }
-      });
-      if (userDetailPromises) console.warn('sem userDetailPromises = ' + userDetailPromises);
+  const _getBlockedUsers = useCallback(async () => {
+    setTimeout(async () => {
+      try {
+        const data = await getSecureStoreData();
+        if (!data) console.warn('sem token BlockedScreen = ' + data.token);
+        const listBlocked = await blockedUsers(data.Id);
+        const userDetailPromises = listBlocked.map(async (id) => {
+          try {
+            const blockData = await userById(id);
+            return blockData;
+          } catch (error) {
+            console.error(`Erro ao obter detalhes do usuário ${id}:`, error);
+          }
+        });
+        const userDetails = await Promise.all(userDetailPromises);
+        setSectionData(userDetails);
+      } catch (err) {
+        console.error('get block error = ' + err)
+      }
+      finally {
+        console.warn('block falso')
+        setLoading(false);
+      }
+    }, 500)
 
-      const userDetails = await Promise.all(userDetailPromises);
-
-      console.log(userDetailPromises + ' e e ' + userDetails)
-      setSectionData(userDetails);
-    } catch (err) {
-      console.error('get block error = ' + err)
-    }
-    finally {
-      console.warn('block falso')
-      setLoading(false);
-    }
   }, []);
-
 
   const AnimeBottomOp = useAnimatedStyle(() => {
     return {
@@ -72,19 +71,14 @@ const BlockedScreen: React.FC = () => {
     };
   });
 
-
-  const deleteItemList = (_id: string) => { setSectionData((prevData) => prevData.filter((item) => item._id !== _id)); };
-
-
-
   const TimeLine = ({ item }: { item: UserRes }) => {
     const translateX = useSharedValue(0);
-    
+
     const _unBlock = async () => {
       const data = await getSecureStoreData();
       translateX.value = withTiming(-500, { duration: 500, easing: Easing.ease });
-      setTimeout(() => {deleteItemList(item._id);}, 500);
-      await blockUser(data?.userAuth?._id, item?._id, false)
+      setTimeout(() => { deleteItemList(item._id); }, 500);
+      await blockUser(data?.Id, item?._id, false)
     };
     const animeLeft = useAnimatedStyle(() => { return { transform: [{ translateX: translateX.value }], }; });
 
@@ -111,7 +105,6 @@ const BlockedScreen: React.FC = () => {
     );
   }
 
-
   const _listHeaderComponent = ({ item }: { item: UserRes }) => {
     return (
       <View style={[rowstyle.row, {}]}>
@@ -121,13 +114,51 @@ const BlockedScreen: React.FC = () => {
     );
   }
 
+  const footerList = () => {
+    return (
+      <View style={[rootStyle.mb9]}></View>
+    );
+  }
+
+  const deleteItemList = (_id: string) => { setSectionData((prevData) => prevData.filter((item) => item._id !== _id)); };
+  const onEndReached = async () => { if (sectionData.length >= 10) _getBlockedUsers(); };
+
+  const emptyList = () => {
+    return (
+      <View style={[rootStyle.container, rootStyle.centralize, { backgroundColor: 'red' }]}>
+        <LottieView
+          loop={true}
+          autoPlay
+          duration={2000}
+          style={[
+            {
+              width: 140 * 0.7,
+              height: 140 * 0.7,
+            }]}
+          source={require('../../../assets/json/block.json')}
+        />
+        <ProdBold style={[rootStyle.w100, rootStyle.mt02, text.centralizeText, text.fz15, { color: themeBW }]}>
+          {t('profile.favoritesEmpty')}
+        </ProdBold>
+        <ProdLight style={[rootStyle.w100, rootStyle.mt01, text.centralizeText, text.fz13, { color: themeGTD }]}>
+          {t('profile.favoritesEmpty2')}
+        </ProdLight>
+      </View>
+    );
+  };
+
 
 
   useEffect(() => {
-    _getUserAuth();
+    const data = async () => {
+      if (loading) {
+        await _getBlockedUsers();
+      };
+    }
+    data()
     animeShared300.value = 0;
     animeShared0.value = 1;
-  }, [])
+  }, [_getBlockedUsers])
   return (
     <>
       {loading ? (
@@ -141,17 +172,16 @@ const BlockedScreen: React.FC = () => {
           keyExtractor={(item, index) => item._id}
           renderItem={TimeLine}
           ListHeaderComponent={_listHeaderComponent}
-          // keyExtractor={(item: PostRes, index) => `${item._id.toString()}_${index}`}
           // onEndReached={_handleCheckEndPage}
-          onEndReachedThreshold={0.1}
+          // onEndReachedThreshold={0.1}
           // onRefresh={_refreshMorePub}
-          ListEmptyComponent={<ActivityIndicator size="large" color={colors.patternColor} />}
-          // ListFooterComponent={_refreshMorePub}
+          ListEmptyComponent={emptyList}
+          ListFooterComponent={footerList}
           // stickyHeaderIndices={[0]}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={() => { _getUserAuth; }}
+              onRefresh={() => { _getBlockedUsers }}
               tintColor="#007AFF"
               titleColor="#007AFF"
               progressViewOffset={0}
